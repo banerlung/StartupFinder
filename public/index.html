@@ -418,7 +418,48 @@
 <div id="userProfileStartups" class="space-y-6"></div>
 </div>
 </div>
+<!--МОИ СТАРТАПЫ-->
+<!-- МОИ СТАРТАПЫ (Отдельная страница) -->
+<div id="myStartupsPage" class="page">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
 
+    <!-- Хлебные крошки -->
+    <div class="flex items-center gap-2 text-sm text-gray-400 mb-10">
+      <button onclick="navigate('home')" class="hover:text-brand-500 transition-colors flex items-center gap-1.5">
+        <i data-lucide="home" class="w-4 h-4"></i> Главная
+      </button>
+      <i data-lucide="chevron-right" class="w-3 h-3"></i>
+      <span class="text-gray-900 dark:text-white font-medium">Мои стартапы</span>
+    </div>
+
+    <!-- Заголовок страницы -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-12">
+      <div>
+        <h1 class="text-3xl md:text-4xl font-semibold tracking-tight text-gray-900 dark:text-white mb-2">Мои стартапы</h1>
+        <p class="text-sm text-gray-500"><span id="myStartupsTotal">0</span> проектов</p>
+      </div>
+      <button onclick="navigate('create')" class="inline-flex items-center gap-2 px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-full text-sm font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
+        <i data-lucide="plus" class="w-4 h-4"></i> Новый проект
+      </button>
+    </div>
+
+    <!-- Сетка стартапов -->
+    <div id="myStartupsPageGrid" class="space-y-6"></div>
+
+    <!-- Пустое состояние -->
+    <div id="myStartupsPageEmpty" class="hidden text-center py-20 bg-gray-50 dark:bg-gray-900/50 rounded-2xl border border-dashed border-gray-200 dark:border-gray-800">
+      <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-white dark:bg-gray-800 shadow-sm flex items-center justify-center">
+        <i data-lucide="folder-open" class="w-8 h-8 text-gray-400"></i>
+      </div>
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">У вас пока нет стартапов</h3>
+      <p class="text-sm text-gray-500 mb-8 max-w-md mx-auto">Опубликуйте свою первую идею и найдите команду для её реализации</p>
+      <button onclick="navigate('create')" class="inline-flex items-center gap-2 px-8 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-full text-sm font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
+        <i data-lucide="plus" class="w-4 h-4"></i> Создать проект
+      </button>
+    </div>
+
+  </div>
+</div>
 <!-- НАСТРОЙКИ -->
 <div id="settingsPage" class="page">
 <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">

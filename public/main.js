@@ -30,6 +30,7 @@ let scrollObserver = null;
 
 // ============ INIT ============
 document.addEventListener('DOMContentLoaded', async () => {
+    
     initTheme();
     initIcons();
     initTagInputs();
@@ -37,7 +38,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     initModalKeys();
     await loadUser();
     loadStats();
-    loadStartups(true);
+    await loadStartups(true);
+    updateMyStartupsCount();
     initRouteHandler();
 });
 
@@ -570,7 +572,19 @@ async function viewStartupInFeed(startupId) {
         }
     } catch (e) { console.error(e); }
 }
-
+function updateMyStartupsCount() {
+    // Если пользователь не вошел или стартапы еще не загрузились — выходим
+    if (!state.user || !state.startups) return;
+    
+    // Считаем только твои стартапы
+    const count = state.startups.filter(s => Number(s.user_id) === Number(state.user.id)).length;
+    
+    // Обновляем цифру в меню
+    const badge = document.getElementById('myStartupsCount');
+    if (badge) {
+        badge.textContent = count;
+    }
+}
 function renderStartupCard(startup, animate = true) {
     const stacks = parseArray(startup.stack);
     const vacancies = parseArray(startup.vacancies);
@@ -578,7 +592,7 @@ function renderStartupCard(startup, animate = true) {
     const initial = (startup.name || 'P')[0].toUpperCase();
     const timeAgo = getTimeAgo(startup.created_at);
     const isExpanded = state.expandedStartups.has(startup.id);
-    const isOwner = state.user && state.user.id === startup.user_id;
+    const isOwner = state.user && Number(state.user.id) === Number(startup.user_id);
     const authorName = startup.author_name || 'Участник';
     const authorInitial = authorName[0].toUpperCase();
     const authorLink = isOwner ? '#/profile' : `#/user/${startup.user_id}`;
@@ -586,101 +600,120 @@ function renderStartupCard(startup, animate = true) {
     const animClass = animate ? 'stagger-item' : '';
 
     return `
-    <article id="startup-card-${startup.id}" class="${animClass} card-hover bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
-        <div class="p-6">
-            <div class="flex items-start gap-4 mb-4">
+    <article id="startup-card-${startup.id}" class="${animClass} bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
+        <div class="p-6 md:p-8">
+            
+            <!-- Шапка: Картинка/Буква + Название + Бейдж -->
+            <div class="flex items-start gap-4 mb-5">
                 ${startup.image_url ? `
-                <div class="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 dark:bg-gray-800">
+                <div class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-gray-50 dark:bg-gray-800 ring-1 ring-gray-100 dark:ring-gray-700">
                     <img src="${startup.image_url}" alt="${escapeHtml(startup.name)}" class="w-full h-full object-cover" loading="lazy">
                 </div>
                 ` : `
-                <div class="w-14 h-14 rounded-lg bg-brand-500 flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                <div class="w-16 h-16 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-400 font-semibold text-2xl flex-shrink-0 ring-1 ring-gray-100 dark:ring-gray-700">
                     ${initial}
                 </div>
                 `}
-                <div class="flex-1 min-w-0">
-                    <div class="flex items-start justify-between gap-2 mb-1 flex-wrap">
-                        <h3 class="font-bold text-lg break-words flex-1 min-w-0">${escapeHtml(startup.name)}</h3>
+                
+                <div class="flex-1 min-w-0 pt-1">
+                    <div class="flex items-start justify-between gap-3 mb-1">
+                        <h3 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white break-words leading-tight">
+                            ${escapeHtml(startup.name)}
+                        </h3>
                         ${startup.is_paid 
-                          ? '<span class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-400 text-xs font-semibold rounded-lg border border-green-200 dark:border-green-800/50"><i data-lucide="wallet" class="w-3.5 h-3.5"></i>С оплатой</span>' 
-                          : '<span class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 text-xs font-semibold rounded-lg border border-brand-200 dark:border-brand-800/50"><i data-lucide="handshake" class="w-3.5 h-3.5"></i>Без оплаты</span>'
+                          ? '<span class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-medium rounded-full"><i data-lucide="wallet" class="w-3 h-3"></i>С оплатой</span>' 
+                          : '<span class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-medium rounded-full"><i data-lucide="handshake" class="w-3 h-3"></i>Без оплаты</span>'
                         }
                     </div>
-                    <p class="text-xs text-gray-500">${timeAgo}</p>
+                    <p class="text-xs font-medium text-gray-400 dark:text-gray-500">${timeAgo}</p>
                 </div>
             </div>
-            <div class="mb-4">
-                <p class="startup-desc text-sm text-gray-600 dark:text-gray-400 leading-relaxed break-words ${isExpanded ? '' : 'line-clamp-3'}">${escapeHtml(startup.description || '')}</p>
+
+            <!-- Описание -->
+            <div class="mb-6">
+                <p class="startup-desc text-sm text-gray-600 dark:text-gray-400 leading-relaxed break-words ${isExpanded ? '' : 'line-clamp-3'}">
+                    ${escapeHtml(startup.description || '')}
+                </p>
             </div>
-            <a href="${authorLink}" target="_self" class="inline-flex items-center gap-2.5 mb-4 group" aria-label="Профиль автора">
-                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white text-sm font-semibold overflow-hidden flex-shrink-0">
+
+            <!-- Автор -->
+            <a href="${authorLink}" target="_self" class="inline-flex items-center gap-2.5 mb-6 group/author" aria-label="Профиль автора">
+                <div class="w-7 h-7 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 text-xs font-semibold overflow-hidden flex-shrink-0 ring-2 ring-white dark:ring-gray-900">
                     ${startup.author_avatar ? `<img src="${startup.author_avatar}" class="w-full h-full object-cover" loading="lazy" alt="">` : authorInitial}
                 </div>
-                <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">${escapeHtml(authorName)}</span>
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover/author:text-brand-500 transition-colors">
+                    ${escapeHtml(authorName)}
+                </span>
             </a>
+
+            <!-- Стек (Теги) -->
             ${stacks.length > 0 ? `
-            <div class="text-xs text-gray-500 mb-1">Технический стек:</div>
-            <div class="flex flex-wrap gap-1.5 mb-4">
-                ${stacks.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join('')}
+            <div class="flex flex-wrap gap-2 mb-6">
+                ${stacks.map(s => `<span class="px-2.5 py-1 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-medium rounded-md border border-gray-100 dark:border-gray-700">${escapeHtml(s)}</span>`).join('')}
             </div>` : ''}
+
+            <!-- Вакансии (Сделали чище, без агрессивного градиента) -->
             ${vacancies.length > 0 ? `
-            <div class="mb-4 p-4 bg-gradient-to-br from-brand-50 to-orange-50 dark:from-brand-950/30 dark:to-orange-950/20 rounded-lg border border-brand-200 dark:border-brand-800/30">
+            <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-800">
                 <div class="flex items-center gap-2 mb-3">
-                    <div class="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center">
-                        <i data-lucide="users" class="w-4 h-4 text-white"></i>
-                    </div>
-                    <div>
-                        <div class="text-sm font-bold text-gray-900 dark:text-white">Ищут в команду</div>
-                        <div class="text-xs text-gray-500">${vacancies.length} ${vacancies.length === 1 ? 'вакансия' : vacancies.length < 5 ? 'вакансии' : 'вакансий'}</div>
-                    </div>
+                    <i data-lucide="users" class="w-4 h-4 text-gray-500 dark:text-gray-400"></i>
+                    <span class="text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider">Ищут в команду</span>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div class="flex flex-wrap gap-2">
                     ${vacancies.map(v => `
-                    <div class="flex items-center gap-2 p-2.5 bg-white dark:bg-gray-900 rounded-lg border border-brand-200 dark:border-brand-800/30">
-                        <i data-lucide="briefcase" class="w-4 h-4 text-brand-500 flex-shrink-0"></i>
-                        <span class="text-sm font-medium text-gray-900 dark:text-white break-words">${escapeHtml(v)}</span>
-                    </div>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm">
+                        <i data-lucide="briefcase" class="w-3.5 h-3.5 text-gray-400"></i>
+                        ${escapeHtml(v)}
+                    </span>
                     `).join('')}
                 </div>
             </div>` : ''}
+
+            <!-- Раскрывающийся контент (Контакты) -->
             <div class="expand-content ${isExpanded ? 'expanded' : ''}">
-                <div class="pt-4 border-t border-gray-100 dark:border-gray-800 space-y-4">
+                <div class="pt-5 border-t border-gray-100 dark:border-gray-800 space-y-3">
                     ${contacts.length > 0 || startup.telegram ? `
                     <div>
-                        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Контакты</div>
+                        <div class="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-3">Контакты</div>
                         <div class="space-y-2">
                             ${startup.telegram ? `
-                            <a href="https://t.me/${escapeHtml(cleanTelegram(startup.telegram))}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-950/50 transition-colors">
-                                <div class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center flex-shrink-0">
+                            <a href="https://t.me/${escapeHtml(cleanTelegram(startup.telegram))}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-950/40 transition-colors group/link">
+                                <div class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center flex-shrink-0 shadow-sm shadow-blue-500/20">
                                     <i data-lucide="send" class="w-4 h-4 text-white"></i>
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <div class="text-xs text-gray-500">Telegram</div>
-                                    <div class="text-sm font-semibold truncate">@${escapeHtml(cleanTelegram(startup.telegram))}</div>
+                                    <div class="text-[10px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Telegram</div>
+                                    <div class="text-sm font-medium text-gray-900 dark:text-white truncate">@${escapeHtml(cleanTelegram(startup.telegram))}</div>
                                 </div>
-                                <i data-lucide="external-link" class="w-4 h-4 text-gray-400 flex-shrink-0"></i>
+                                <i data-lucide="arrow-up-right" class="w-4 h-4 text-gray-400 flex-shrink-0 group-hover/link:text-blue-500 transition-colors"></i>
                             </a>` : ''}
                             ${contacts.map(c => renderContactLink(c)).join('')}
                         </div>
                     </div>` : ''}
                 </div>
             </div>
-            <div class="flex gap-2 pt-4 border-t border-gray-100 dark:border-gray-800">
-                ${expandable ? `
-                <button onclick="toggleExpand(${startup.id}, this)" class="expand-btn flex-1 px-4 py-2.5 bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 rounded-lg text-sm font-semibold hover:bg-brand-100 dark:hover:bg-brand-950/60 transition-colors flex items-center justify-center gap-1.5 btn-hover" aria-expanded="${isExpanded}">
-                    <i data-lucide="${isExpanded ? 'chevron-up' : 'chevron-down'}" class="expand-btn-icon w-4 h-4"></i>
-                    <span class="expand-btn-text">${isExpanded ? 'Скрыть' : 'Подробнее'}</span>
+
+            <!-- Футер карточки (Кнопки) -->
+            <div class="flex items-center gap-3 pt-5 border-t border-gray-100 dark:border-gray-800 mt-2">
+               ${expandable ? `
+                <button onclick="toggleExpand(${startup.id}, this)" class="expand-btn flex-1 px-4 py-2.5 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm font-medium transition-colors flex items-center justify-center gap-1.5" aria-expanded="${isExpanded}">
+                <i data-lucide="${isExpanded ? 'chevron-up' : 'chevron-down'}" class="expand-btn-icon w-4 h-4"></i>
+                <span class="expand-btn-text">${isExpanded ? 'Скрыть' : 'Подробнее'}</span>
                 </button>
-                ` : '<div class="flex-1"></div>'}
+                    ` : '<div class="flex-1"></div>'}
+                
                 ${isOwner ? `
-                <button onclick="openEditStartup(${startup.id})" class="px-4 py-2.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors btn-hover" aria-label="Редактировать проект">
-                    <i data-lucide="edit-2" class="w-4 h-4"></i>
-                </button>
-                <button onclick="confirmDeleteStartup(${startup.id})" class="px-4 py-2.5 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 rounded-lg text-sm font-medium hover:bg-red-100 dark:hover:bg-red-950/50 transition-colors btn-hover" aria-label="Удалить проект">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                </button>
+                <div class="flex items-center gap-2">
+                    <button onclick="openEditStartup(${startup.id})" class="p-2.5 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors" aria-label="Редактировать">
+                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="confirmDeleteStartup(${startup.id})" class="p-2.5 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-xl transition-colors" aria-label="Удалить">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
                 ` : ''}
             </div>
+
         </div>
     </article>
     `;
@@ -1013,7 +1046,10 @@ async function loadMyStartupsPage() {
         const res = await fetch(`${API_URL}/api/startups?limit=100&offset=0`);
         if (!res.ok) return;
         const data = await res.json();
-        const myStartups = (data.startups || []).filter(s => s.user_id === state.user.id);
+        
+        // ИСПРАВЛЕНИЕ: добавляем Number() для надежного сравнения
+        const myStartups = (data.startups || []).filter(s => Number(s.user_id) === Number(state.user.id));
+        
         document.getElementById('myStartupsTotal').textContent = myStartups.length;
         const grid = document.getElementById('myStartupsPageGrid');
         const empty = document.getElementById('myStartupsPageEmpty');
