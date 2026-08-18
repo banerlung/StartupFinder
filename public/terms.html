@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Пользовательское соглашение — StartupFinder</title>
+<meta name="description" content="Пользовательское соглашение сервиса StartupFinder">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-500-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-600-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+<link rel="stylesheet" href="style.css">
+<style>
+* { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', system-ui, sans-serif; }
+.gradient-text {
+  background: linear-gradient(135deg, #F97316 0%, #FB923C 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.glass {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+.dark .glass { background: rgba(17,24,39,0.85); }
+.prose-brand h2 { color: #111827; font-weight: 700; font-size: 1.5rem; margin-top: 2.5rem; margin-bottom: 1rem; scroll-margin-top: 6rem; }
+.dark .prose-brand h2 { color: #F9FAFB; }
+.prose-brand h3 { color: #374151; font-weight: 600; font-size: 1.125rem; margin-top: 1.75rem; margin-bottom: 0.75rem; }
+.dark .prose-brand h3 { color: #D1D5DB; }
+.prose-brand p { color: #4B5563; line-height: 1.75; margin-bottom: 1rem; }
+.dark .prose-brand p { color: #9CA3AF; }
+.prose-brand ul { list-style: disc; padding-left: 1.5rem; color: #4B5563; margin-bottom: 1rem; }
+.dark .prose-brand ul { color: #9CA3AF; }
+.prose-brand li { margin-bottom: 0.5rem; }
+.prose-brand a { color: #F97316; text-decoration: underline; text-underline-offset: 2px; }
+.prose-brand a:hover { color: #EA580C; }
+.toc-link.active { color: #F97316; font-weight: 600; border-left-color: #F97316; background: #FFF7ED; }
+.dark .toc-link.active { background: rgba(249,115,22,0.1); }
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb { background: #FDBA74; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #F97316; }
+.dark ::-webkit-scrollbar-thumb { background: #C2410C; }
+</style>
+<base target="_blank">
+</head>
+<body class="bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 min-h-screen flex flex-col transition-colors duration-300">
+
+<!-- Навбар -->
+<nav class="sticky top-0 z-40 glass border-b border-gray-200/50 dark:border-gray-800/50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <a href="index.html#/" class="flex items-center gap-2">
+        <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center">
+          <i data-lucide="rocket" class="w-5 h-5 text-white"></i>
+        </div>
+        <span class="font-bold text-lg">Startup<span class="gradient-text">Finder</span></span>
+      </a>
+      <button onclick="toggleTheme()" class="p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" title="Сменить тему">
+        <i data-lucide="sun" class="w-5 h-5 theme-icon-light"></i>
+        <i data-lucide="moon" class="w-5 h-5 theme-icon-dark hidden"></i>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Контент -->
+<main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+  <div class="flex flex-col lg:flex-row gap-12">
+    
+    <!-- Боковое меню (TOC) -->
+    <aside class="lg:w-64 flex-shrink-0">
+      <div class="lg:sticky lg:top-24">
+        <h2 class="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">Содержание</h2>
+        <nav class="space-y-1 border-l-2 border-gray-200 dark:border-gray-800">
+          <a href="#general" class="toc-link block pl-4 py-1.5 text-sm text-gray-500 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400 transition-colors border-l-2 border-transparent -ml-[2px]">1. Общие положения</a>
+          <a href="#subject" class="toc-link block pl-4 py-1.5 text-sm text-gray-500 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400 transition-colors border-l-2 border-transparent -ml-[2px]">2. Предмет соглашения</a>
+          <a href="#account" class="toc-link block pl-4 py-1.5 text-sm text-gray-500 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400 transition-colors border-l-2 border-transparent -ml-[2px]">3. Регистрация и аккаунт</a>
+          <a href="#content" class="toc-link block pl-4 py-1.5 text-sm text-gray-500 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400 transition-colors border-l-2 border-transparent -ml-[2px]">4. Правила публикации</a>
+          <a href="#ip" class="toc-link block pl-4 py-1.5 text-sm text-gray-500 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400 transition-colors border-l-2 border-transparent -ml-[2px]">5. Интеллектуальная собственность</a>
+          <a href="#liability" class="toc-link block pl-4 py-1.5 text-sm text-gray-500 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400 transition-colors border-l-2 border-transparent -ml-[2px]">6. Ответственность сторон</a>
+          <a href="#privacy" class="toc-link block pl-4 py-1.5 text-sm text-gray-500 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400 transition-colors border-l-2 border-transparent -ml-[2px]">7. Персональные данные</a>
+          <a href="#prohibited" class="toc-link block pl-4 py-1.5 text-sm text-gray-500 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400 transition-colors border-l-2 border-transparent -ml-[2px]">8. Запрещённые действия</a>
+          <a href="#changes" class="toc-link block pl-4 py-1.5 text-sm text-gray-500 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400 transition-colors border-l-2 border-transparent -ml-[2px]">9. Изменение условий</a>
+          <a href="#final" class="toc-link block pl-4 py-1.5 text-sm text-gray-500 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400 transition-colors border-l-2 border-transparent -ml-[2px]">10. Заключительные положения</a>
+        </nav>
+        <a href="index.html#/" class="mt-8 inline-flex items-center gap-2 text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 transition-colors">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          На главную
+        </a>
+      </div>
+    </aside>
+
+    <!-- Текст соглашения -->
+    <article class="flex-1 prose-brand max-w-3xl">
+      <div class="mb-10 pb-8 border-b border-gray-200 dark:border-gray-800">
+        <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">Пользовательское соглашение</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm">Последнее обновление: 31 июля 2026 г.</p>
+      </div>
+
+      <section id="general">
+        <h2>1. Общие положения</h2>
+        <p>1.1. Настоящее Пользовательское соглашение (далее — «Соглашение») регулирует отношения между Администрацией сервиса StartupFinder (далее — «Администрация») и любым физическим лицом (далее — «Пользователь»), использующим сайт и функционал сервиса.</p>
+        <p>1.2. Используя StartupFinder, Пользователь подтверждает своё согласие с условиями настоящего Соглашения и обязуется их соблюдать. Если Пользователь не согласен с условиями, он должен немедленно прекратить использование сервиса.</p>
+        <p>1.3. Администрация оставляет за собой право в любое время изменять, добавлять или удалять пункты настоящего Соглашения без предварительного уведомления Пользователя. Новая редакция вступает в силу с момента её размещения на сайте.</p>
+      </section>
+
+      <section id="subject">
+        <h2>2. Предмет соглашения</h2>
+        <p>2.1. Администрация предоставляет Пользователю доступ к платформе StartupFinder, предназначенной для размещения информации о стартап-проектах, поиска сооснователей (кофаундеров), членов команды и партнёров.</p>
+        <p>2.2. Все услуги предоставляются на безвозмездной основе, если иное не предусмотрено отдельными функциями сервиса.</p>
+        <p>2.3. StartupFinder является исключительно информационной площадкой и не участвует в переговорах, трудовых или гражданско-правовых отношениях между Пользователями.</p>
+      </section>
+
+      <section id="account">
+        <h2>3. Регистрация и аккаунт</h2>
+        <p>3.1. Для полноценного использования сервиса Пользователю необходимо пройти регистрацию, указав действующий адрес электронной почты и пароль.</p>
+        <p>3.2. Пользователь обязуется предоставлять достоверную информацию при регистрации и поддерживать её в актуальном состоянии.</p>
+        <p>3.3. Пользователь несёт полную ответственность за сохранность своих учётных данных и за все действия, совершённые под его аккаунтом. При обнаружении несанкционированного доступа Пользователь обязан незамедлительно уведомить Администрацию.</p>
+        <p>3.4. Администрация вправе заблокировать или удалить аккаунт Пользователя в случае нарушения настоящего Соглашения или по иным обоснованным причинам без предварительного уведомления.</p>
+      </section>
+
+      <section id="content">
+        <h2>4. Правила публикации проектов и контента</h2>
+        <p>4.1. Пользователь вправе размещать на сервисе информацию о своих проектах, идеях, вакансиях и контактных данных при условии соблюдения настоящего Соглашения и действующего законодательства РФ.</p>
+        <p>4.2. Размещая контент, Пользователь гарантирует, что обладает всеми необходимыми правами для его публикации и что такая публикация не нарушает права третьих лиц.</p>
+        <p>4.3. Администрация не осуществляет предварительную модерацию каждого размещаемого проекта, но оставляет за собой право удалить любой контент, нарушающий настоящее Соглашение или требования закона, по собственному усмотрению и без объяснения причин.</p>
+      </section>
+
+      <section id="ip">
+        <h2>5. Интеллектуальная собственность</h2>
+        <p>5.1. Все объекты интеллектуальной собственности, размещённые на сервисе (логотипы, тексты, дизайн, код), принадлежат Администрации или соответствующим правообладателям.</p>
+        <p>5.2. Пользователь сохраняет все права на контент, который он самостоятельно размещает на платформе. Размещая проект, Пользователь предоставляет Администрации неисключительную лицензию на использование такого контента в пределах функционирования сервиса.</p>
+        <p>5.3. Администрация не несёт ответственности за нарушение прав интеллектуальной собственности, совершённое Пользователями при размещении контента. Все претензии по данному поводу направляются непосредственно к Пользователю, разместившему спорный контент.</p>
+      </section>
+
+      <section id="liability">
+        <h2>6. Ограничение ответственности</h2>
+        <p><strong>6.1. Сервис предоставляется «как есть» (as is).</strong> Администрация не гарантирует, что функционал сервиса будет соответствовать ожиданиям Пользователя, работать непрерывно, быстро, надёжно и без ошибок.</p>
+        <p>6.2. <strong>Администрация не несёт ответственности:</strong></p>
+        <ul>
+          <li>за содержание и достоверность информации, размещаемой Пользователями;</li>
+          <li>за любые убытки, возникшие в результате использования или невозможности использования сервиса;</li>
+          <li>за ущерб, причинённый Пользователю в результате взаимодействия с другими Пользователями (включая мошенничество, недобросовестность, нарушение договорённостей);</li>
+          <li>за утрату данных, вызванную техническими сбоями, действиями третьих лиц или иными обстоятельствами, находящимися вне разумного контроля Администрации;</li>
+          <li>за нарушение законодательства, совершённое Пользователем при использовании сервиса.</li>
+        </ul>
+        <p>6.3. Пользователь самостоятельно несёт ответственность перед третьими лицами за свои действия, совершённые с использованием сервиса, включая размещение недостоверной информации или нарушение прав на интеллектуальную собственность.</p>
+        <p>6.4. В случае предъявления претензий третьих лиц к Администрации, связанных с действиями Пользователя, последний обязуется урегулировать такие претензии за свой счёт и возместить Администрации все понесённые убытки.</p>
+      </section>
+
+      <section id="privacy">
+        <h2>7. Персональные данные и конфиденциальность</h2>
+        <p>7.1. Обработка персональных данных Пользователей осуществляется в соответствии с Политикой конфиденциальности, являющейся неотъемлемой частью настоящего Соглашения.</p>
+        <p>7.2. Пользователь осознаёт и соглашается с тем, что определённая информация (имя, контакты, описание проектов) становится доступной другим Пользователям сервиса в соответствии с его настройками.</p>
+        <p>7.3. Администрация принимает разумные меры для защиты персональных данных, но не может гарантировать абсолютную безопасность информации при передаче данных через интернет.</p>
+      </section>
+
+      <section id="prohibited">
+        <h2>8. Запрещённые действия</h2>
+        <p>8.1. При использовании сервиса Пользователю запрещается:</p>
+        <ul>
+          <li>размещать заведомо ложную, вводящую в заблуждение или оскорбительную информацию;</li>
+          <li>использовать сервис для распространения спама, вредоносного ПО, фишинга;</li>
+          <li>публиковать контент порнографического, экстремистского или иного запрещённого законодательством характера;</li>
+          <li>предпринимать действия, направленные на нарушение работоспособности сервиса (DDoS, скрейпинг, взлом);</li>
+          <li>собирать контактные данные других Пользователей в автоматическом режиме без их согласия;</li>
+          <li>выдавать себя за другого человека или представителя организации без достаточных на то оснований.</li>
+        </ul>
+      </section>
+
+      <section id="changes">
+        <h2>9. Изменение и прекращение действия Соглашения</h2>
+        <p>9.1. Администрация вправе в любое время изменять настоящее Соглашение. Продолжение использования сервиса после внесения изменений означает согласие Пользователя с новой редакцией.</p>
+        <p>9.2. Администрация вправе приостановить или прекратить работу сервиса (полностью или частично) без предварительного уведомления Пользователя.</p>
+        <p>9.3. Пользователь вправе в любой момент удалить свой аккаунт. Удаление аккаунта влечёт за собой удаление всех связанных с ним данных с сервера в течение разумного срока.</p>
+      </section>
+
+      <section id="final">
+        <h2>10. Заключительные положения</h2>
+        <p>10.1. Настоящее Соглашение регулируется законодательством Российской Федерации.</p>
+        <p>10.2. Все споры, возникающие из настоящего Соглашения или в связи с его исполнением, подлежат разрешению путём переговоров. В случае невозможности достижения соглашения спор передаётся на рассмотрение в суд по месту нахождения Администрации.</p>
+        <p>10.3. Если какое-либо положение настоящего Соглашения будет признано недействительным, остальные положения остаются в силе.</p>
+        <p>10.4. По всем вопросам, связанным с использованием сервиса, Пользователь может связаться с Администрацией через контактные данные, указанные на сайте.</p>
+      </section>
+
+      <div class="mt-16 p-6 bg-brand-50 dark:bg-brand-950/20 rounded-xl border border-brand-200 dark:border-brand-800/30">
+        <p class="text-sm text-brand-800 dark:text-brand-300 mb-0">
+          <strong>Используя StartupFinder, вы подтверждаете, что ознакомились с настоящим Соглашением, понимаете его содержание и принимаете все его условия безоговорочно.</strong>
+        </p>
+      </div>
+    </article>
+  </div>
+</main>
+
+<!-- Футер -->
+<footer class="border-t border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/30 mt-auto">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center">
+          <i data-lucide="rocket" class="w-4 h-4 text-white"></i>
+        </div>
+        <span class="font-bold">Startup<span class="gradient-text">Finder</span></span>
+      </div>
+      <div class="flex items-center gap-6 text-sm">
+        <a href="privacy.html" class="text-gray-500 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400 transition-colors">Политика конфиденциальности</a>
+        <a href="terms.html" class="text-brand-600 dark:text-brand-400 font-medium">Пользовательское соглашение</a>
+      </div>
+      <p class="text-sm text-gray-500">© 2026 StartupFinder</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Тема
+function initTheme() {
+  const saved = localStorage.getItem('theme') || 'system';
+  applyTheme(saved);
+}
+function applyTheme(theme) {
+  const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  document.documentElement.classList.toggle('dark', isDark);
+  document.querySelectorAll('.theme-icon-light').forEach(el => el.classList.toggle('hidden', isDark));
+  document.querySelectorAll('.theme-icon-dark').forEach(el => el.classList.toggle('hidden', !isDark));
+}
+function toggleTheme() {
+  const isDark = document.documentElement.classList.contains('dark');
+  const newTheme = isDark ? 'light' : 'dark';
+  localStorage.setItem('theme', newTheme);
+  applyTheme(newTheme);
+}
+initTheme();
+
+// Иконки
+if (window.lucide) lucide.createIcons();
+
+// Подсветка TOC при скролле
+const sections = document.querySelectorAll('section[id]');
+const tocLinks = document.querySelectorAll('.toc-link');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      tocLinks.forEach(link => link.classList.remove('active'));
+      const active = document.querySelector(`.toc-link[href="#${entry.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -60% 0px' });
+sections.forEach(section => observer.observe(section));
+</script>
+
+</body>
+</html>

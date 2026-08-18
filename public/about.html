@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>О проекте — StartupFinder</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+<style>
+    .gradient-text {
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #c2410c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .glass {
+      background: rgba(20, 20, 20, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+  </style>
+<base target="_blank">
+</head>
+<body class="bg-sf-bg text-white font-sans antialiased">
+
+  <!-- Навигация -->
+  <nav class="fixed top-0 w-full z-50 glass">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="/" class="text-xl font-bold tracking-tight">Startup<span class="text-sf-accent">Finder</span></a>
+      <div class="flex items-center gap-6 text-sm text-sf-muted">
+        <a href="/" class="hover:text-white transition">Поиск</a>
+        <a href="/about" class="text-white">О проекте</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="pt-32 pb-20 px-6">
+    <div class="max-w-4xl mx-auto text-center">
+      <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-6">
+        Находим стартапы.<br>
+        <span class="gradient-text">Без шума и воды.</span>
+      </h1>
+      <p class="text-lg text-sf-muted max-w-2xl mx-auto leading-relaxed">
+        StartupFinder — это не агрегатор новостей и не база данных за 10 000 ₽. 
+        Это инструмент, который помогает найти реальные стартапы с потенциалом, 
+        отфильтровать хайп и сфокусироваться на метриках.
+      </p>
+    </div>
+  </section>
+
+  <!-- Метрики (динамические из API) -->
+  <section class="py-16 px-6 border-y border-sf-border">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="text-center">
+        <div class="flex justify-center mb-3">
+          <svg class="w-8 h-8 text-sf-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/>
+          </svg>
+        </div>
+        <div class="text-4xl md:text-5xl font-bold text-sf-accent mb-2" id="stat-startups">—</div>
+        <div class="text-sm text-sf-muted uppercase tracking-wider">Стартапов в базе</div>
+      </div>
+      <div class="text-center">
+        <div class="flex justify-center mb-3">
+          <svg class="w-8 h-8 text-sf-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
+          </svg>
+        </div>
+        <div class="text-4xl md:text-5xl font-bold text-sf-accent mb-2" id="stat-users">—</div>
+        <div class="text-sm text-sf-muted uppercase tracking-wider">Пользователей</div>
+      </div>
+      <div class="text-center">
+        <div class="flex justify-center mb-3">
+          <svg class="w-8 h-8 text-sf-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.084-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z"/>
+          </svg>
+        </div>
+        <div class="text-4xl md:text-5xl font-bold text-sf-accent mb-2" id="stat-vacancies">—</div>
+        <div class="text-sm text-sf-muted uppercase tracking-wider">Открытых вакансий</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Сравнение таблица -->
+  <section class="py-24 px-6">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Почему именно мы</h2>
+      <p class="text-sf-muted text-center mb-16 max-w-xl mx-auto">
+        Мы не пытаемся быть всем. Мы делаем одно — поиск стартапов — и делаем это лучше.
+      </p>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-sf-border">
+              <th class="pb-4 pr-4 text-sm font-medium text-sf-muted uppercase tracking-wider">Функция</th>
+              <th class="pb-4 px-4 text-sm font-medium text-sf-muted uppercase tracking-wider text-center">Crunchbase</th>
+              <th class="pb-4 px-4 text-sm font-medium text-sf-muted uppercase tracking-wider text-center">AngelList</th>
+              <th class="pb-4 pl-4 text-sm font-medium text-sf-accent uppercase tracking-wider text-center">StartupFinder</th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr class="border-b border-sf-border/50">
+              <td class="py-5 pr-4 font-medium">Бесплатный поиск</td>
+              <td class="py-5 px-4 text-center text-sf-muted">Ограниченно</td>
+              <td class="py-5 px-4 text-center text-sf-muted">Требует регистрации</td>
+              <td class="py-5 pl-4 text-center text-sf-accent font-semibold">Полностью</td>
+            </tr>
+            <tr class="border-b border-sf-border/50">
+              <td class="py-5 pr-4 font-medium">Русскоязычные стартапы</td>
+              <td class="py-5 px-4 text-center text-red-400">Мало</td>
+              <td class="py-5 px-4 text-center text-red-400">Мало</td>
+              <td class="py-5 pl-4 text-center text-sf-accent font-semibold">Приоритет</td>
+            </tr>
+            <tr class="border-b border-sf-border/50">
+              <td class="py-5 pr-4 font-medium">Фильтры по стадии / индустрии</td>
+              <td class="py-5 px-4 text-center text-sf-muted">Да</td>
+              <td class="py-5 px-4 text-center text-sf-muted">Да</td>
+              <td class="py-5 pl-4 text-center text-sf-accent font-semibold">Да + теги</td>
+            </tr>
+            <tr class="border-b border-sf-border/50">
+              <td class="py-5 pr-4 font-medium">Мобильное приложение</td>
+              <td class="py-5 px-4 text-center text-red-400">Нет</td>
+              <td class="py-5 px-4 text-center text-red-400">Нет</td>
+              <td class="py-5 pl-4 text-center text-sf-accent font-semibold">APK / PWA</td>
+            </tr>
+            <tr class="border-b border-sf-border/50">
+              <td class="py-5 pr-4 font-medium">Регистрация для просмотра</td>
+              <td class="py-5 px-4 text-center text-red-400">Обязательна</td>
+              <td class="py-5 px-4 text-center text-red-400">Обязательна</td>
+              <td class="py-5 pl-4 text-center text-sf-accent font-semibold">Не нужна</td>
+            </tr>
+            <tr>
+              <td class="py-5 pr-4 font-medium">Скорость загрузки</td>
+              <td class="py-5 px-4 text-center text-sf-muted">Средняя</td>
+              <td class="py-5 px-4 text-center text-sf-muted">Средняя</td>
+              <td class="py-5 pl-4 text-center text-sf-accent font-semibold">&lt; 1 сек</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Технологический стек -->
+  <section class="py-20 px-6 bg-sf-card border-y border-sf-border">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-12">Технологический стек</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="p-4 rounded-xl border border-sf-border bg-sf-bg text-center">
+          <svg class="w-8 h-8 text-sf-accent mx-auto mb-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/>
+          </svg>
+          <div class="font-semibold text-sm">Node.js</div>
+          <div class="text-xs text-sf-muted mt-1">Backend</div>
+        </div>
+        <div class="p-4 rounded-xl border border-sf-border bg-sf-bg text-center">
+          <svg class="w-8 h-8 text-sf-accent mx-auto mb-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"/>
+          </svg>
+          <div class="font-semibold text-sm">PostgreSQL</div>
+          <div class="text-xs text-sf-muted mt-1">Database</div>
+        </div>
+        <div class="p-4 rounded-xl border border-sf-border bg-sf-bg text-center">
+          <svg class="w-8 h-8 text-sf-accent mx-auto mb-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/>
+          </svg>
+          <div class="font-semibold text-sm">Vanilla JS</div>
+          <div class="text-xs text-sf-muted mt-1">Frontend</div>
+        </div>
+        <div class="p-4 rounded-xl border border-sf-border bg-sf-bg text-center">
+          <svg class="w-8 h-8 text-sf-accent mx-auto mb-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"/>
+          </svg>
+          <div class="font-semibold text-sm">Capacitor</div>
+          <div class="text-xs text-sf-muted mt-1">Mobile</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Присоединиться к команде -->
+  <section class="py-20 px-6">
+    <div class="max-w-2xl mx-auto">
+      <div class="relative p-8 md:p-10 rounded-2xl border border-sf-border bg-sf-card text-center overflow-hidden">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-gradient-to-r from-transparent via-sf-accent to-transparent"></div>
+        
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-sf-accent/10 border border-sf-accent/20 mb-6">
+          <svg class="w-7 h-7 text-sf-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/>
+          </svg>
+        </div>
+        
+        <h3 class="text-2xl md:text-3xl font-bold mb-3">Хочешь присоединиться к команде?</h3>
+        <p class="text-sf-muted mb-8 leading-relaxed">
+          Мы ищем единомышленников. Если ты разработчик, дизайнер или просто горишь идеей — напиши нам.
+        </p>
+        
+        <a href="https://t.me/banerlung" target="_blank" rel="noopener noreferrer"
+           class="inline-flex items-center gap-2.5 px-6 py-3 bg-sf-accent hover:bg-orange-600 text-black font-semibold rounded-xl transition-all">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+          </svg>
+          Написать в Telegram
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Roadmap -->
+  <section class="py-24 px-6">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-12">Что дальше</h2>
+      <div class="space-y-6">
+        <div class="flex gap-4">
+          <div class="w-8 h-8 rounded-full bg-sf-accent/20 text-sf-accent flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+            </svg>
+          </div>
+          <div>
+            <h4 class="font-semibold">Базовый поиск и фильтры</h4>
+            <p class="text-sm text-sf-muted">Готово — поиск по названию, индустрии, стадии</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <div class="w-8 h-8 rounded-full bg-sf-accent/20 text-sf-accent flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+            </svg>
+          </div>
+          <div>
+            <h4 class="font-semibold">Мобильное приложение</h4>
+            <p class="text-sm text-sf-muted">APK на Android через Capacitor</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <div class="w-8 h-8 rounded-full border border-sf-border text-sf-muted flex items-center justify-center text-sm font-bold shrink-0">2</div>
+          <div>
+            <h4 class="font-semibold text-sf-muted">ИИ-ассистент для анализа</h4>
+            <p class="text-sm text-sf-muted">Автоматическая оценка потенциала стартапа</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <div class="w-8 h-8 rounded-full border border-sf-border text-sf-muted flex items-center justify-center text-sm font-bold shrink-0">3</div>
+          <div>
+            <h4 class="font-semibold text-sf-muted">API для разработчиков</h4>
+            <p class="text-sm text-sf-muted">Доступ к базе стартапов через REST API</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA / APK -->
+  <section class="py-24 px-6 bg-sf-card border-y border-sf-border">
+    <div class="max-w-2xl mx-auto text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-4">Скачать приложение</h2>
+      <p class="text-sf-muted mb-8">Android APK. Устанавливается без Google Play.</p>
+      
+      <a href="/download/startupfinder.apk" download 
+         class="inline-flex items-center gap-3 px-8 py-4 bg-sf-accent hover:bg-orange-600 text-black font-semibold rounded-xl transition-all transform hover:scale-105">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+        </svg>
+        Скачать APK
+      </a>
+      
+      <div class="mt-6 flex justify-center gap-6 text-sm text-sf-muted">
+        <span>v1.0.0</span>
+        <span>•</span>
+        <span>12 MB</span>
+        <span>•</span>
+        <span>Android 8+</span>
+      </div>
+
+      <div class="mt-12 pt-8 border-t border-sf-border">
+        <p class="text-sm text-sf-muted mb-4">Или открой в браузере</p>
+        <a href="/" class="text-sf-accent hover:text-orange-400 transition text-sm font-medium">gabyweb.ru →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Футер -->
+  <footer class="py-8 px-6 border-t border-sf-border text-center text-sm text-sf-muted">
+    <p class="inline-flex items-center gap-1.5">
+      © 2026 StartupFinder. Сделано с
+      <svg class="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z"/>
+      </svg>
+    </p>
+  </footer>
+
+  <script>
+    const API_URL = window.location.origin;
+
+    async function loadStats() {
+      try {
+        const res = await fetch(`${API_URL}/api/stats`);
+        if (!res.ok) throw new Error();
+        const stats = await res.json();
+        
+        const elStartups = document.getElementById('stat-startups');
+        const elUsers = document.getElementById('stat-users');
+        const elVacancies = document.getElementById('stat-vacancies');
+        
+        if (elStartups) elStartups.textContent = stats.startups || 0;
+        if (elUsers) elUsers.textContent = stats.users || 0;
+        if (elVacancies) elVacancies.textContent = stats.vacancies || 0;
+      } catch (err) {
+        console.error('Ошибка загрузки статистики:', err);
+      }
+    }
+
+    loadStats();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Политика конфиденциальности — StartupFinder</title>
+    <style>
+        /* CSS-переменные для лёгкой смены темы */
+        :root {
+            --primary-color: #4F46E5;
+            --text-color: #1F2937;
+            --bg-color: #FFFFFF;
+            --card-bg: #F9FAFB;
+            --border-color: #E5E7EB;
+            --accent-color: #10B981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 32px;
+            margin-bottom: 10px;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 10px;
+        }
+
+        .meta {
+            color: #6B7280;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-size: 22px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        p {
+            margin-bottom: 12px;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .check-list li::before {
+            content: " ";
+        }
+
+        .cross-list li::before {
+            content: " ";
+        }
+
+        .security-list li::before {
+            content: " ";
+        }
+
+        .highlight {
+            background: #EEF2FF;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Адаптивность для мобильных */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 26px;
+            }
+            h2 {
+                font-size: 20px;
+            }
+        }
+
+        /* Тёмная тема */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --text-color: #F9FAFB;
+                --bg-color: #111827;
+                --card-bg: #1F2937;
+                --border-color: #374151;
+            }
+            .highlight {
+                background: #312E81;
+            }
+            .meta {
+                color: #9CA3AF;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Политика конфиденциальности</h1>
+        <div class="meta">
+            <strong>Сервис:</strong> StartupFinder (https://startup-finder.ru)<br>
+            <strong>Дата вступления в силу:</strong> 29 июля 2026 г.<br>
+            <strong>Контакт:</strong> StartupFinderSend@gmail.com
+        </div>
+
+        <h2>1. Общие положения</h2>
+        <p>Настоящая Политика конфиденциальности описывает, какие данные собирает платформа <strong>StartupFinder</strong> (далее — «Сервис»), как они используются и защищаются. Используя наш Сервис, вы соглашаетесь с условиями данной Политики.</p>
+
+        <h2>2. Какие данные мы собираем</h2>
+
+        <h3>2.1. При регистрации</h3>
+        <ul>
+            <li><strong>Email</strong> — для входа в аккаунт и подтверждения регистрации</li>
+            <li><strong>Пароль</strong> — хранится <em>только в зашифрованном виде</em> (хешируется алгоритмом bcrypt). Мы не видим и не храним ваш пароль в открытом виде</li>
+            <li><strong>Имя пользователя</strong> (опционально)</li>
+        </ul>
+
+        <h3>2.2. При использовании Сервиса</h3>
+        <ul>
+            <li>Описания стартапов, которые вы публикуете</li>
+            <li>Технологический стек проектов</li>
+            <li>Загружаемые изображения (аватарки, логотипы проектов)</li>
+            <li>Технические данные: IP-адрес, тип браузера, время посещения (для защиты от злоупотреблений)</li>
+        </ul>
+
+        <h3>2.3. Автоматически собираемые данные</h3>
+        <ul>
+            <li><strong>JWT-токен</strong> — хранится в вашем браузере (localStorage) для поддержания сессии. Это технический ключ доступа, а не персональные данные</li>
+            <li><strong>Cookies</strong> — Сервис может использовать cookies для удобства работы</li>
+        </ul>
+
+        <h2>3. Как мы используем ваши данные</h2>
+        <p>Мы используем собранные данные исключительно для:</p>
+        <ul class="check-list">
+            <li>Предоставления доступа к функциям Сервиса</li>
+            <li>Подтверждения вашей личности при входе</li>
+            <li>Отображения ваших проектов другим пользователям</li>
+            <li>Защиты Сервиса от спама и злоупотреблений</li>
+            <li>Улучшения работы платформы</li>
+        </ul>
+
+        <div class="highlight">
+            <strong>Мы НЕ:</strong>
+            <ul class="cross-list">
+                <li>Передаём ваши данные третьим лицам</li>
+                <li>Используем данные для рекламы</li>
+                <li>Продаём вашу информацию</li>
+            </ul>
+        </div>
+
+        <h2>4. Как мы защищаем ваши данные</h2>
+        <ul class="security-list">
+            <li><strong>Пароли</strong> хешируются алгоритмом <strong>bcrypt</strong> — даже в случае утечки базы данных восстановить ваш пароль невозможно</li>
+            <li><strong>Авторизация</strong> реализована через <strong>JWT-токены</strong> с ограниченным сроком действия</li>
+            <li><strong>Передача данных</strong> между браузером и сервером защищена протоколом <strong>HTTPS</strong></li>
+            <li><strong>SQL-запросы</strong> используют параметризацию, что исключает возможность SQL-инъекций</li>
+            <li><strong>Загружаемые файлы</strong> проверяются по MIME-типу и размеру для защиты от вредоносного содержимого</li>
+        </ul>
+
+        <h2>5. Ваши права</h2>
+        <p>В соответствии с Федеральным законом № 152-ФЗ «О персональных данных», вы имеете право:</p>
+        <ul>
+            <li>Получить информацию о том, какие ваши данные хранятся</li>
+            <li>Потребовать исправления неточных данных</li>
+            <li>Потребовать удаления вашего аккаунта и всех связанных данных</li>
+            <li>Отозвать согласие на обработку данных</li>
+        </ul>
+        <p>Для реализации этих прав напишите нам на email: <strong>StartupFinderSend@gmail.com
+
+        <h2>6. Хранение данных</h2>
+        <p>Ваши данные хранятся на серверах, расположенных на территории Российской Федерации, в соответствии с требованиями российского законодательства.</p>
+        <p>Мы храним ваши данные до тех пор, пока ваш аккаунт активен. После удаления аккаунта все персональные данные удаляются в течение 30 дней.</p>
+
+        <h2>7. Несовершеннолетние пользователи</h2>
+        <p>Сервис предназначен для пользователей старше 14 лет. Если вам меньше 14 лет, пожалуйста, используйте Сервис только с согласия родителей или законных представителей.</p>
+
+        <h2>8. Изменения в Политике</h2>
+        <p>Мы можем обновлять настоящую Политику. О существенных изменениях мы сообщим на этой странице.</p>
+
+        <h2>9. Контакты</h2>
+        <p>По всем вопросам, связанным с обработкой персональных данных, вы можете связаться с нами:</p>
+        <ul>
+            <li><strong>Email:</strong> StartupFinderSend@gmail.com</li>
+            <li><strong>Сайт:</strong> <a href="https://startup-finder.ru">https://startup-finder.ru</a></li>
+        </ul>
+
+        <a href="https://startup-finder.ru" class="back-link">← Вернуться на главную</a>
+    </div>
+</body>
+</html>

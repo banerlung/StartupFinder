@@ -1,0 +1,1445 @@
+// ============ CONFIG ============
+const API_URL = window.location.origin;
+const PAGE_SIZE = 5;
+
+// ============ STATE ============
+let state = {
+    user: null,
+    token: localStorage.getItem('token'),
+    startups: [],
+    currentFilter: { stack: [], payment: 'all', vacancy: '' },
+    currentPage: 'home',
+    editingStartupId: null,
+    deletingStartupId: null,
+    pendingVerifyEmail: null,
+    pendingResetEmail: null,
+    createVacancies: [],
+    createContacts: [],
+    editVacancies: [],
+    editContacts: [],
+    editProfileContacts: [],
+    filterStacks: [],
+    expandedStartups: new Set(),
+    authLoaded: false,
+};
+
+let currentOffset = 0;
+let hasMoreStartups = true;
+let isLoadingMore = false;
+let scrollObserver = null;
+
+// ============ INIT ============
+document.addEventListener('DOMContentLoaded', async () => {
+    initTheme();
+    initIcons();
+    initTagInputs();
+    initCharCounters();
+    initModalKeys();
+    await loadUser();
+    loadStats();
+    loadStartups(true);
+    initRouteHandler();
+});
+
+// ============ ICONS ============
+function initIcons() {
+    if (window.lucide) {
+        lucide.createIcons();
+    } else {
+        setTimeout(initIcons, 100);
+    }
+}
+function refreshIcons() {
+    if (window.lucide) lucide.createIcons();
+}
+
+// ============ THEME ============
+function initTheme() {
+    const saved = localStorage.getItem('theme') || 'system';
+    applyTheme(saved);
+}
+function applyTheme(theme) {
+    localStorage.setItem('theme', theme);
+    const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    document.documentElement.classList.toggle('dark', isDark);
+    document.querySelectorAll('.theme-icon-light').forEach(el => el.classList.toggle('hidden', isDark));
+    document.querySelectorAll('.theme-icon-dark').forEach(el => el.classList.toggle('hidden', !isDark));
+}
+function setTheme(theme) { applyTheme(theme); closeThemeMenu(); showToast('Тема оформления изменена', 'success'); }
+function toggleThemeMenu() {
+    const menu = document.getElementById('themeMenu');
+    const btn = document.getElementById('themeBtn');
+    const isHidden = menu.classList.toggle('hidden');
+    btn.setAttribute('aria-expanded', !isHidden);
+}
+function closeThemeMenu() {
+    document.getElementById('themeMenu').classList.add('hidden');
+    document.getElementById('themeBtn').setAttribute('aria-expanded', 'false');
+}
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (localStorage.getItem('theme') === 'system') applyTheme('system');
+});
+
+// ============ ROUTING ============
+function initRouteHandler() { window.addEventListener('hashchange', handleRoute); handleRoute(); }
+function handleRoute() {
+    const hash = window.location.hash || '#/';
+    const path = hash.slice(1) || '/';
+    if (path === '/' || path === '/home') navigate('home', false);
+    else if (path === '/create') navigate('create', false);
+    else if (path === '/profile') navigate('profile', false);
+    else if (path === '/my-startups') navigate('myStartups', false);
+    else if (path === '/settings') navigate('settings', false);
+    else if (path.startsWith('/user/')) showUserProfile(parseInt(path.split('/')[2], 10));
+    else navigate('home', false);
+}
+function navigate(page, updateHash = true) {
+    if (updateHash) {
+        const routes = { home: '/', create: '/create', profile: '/profile', myStartups: '/my-startups', settings: '/settings' };
+        window.location.hash = routes[page] || '/';
+    }
+    if ((page === 'create' || page === 'profile' || page === 'myStartups' || page === 'settings') && !state.user) {
+        openModal('loginModal');
+        return;
+    }
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const pageEl = document.getElementById(page + 'Page');
+    if (pageEl) { pageEl.classList.add('active'); state.currentPage = page; }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (page === 'profile') loadProfileData();
+    if (page === 'myStartups') loadMyStartupsPage();
+    if (page === 'create') resetCreateForm();
+    refreshIcons();
+}
+
+// ============ AUTH ============
+async function loadUser() {
+    if (!state.token) {
+        state.authLoaded = true;
+        document.body.classList.remove('auth-loading');
+        updateAuthUI();
+        return;
+    }
+    try {
+        const res = await fetch(`${API_URL}/api/me`, { headers: { 'Authorization': `Bearer ${state.token}` } });
+        if (!res.ok) throw new Error('Invalid token');
+        state.user = await res.json();
+        state.authLoaded = true;
+        document.body.classList.remove('auth-loading');
+        updateAuthUI();
+    } catch (e) {
+        state.token = null;
+        state.user = null;
+        localStorage.removeItem('token');
+        state.authLoaded = true;
+        document.body.classList.remove('auth-loading');
+        updateAuthUI();
+    }
+}
+function updateAuthUI() {
+    const authBtns = document.getElementById('authButtons');
+    const profileMenu = document.getElementById('profileMenu');
+    const mobileAuth = document.getElementById('mobileAuthButtons');
+    const mobileAuthMenu = document.getElementById('mobileAuthMenu');
+    if (state.user) {
+        authBtns.classList.add('hidden'); authBtns.classList.remove('md:flex');
+        profileMenu.classList.remove('hidden'); profileMenu.classList.add('md:flex');
+        mobileAuth.classList.add('hidden'); mobileAuthMenu.classList.remove('hidden');
+        const initial = (state.user.name || state.user.email || 'U')[0].toUpperCase();
+        const avatarHtml = state.user.avatar_url 
+            ? `<img src="${state.user.avatar_url}" class="w-full h-full object-cover" loading="lazy" alt="">` 
+            : initial;
+        document.getElementById('userAvatar').innerHTML = avatarHtml;
+        document.getElementById('profileAvatar').innerHTML = avatarHtml;
+        document.getElementById('userNameNav').textContent = state.user.name || state.user.email;
+        document.getElementById('profileName').textContent = state.user.name || state.user.email;
+    } else {
+        authBtns.classList.remove('hidden'); authBtns.classList.add('md:flex');
+        profileMenu.classList.add('hidden'); profileMenu.classList.remove('md:flex');
+        mobileAuth.classList.remove('hidden'); mobileAuthMenu.classList.add('hidden');
+    }
+}
+function toggleProfileMenu() {
+    const menu = document.getElementById('profileDropdown');
+    const btn = document.querySelector('#profileMenu > button');
+    const isHidden = menu.classList.toggle('hidden');
+    if (btn) btn.setAttribute('aria-expanded', !isHidden);
+}
+function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('hidden'); }
+
+async function handleLogin(e) {
+    e.preventDefault();
+    const btn = document.getElementById('loginSubmitBtn');
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>';
+    try {
+        const res = await fetch(`${API_URL}/api/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            if (res.status === 403) {
+                closeModal('loginModal');
+                state.pendingVerifyEmail = email;
+                document.getElementById('verifyEmail').textContent = email;
+                openModal('verifyModal');
+                showToast('Подтвердите email для входа', 'info');
+            } else { showToast(data.error || 'Ошибка входа', 'error'); }
+            return;
+        }
+        state.token = data.token;
+        localStorage.setItem('token', data.token);
+        await loadUser();
+        closeModal('loginModal');
+        showToast('Добро пожаловать!', 'success');
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginPassword').value = '';
+    } catch (err) { showToast('Ошибка соединения с сервером', 'error'); }
+    finally { btn.disabled = false; btn.textContent = 'Войти'; }
+}
+async function handleRegister(e) {
+    e.preventDefault();
+    const btn = document.getElementById('registerSubmitBtn');
+    const email = document.getElementById('registerEmail').value;
+    const password = document.getElementById('registerPassword').value;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>';
+    try {
+        const res = await fetch(`${API_URL}/api/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) { showToast(data.error || 'Ошибка регистрации', 'error'); return; }
+        closeModal('registerModal');
+        state.pendingVerifyEmail = email;
+        document.getElementById('verifyEmail').textContent = email;
+        openModal('verifyModal');
+        showToast('Код отправлен на почту', 'success');
+        document.getElementById('registerEmail').value = '';
+        document.getElementById('registerPassword').value = '';
+    } catch (err) { showToast('Ошибка соединения с сервером', 'error'); }
+    finally { btn.disabled = false; btn.textContent = 'Создать аккаунт'; }
+}
+async function handleVerify(e) {
+    e.preventDefault();
+    const btn = document.getElementById('verifySubmitBtn');
+    const code = document.getElementById('verifyCode').value;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>';
+    try {
+        const res = await fetch(`${API_URL}/api/verify`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: state.pendingVerifyEmail, code })
+        });
+        const data = await res.json();
+        if (!res.ok) { showToast(data.error || 'Неверный код', 'error'); return; }
+        state.token = data.token;
+        localStorage.setItem('token', data.token);
+        await loadUser();
+        closeModal('verifyModal');
+        showToast('Email подтверждён! Добро пожаловать!', 'success');
+        document.getElementById('verifyCode').value = '';
+        state.pendingVerifyEmail = null;
+    } catch (err) { showToast('Ошибка соединения с сервером', 'error'); }
+    finally { btn.disabled = false; btn.textContent = 'Подтвердить'; }
+}
+async function handleForgotPassword(e) {
+    e.preventDefault();
+    const btn = document.getElementById('forgotSubmitBtn');
+    const email = document.getElementById('forgotEmail').value;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>';
+    try {
+        const res = await fetch(`${API_URL}/api/forgot-password`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+        if (!res.ok) { showToast(data.error || 'Ошибка', 'error'); return; }
+        closeModal('forgotModal');
+        state.pendingResetEmail = email;
+        document.getElementById('resetEmail').textContent = email;
+        openModal('resetModal');
+        showToast(data.message, 'success');
+    } catch (err) { showToast('Ошибка соединения с сервером', 'error'); }
+    finally { btn.disabled = false; btn.textContent = 'Получить код'; }
+}
+async function handleResetPassword(e) {
+    e.preventDefault();
+    const btn = document.getElementById('resetSubmitBtn');
+    const code = document.getElementById('resetCode').value;
+    const newPassword = document.getElementById('resetNewPassword').value;
+    const confirmPassword = document.getElementById('resetConfirmPassword').value;
+    if (newPassword !== confirmPassword) { showToast('Пароли не совпадают', 'error'); return; }
+    btn.disabled = true;
+    btn.innerHTML = '<span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>';
+    try {
+        const res = await fetch(`${API_URL}/api/reset-password`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: state.pendingResetEmail, code, newPassword })
+        });
+        const data = await res.json();
+        if (!res.ok) { showToast(data.error || 'Ошибка', 'error'); return; }
+        closeModal('resetModal');
+        showToast('Пароль успешно изменён!', 'success');
+        openModal('loginModal');
+        document.getElementById('resetCode').value = '';
+        document.getElementById('resetNewPassword').value = '';
+        document.getElementById('resetConfirmPassword').value = '';
+        state.pendingResetEmail = null;
+    } catch (err) { showToast('Ошибка соединения с сервером', 'error'); }
+    finally { btn.disabled = false; btn.textContent = 'Сменить пароль'; }
+}
+function confirmLogout() { document.getElementById('profileDropdown').classList.add('hidden'); openModal('logoutModal'); }
+function handleLogout() {
+    state.token = null; state.user = null;
+    localStorage.removeItem('token');
+    state.authLoaded = true;
+    document.body.classList.remove('auth-loading');
+    updateAuthUI();
+    closeModal('logoutModal');
+    navigate('home');
+    showToast('Вы вышли из аккаунта', 'success');
+}
+
+// ============ НАСТРОЙКИ ============
+// Подсветка активной темы на странице настроек
+function updateThemeButtons() {
+    const current = localStorage.getItem('theme') || 'system';
+    document.querySelectorAll('[data-theme-btn]').forEach(btn => {
+        const active = btn.dataset.themeBtn === current;
+        btn.classList.toggle('border-brand-500', active);
+        btn.classList.toggle('bg-brand-50', active);
+        btn.classList.toggle('dark:bg-brand-950/30', active);
+        btn.classList.toggle('border-gray-200', !active);
+        btn.classList.toggle('dark:border-gray-700', !active);
+    });
+    refreshIcons();
+}
+
+// Удаление аккаунта (152-ФЗ: право на удаление персональных данных)
+async function handleDeleteAccount() {
+    const btn = document.getElementById('deleteAccountBtn');
+    btn.disabled = true;
+    btn.textContent = 'Удаляем...';
+    try {
+        const res = await fetch(`${API_URL}/api/users/${state.user.id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${state.token}` }
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            showToast(data.error || 'Не удалось удалить аккаунт', 'error');
+            return;
+        }
+        // Полный выход: чистим токен и состояние
+        state.token = null;
+        state.user = null;
+        localStorage.removeItem('token');
+        state.authLoaded = true;
+        document.body.classList.remove('auth-loading');
+        closeModal('deleteAccountModal');
+        updateAuthUI();
+        navigate('home');
+        showToast('Аккаунт удалён. Нам будет вас не хватать!', 'success');
+    } catch (err) {
+        showToast('Ошибка соединения с сервером', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Удалить';
+    }
+}
+
+// ============ СТАТИСТИКА ============
+async function loadStats() {
+    try {
+        const res = await fetch(`${API_URL}/api/stats`);
+        if (!res.ok) throw new Error();
+        const stats = await res.json();
+        const elStartups = document.getElementById('statStartups');
+        const elUsers = document.getElementById('statUsers');
+        const elVacancies = document.getElementById('statVacancies');
+        if (elStartups) elStartups.textContent = stats.startups;
+        if (elUsers) elUsers.textContent = stats.users;
+        if (elVacancies) elVacancies.textContent = stats.vacancies || 0;
+    } catch (err) { console.error('Ошибка загрузки статистики:', err); }
+}
+
+// ============ STARTUPS (СЕРВЕРНАЯ ПАГИНАЦИЯ) ============
+function buildStartupsUrl(offset = 0, limit = PAGE_SIZE) {
+    const params = new URLSearchParams({
+        limit: limit.toString(),
+        offset: offset.toString(),
+        payment: state.currentFilter.payment
+    });
+    if (state.currentFilter.stack.length > 0) {
+        params.set('stack', state.currentFilter.stack.join(','));
+    }
+    return `${API_URL}/api/startups?${params.toString()}`;
+}
+
+async function loadStartups(reset = false) {
+    if (reset) {
+        currentOffset = 0;
+        state.startups = [];
+        document.getElementById('projectsGrid').innerHTML = '';
+        document.getElementById('projectsEmpty').classList.add('hidden');
+        document.getElementById('projectsLoading').classList.remove('hidden');
+    }
+    if (isLoadingMore) return;
+    isLoadingMore = true;
+    const loader = document.getElementById('loadMoreLoader');
+    if (loader) loader.classList.remove('hidden');
+    try {
+        const res = await fetch(buildStartupsUrl(currentOffset));
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        if (reset) {
+            state.startups = data.startups;
+        } else {
+            state.startups = [...state.startups, ...data.startups];
+        }
+        hasMoreStartups = data.hasMore;
+        currentOffset += data.startups.length;
+        if (data.startups.length > 0) {
+            const grid = document.getElementById('projectsGrid');
+            const fragment = document.createDocumentFragment();
+            data.startups.forEach((s, idx) => {
+                const div = document.createElement('div');
+                div.innerHTML = renderStartupCard(s, !reset);
+                fragment.appendChild(div.firstElementChild);
+            });
+            grid.appendChild(fragment);
+            refreshIcons();
+        }
+        if (reset && state.startups.length === 0) {
+            document.getElementById('projectsEmpty').classList.remove('hidden');
+        }
+        setupScrollObserver();
+    } catch (err) {
+        showToast('Не удалось загрузить проекты', 'error');
+    } finally {
+        isLoadingMore = false;
+        if (loader) loader.classList.add('hidden');
+        document.getElementById('projectsLoading').classList.add('hidden');
+    }
+}
+
+function setupScrollObserver() {
+    if (scrollObserver) scrollObserver.disconnect();
+    const sentinel = document.getElementById('scrollSentinel');
+    if (!sentinel) return;
+    scrollObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && hasMoreStartups && !isLoadingMore && state.currentPage === 'home') {
+                loadStartups(false);
+            }
+        });
+    }, { rootMargin: '200px' });
+    scrollObserver.observe(sentinel);
+}
+
+function parseArray(val) {
+    let arr;
+    if (Array.isArray(val)) {
+        arr = val;
+    } else if (!val) {
+        return [];
+    } else if (typeof val === 'string') {
+        const s = val.trim();
+        if (s.startsWith('{') && s.endsWith('}') && !s.includes('":')) {
+            // Литерал массива PostgreSQL: {"a","b"} или {a,b}
+            arr = s.slice(1, -1).split(',')
+                .map(x => x.trim().replace(/^"|"$/g, '').replace(/\\"/g, '"'))
+                .filter(Boolean);
+        } else {
+            try {
+                const parsed = JSON.parse(s);
+                arr = Array.isArray(parsed) ? parsed : [parsed];
+            } catch (e) {
+                arr = s.split(',').map(x => x.trim());
+            }
+        }
+    } else {
+        return [];
+    }
+    // Распаковка старых записей: элементы вида '{"@user"}' (JSON внутри массива)
+    const out = [];
+    for (const item of arr) {
+        if (typeof item === 'string' && (item.trim().startsWith('{') || item.trim().startsWith('['))) {
+            try {
+                const inner = JSON.parse(item);
+                if (Array.isArray(inner)) { out.push(...inner); continue; }
+                if (inner) { out.push(String(inner)); continue; }
+            } catch (e) {}
+        }
+        if (item) out.push(item);
+    }
+    return out.filter(Boolean).map(String);
+}
+
+function cleanTelegram(val) {
+    if (!val) return '';
+    return val.trim().replace(/^@/, '');
+}
+
+function hasExpandableContent(startup) {
+    const contacts = parseArray(startup.contacts);
+    const hasContacts = contacts.length > 0 || !!startup.telegram;
+    const desc = (startup.description || '').trim();
+    return hasContacts || desc.length > 120;
+}
+
+function toggleExpand(startupId, btnEl) {
+    // Ищем карточку от самой кнопки вверх — так нас не ломают дубли id на разных страницах
+    const card = btnEl ? btnEl.closest('article') : document.getElementById(`startup-card-${startupId}`);
+    if (!card) return;
+    const isExpanded = state.expandedStartups.has(startupId);
+    const descEl = card.querySelector('.startup-desc');
+    const expandContent = card.querySelector('.expand-content');
+    const btn = card.querySelector('.expand-btn');
+    const btnText = card.querySelector('.expand-btn-text');
+    const btnIcon = card.querySelector('.expand-btn-icon');
+
+    if (isExpanded) {
+        state.expandedStartups.delete(startupId);
+        if (descEl) descEl.classList.add('line-clamp-3');
+        if (expandContent) expandContent.classList.remove('expanded');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+        if (btnText) btnText.textContent = 'Подробнее';
+        if (btnIcon) btnIcon.setAttribute('data-lucide', 'chevron-down');
+    } else {
+        state.expandedStartups.add(startupId);
+        if (descEl) descEl.classList.remove('line-clamp-3');
+        if (expandContent) expandContent.classList.add('expanded');
+        if (btn) btn.setAttribute('aria-expanded', 'true');
+        if (btnText) btnText.textContent = 'Скрыть';
+        if (btnIcon) btnIcon.setAttribute('data-lucide', 'chevron-up');
+    }
+    refreshIcons();
+}
+
+async function viewStartupInFeed(startupId) {
+    state.expandedStartups.clear();
+    state.expandedStartups.add(startupId);
+    state.currentFilter = { stack: [], payment: 'all', vacancy: '' };
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+        const f = chip.dataset.filter;
+        if (f === 'all') {
+            chip.classList.add('bg-brand-500', 'text-white');
+            chip.classList.remove('bg-white', 'dark:bg-gray-900', 'border', 'border-gray-200', 'dark:border-gray-800');
+        } else {
+            chip.classList.remove('bg-brand-500', 'text-white');
+            chip.classList.add('bg-white', 'dark:bg-gray-900', 'border', 'border-gray-200', 'dark:border-gray-800');
+        }
+    });
+    document.getElementById('activeFiltersCount').classList.add('hidden');
+    navigate('home');
+    // Загружаем все стартапы, чтобы гарантировать нахождение нужного
+    try {
+        const res = await fetch(`${API_URL}/api/startups?limit=200&offset=0&payment=all`);
+        if (res.ok) {
+            const data = await res.json();
+            state.startups = data.startups || [];
+            currentOffset = state.startups.length;
+            hasMoreStartups = data.hasMore;
+            const grid = document.getElementById('projectsGrid');
+            grid.innerHTML = '';
+            if (state.startups.length > 0) {
+                grid.innerHTML = state.startups.map(s => renderStartupCard(s, true)).join('');
+                refreshIcons();
+            }
+            const projectsSection = document.getElementById('projectsSection');
+            if (projectsSection) projectsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            setTimeout(() => {
+                const card = document.getElementById(`startup-card-${startupId}`);
+                if (card) {
+                    card.classList.add('startup-highlight');
+                    setTimeout(() => card.classList.remove('startup-highlight'), 2000);
+                }
+            }, 300);
+        }
+    } catch (e) { console.error(e); }
+}
+
+function renderStartupCard(startup, animate = true) {
+    const stacks = parseArray(startup.stack);
+    const vacancies = parseArray(startup.vacancies);
+    const contacts = parseArray(startup.contacts);
+    const initial = (startup.name || 'P')[0].toUpperCase();
+    const timeAgo = getTimeAgo(startup.created_at);
+    const isExpanded = state.expandedStartups.has(startup.id);
+    const isOwner = state.user && state.user.id === startup.user_id;
+    const authorName = startup.author_name || 'Участник';
+    const authorInitial = authorName[0].toUpperCase();
+    const authorLink = isOwner ? '#/profile' : `#/user/${startup.user_id}`;
+    const expandable = hasExpandableContent(startup);
+    const animClass = animate ? 'stagger-item' : '';
+
+    return `
+    <article id="startup-card-${startup.id}" class="${animClass} card-hover bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+        <div class="p-6">
+            <div class="flex items-start gap-4 mb-4">
+                ${startup.image_url ? `
+                <div class="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 dark:bg-gray-800">
+                    <img src="${startup.image_url}" alt="${escapeHtml(startup.name)}" class="w-full h-full object-cover" loading="lazy">
+                </div>
+                ` : `
+                <div class="w-14 h-14 rounded-lg bg-brand-500 flex items-center justify-center text-white font-bold text-xl flex-shrink-0">
+                    ${initial}
+                </div>
+                `}
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-start justify-between gap-2 mb-1 flex-wrap">
+                        <h3 class="font-bold text-lg break-words flex-1 min-w-0">${escapeHtml(startup.name)}</h3>
+                        ${startup.is_paid 
+                          ? '<span class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-400 text-xs font-semibold rounded-lg border border-green-200 dark:border-green-800/50"><i data-lucide="wallet" class="w-3.5 h-3.5"></i>С оплатой</span>' 
+                          : '<span class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 text-xs font-semibold rounded-lg border border-brand-200 dark:border-brand-800/50"><i data-lucide="handshake" class="w-3.5 h-3.5"></i>Без оплаты</span>'
+                        }
+                    </div>
+                    <p class="text-xs text-gray-500">${timeAgo}</p>
+                </div>
+            </div>
+            <div class="mb-4">
+                <p class="startup-desc text-sm text-gray-600 dark:text-gray-400 leading-relaxed break-words ${isExpanded ? '' : 'line-clamp-3'}">${escapeHtml(startup.description || '')}</p>
+            </div>
+            <a href="${authorLink}" target="_self" class="inline-flex items-center gap-2.5 mb-4 group" aria-label="Профиль автора">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white text-sm font-semibold overflow-hidden flex-shrink-0">
+                    ${startup.author_avatar ? `<img src="${startup.author_avatar}" class="w-full h-full object-cover" loading="lazy" alt="">` : authorInitial}
+                </div>
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">${escapeHtml(authorName)}</span>
+            </a>
+            ${stacks.length > 0 ? `
+            <div class="text-xs text-gray-500 mb-1">Технический стек:</div>
+            <div class="flex flex-wrap gap-1.5 mb-4">
+                ${stacks.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join('')}
+            </div>` : ''}
+            ${vacancies.length > 0 ? `
+            <div class="mb-4 p-4 bg-gradient-to-br from-brand-50 to-orange-50 dark:from-brand-950/30 dark:to-orange-950/20 rounded-lg border border-brand-200 dark:border-brand-800/30">
+                <div class="flex items-center gap-2 mb-3">
+                    <div class="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center">
+                        <i data-lucide="users" class="w-4 h-4 text-white"></i>
+                    </div>
+                    <div>
+                        <div class="text-sm font-bold text-gray-900 dark:text-white">Ищут в команду</div>
+                        <div class="text-xs text-gray-500">${vacancies.length} ${vacancies.length === 1 ? 'вакансия' : vacancies.length < 5 ? 'вакансии' : 'вакансий'}</div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    ${vacancies.map(v => `
+                    <div class="flex items-center gap-2 p-2.5 bg-white dark:bg-gray-900 rounded-lg border border-brand-200 dark:border-brand-800/30">
+                        <i data-lucide="briefcase" class="w-4 h-4 text-brand-500 flex-shrink-0"></i>
+                        <span class="text-sm font-medium text-gray-900 dark:text-white break-words">${escapeHtml(v)}</span>
+                    </div>
+                    `).join('')}
+                </div>
+            </div>` : ''}
+            <div class="expand-content ${isExpanded ? 'expanded' : ''}">
+                <div class="pt-4 border-t border-gray-100 dark:border-gray-800 space-y-4">
+                    ${contacts.length > 0 || startup.telegram ? `
+                    <div>
+                        <div class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Контакты</div>
+                        <div class="space-y-2">
+                            ${startup.telegram ? `
+                            <a href="https://t.me/${escapeHtml(cleanTelegram(startup.telegram))}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-950/50 transition-colors">
+                                <div class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center flex-shrink-0">
+                                    <i data-lucide="send" class="w-4 h-4 text-white"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="text-xs text-gray-500">Telegram</div>
+                                    <div class="text-sm font-semibold truncate">@${escapeHtml(cleanTelegram(startup.telegram))}</div>
+                                </div>
+                                <i data-lucide="external-link" class="w-4 h-4 text-gray-400 flex-shrink-0"></i>
+                            </a>` : ''}
+                            ${contacts.map(c => renderContactLink(c)).join('')}
+                        </div>
+                    </div>` : ''}
+                </div>
+            </div>
+            <div class="flex gap-2 pt-4 border-t border-gray-100 dark:border-gray-800">
+                ${expandable ? `
+                <button onclick="toggleExpand(${startup.id}, this)" class="expand-btn flex-1 px-4 py-2.5 bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 rounded-lg text-sm font-semibold hover:bg-brand-100 dark:hover:bg-brand-950/60 transition-colors flex items-center justify-center gap-1.5 btn-hover" aria-expanded="${isExpanded}">
+                    <i data-lucide="${isExpanded ? 'chevron-up' : 'chevron-down'}" class="expand-btn-icon w-4 h-4"></i>
+                    <span class="expand-btn-text">${isExpanded ? 'Скрыть' : 'Подробнее'}</span>
+                </button>
+                ` : '<div class="flex-1"></div>'}
+                ${isOwner ? `
+                <button onclick="openEditStartup(${startup.id})" class="px-4 py-2.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors btn-hover" aria-label="Редактировать проект">
+                    <i data-lucide="edit-2" class="w-4 h-4"></i>
+                </button>
+                <button onclick="confirmDeleteStartup(${startup.id})" class="px-4 py-2.5 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 rounded-lg text-sm font-medium hover:bg-red-100 dark:hover:bg-red-950/50 transition-colors btn-hover" aria-label="Удалить проект">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+                ` : ''}
+            </div>
+        </div>
+    </article>
+    `;
+}
+
+function renderContactLink(contact) {
+    const c = contact.trim();
+    if (!c) return '';
+    let href = '#', icon = 'link', label = c;
+    if (c.startsWith('@')) { href = `https://t.me/${c.slice(1)}`; icon = 'send'; label = 'Telegram: ' + c; }
+    else if (c.includes('@') && c.includes('.')) { href = `mailto:${c}`; icon = 'mail'; label = c; }
+    else if (c.includes('vk.com')) { href = c.startsWith('http') ? c : `https://${c}`; icon = 'users'; }
+    else if (c.includes('github.com')) { href = c.startsWith('http') ? c : `https://${c}`; icon = 'code'; }
+    else if (c.startsWith('http')) { href = c; }
+    return `
+    <a href="${href}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+        <div class="w-8 h-8 rounded-lg bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="${icon}" class="w-4 h-4 text-brand-500"></i>
+        </div>
+        <div class="flex-1 min-w-0">
+            <div class="text-sm font-medium truncate">${escapeHtml(label)}</div>
+        </div>
+        <i data-lucide="external-link" class="w-4 h-4 text-gray-400 flex-shrink-0"></i>
+    </a>
+    `;
+}
+
+function getTimeAgo(dateStr) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diff = Math.floor((now - date) / 1000);
+    if (diff < 60) return 'только что';
+    if (diff < 3600) return `${Math.floor(diff/60)} мин. назад`;
+    if (diff < 86400) return `${Math.floor(diff/3600)} ч. назад`;
+    if (diff < 604800) return `${Math.floor(diff/86400)} дн. назад`;
+    return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+}
+
+// ============ FILTERS ============
+function setQuickFilter(filter) {
+    state.currentFilter.payment = filter;
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+        const f = chip.dataset.filter;
+        if (f === filter) {
+            chip.classList.add('bg-brand-500', 'text-white');
+            chip.classList.remove('bg-white', 'dark:bg-gray-900', 'border', 'border-gray-200', 'dark:border-gray-800');
+        } else {
+            chip.classList.remove('bg-brand-500', 'text-white');
+            chip.classList.add('bg-white', 'dark:bg-gray-900', 'border', 'border-gray-200', 'dark:border-gray-800');
+        }
+    });
+    loadStartups(true);
+}
+
+function openFiltersModal() { openModal('filtersModal'); renderFilterStackTags(); refreshIcons(); }
+function renderFilterStackTags() {
+    const container = document.getElementById('filterStackTags');
+    container.innerHTML = state.filterStacks.map((s, i) => `
+        <span class="tag">
+            ${escapeHtml(s)}
+            <button type="button" onclick="removeFilterStack(${i})" aria-label="Удалить фильтр"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </span>
+    `).join('');
+    refreshIcons();
+}
+function removeFilterStack(idx) { state.filterStacks.splice(idx, 1); renderFilterStackTags(); }
+
+function applyFilters() {
+    state.currentFilter.stack = [...state.filterStacks];
+    const payment = document.querySelector('input[name="paymentFilter"]:checked').value;
+    state.currentFilter.payment = payment;
+    const vacancy = document.getElementById('filterVacancyInput').value.trim();
+    state.currentFilter.vacancy = vacancy;
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+        const f = chip.dataset.filter;
+        if (f === payment) {
+            chip.classList.add('bg-brand-500', 'text-white');
+            chip.classList.remove('bg-white', 'dark:bg-gray-900', 'border', 'border-gray-200', 'dark:border-gray-800');
+        } else {
+            chip.classList.remove('bg-brand-500', 'text-white');
+            chip.classList.add('bg-white', 'dark:bg-gray-900', 'border', 'border-gray-200', 'dark:border-gray-800');
+        }
+    });
+    closeModal('filtersModal');
+    const count = state.filterStacks.length + (payment !== 'all' ? 1 : 0);
+    const badge = document.getElementById('activeFiltersCount');
+    if (count > 0) { badge.textContent = count; badge.classList.remove('hidden'); }
+    else { badge.classList.add('hidden'); }
+    loadStartups(true);
+}
+
+function resetFilters() {
+    state.filterStacks = [];
+    state.currentFilter.stack = [];
+    state.currentFilter.payment = 'all';
+    document.querySelector('input[name="paymentFilter"][value="all"]').checked = true;
+    document.getElementById('filterStackInput').value = '';
+    renderFilterStackTags();
+    document.getElementById('activeFiltersCount').classList.add('hidden');
+    loadStartups(true);
+}
+
+// ============ CREATE STARTUP ============
+function handleCreateClick() { if (!state.user) { openModal('loginModal'); return; } navigate('create'); }
+function resetCreateForm() {
+    document.getElementById('createForm').reset();
+    state.createVacancies = []; state.createContacts = [];
+    document.getElementById('createVacanciesTags').innerHTML = '';
+    document.getElementById('createContactsTags').innerHTML = '';
+    document.getElementById('createDescCount').textContent = '0';
+    document.getElementById('createContactsError').classList.add('hidden');
+}
+
+function validateFileSize(inputId, maxMB = 5) {
+    const file = document.getElementById(inputId)?.files[0];
+    if (file && file.size > maxMB * 1024 * 1024) {
+        showToast(`Файл слишком большой. Максимум ${maxMB} МБ.`, 'error');
+        document.getElementById(inputId).value = '';
+        return false;
+    }
+    return true;
+}
+
+async function handleCreateSubmit(e) {
+    e.preventDefault();
+    if (!state.user) { openModal('loginModal'); return; }
+    const telegram = cleanTelegram(document.getElementById('createTelegram').value);
+    if (!telegram && state.createContacts.length === 0) {
+        document.getElementById('createContactsError').classList.remove('hidden');
+        showToast('Укажите хотя бы один способ связи', 'error');
+        return;
+    }
+    document.getElementById('createContactsError').classList.add('hidden');
+    if (!validateFileSize('createImage', 5)) return;
+
+    const btn = document.getElementById('createSubmitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> Публикация...';
+
+    const formData = new FormData();
+    formData.append('name', document.getElementById('createName').value);
+    formData.append('description', document.getElementById('createDescription').value);
+    formData.append('is_paid', document.getElementById('createIsPaid').checked);
+    formData.append('stack', document.getElementById('createStack').value);
+    formData.append('telegram', telegram);
+    formData.append('vacancies', JSON.stringify(state.createVacancies));
+    formData.append('contacts', JSON.stringify(state.createContacts));
+    const imageFile = document.getElementById('createImage')?.files[0];
+    if (imageFile) formData.append('image', imageFile);
+
+    try {
+        const res = await fetch(`${API_URL}/api/startups`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${state.token}` },
+            body: formData
+        });
+        if (!res.ok) { const err = await res.json(); throw new Error(err.error || 'Ошибка'); }
+        showToast('Проект опубликован!', 'success');
+        navigate('home');
+        loadStats();
+        loadStartups(true);
+    } catch (err) { showToast(err.message || 'Не удалось создать проект', 'error'); }
+    finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i data-lucide="send" class="w-4 h-4 inline"></i> Опубликовать';
+        refreshIcons();
+    }
+}
+
+// ============ MY STARTUPS ============
+async function loadProfileData() {
+    if (!state.user) return;
+
+    // 1. Базовые данные (с проверкой на существование)
+    const nameEl = document.getElementById('profileNameBig');
+    if (nameEl) nameEl.textContent = state.user.name || 'Без имени';
+    
+    const descEl = document.getElementById('profileDescription');
+    if (descEl) descEl.textContent = state.user.description || 'Описание пока не добавлено';
+
+    // 2. КОНТАКТЫ (Рендерим сразу, независимо от других запросов)
+    const contacts = parseArray(state.user.contacts);
+    
+    const contactsCountEl = document.getElementById('profileContactsCount');
+    if (contactsCountEl) contactsCountEl.textContent = contacts.length;
+
+    const contactsList = document.getElementById('profileContactsList');
+    if (contactsList) {
+        if (contacts.length === 0) {
+            contactsList.innerHTML = '<span class="text-sm text-gray-500 italic">Контакты не указаны</span>';
+        } else {
+            contactsList.innerHTML = contacts.map(c => `
+                <a href="${getContactHref(c)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 rounded-lg text-sm font-medium hover:bg-brand-100 dark:hover:bg-brand-950/60 transition-colors">
+                    <i data-lucide="${getContactIcon(c)}" class="w-3.5 h-3.5"></i>
+                    ${escapeHtml(c)}
+                </a>
+            `).join('');
+            refreshIcons(); // Обновляем иконки после вставки HTML
+        }
+    }
+
+    // 3. Стартапы (загружаем отдельно, ошибки здесь больше не сломают контакты)
+    try {
+        const res = await fetch(`${API_URL}/api/startups?limit=100&offset=0`);
+        if (res.ok) {
+            const data = await res.json();
+            const arr = Array.isArray(data) ? data : (data.startups || []);
+            const myStartups = arr.filter(s => Number(s.user_id) === Number(state.user.id));
+
+            const profileStartupsCountEl = document.getElementById('profileStartupsCount');
+            if (profileStartupsCountEl) profileStartupsCountEl.textContent = myStartups.length;
+
+            const myStartupsCountEl = document.getElementById('myStartupsCount');
+            if (myStartupsCountEl) myStartupsCountEl.textContent = myStartups.length;
+
+            const totalVacancies = myStartups.reduce((sum, s) => sum + parseArray(s.vacancies).length, 0);
+            const profileVacanciesCountEl = document.getElementById('profileVacanciesCount');
+            if (profileVacanciesCountEl) profileVacanciesCountEl.textContent = totalVacancies;
+
+            const grid = document.getElementById('myStartupsGrid');
+            const empty = document.getElementById('myStartupsEmpty');
+            
+            if (grid && empty) {
+                if (myStartups.length === 0) {
+                    grid.innerHTML = '';
+                    empty.classList.remove('hidden');
+                } else {
+                    empty.classList.add('hidden');
+                    grid.innerHTML = myStartups.map(s => renderMyStartupCard(s)).join('');
+                    refreshIcons();
+                }
+            }
+        }
+    } catch (err) {
+        console.error('Ошибка загрузки стартапов в профиле:', err);
+    }
+}
+
+// ============ ПУБЛИЧНЫЙ ПРОФИЛЬ УЧАСТНИКА ============
+async function showUserProfile(id) {
+    if (!id) return navigate('home');
+    // Свой профиль — сразу в «Мой профиль»
+    if (state.user && Number(state.user.id) === Number(id)) return navigate('profile');
+
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('userProfilePage').classList.add('active');
+    state.currentPage = 'userProfile';
+    window.scrollTo({ top: 0 });
+
+    const contentEl = document.getElementById('userProfileContent');
+    const startupsEl = document.getElementById('userProfileStartups');
+    contentEl.innerHTML = '<div class="skeleton h-64 rounded-xl"></div>';
+    startupsEl.innerHTML = '';
+
+    try {
+        const res = await fetch(`${API_URL}/api/users/${id}`);
+        if (!res.ok) throw new Error();
+        const { user, startups } = await res.json();
+        const initial = (user.name || 'U')[0].toUpperCase();
+        const contacts = parseArray(user.contacts);
+
+        contentEl.innerHTML = `
+        <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden stagger-item">
+            <div class="h-24 bg-gradient-to-br from-brand-400 to-brand-600"></div>
+            <div class="px-6 md:px-8 pb-8">
+                <div class="w-24 h-24 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white text-3xl font-bold border-4 border-white dark:border-gray-900 overflow-hidden -mt-12 mb-4">
+                    ${user.avatar_url ? `<img src="${user.avatar_url}" class="w-full h-full object-cover" alt="">` : initial}
+                </div>
+                <h1 class="text-2xl font-bold">${escapeHtml(user.name || 'Участник')}</h1>
+                <p class="text-gray-700 dark:text-gray-300 leading-relaxed mt-3 break-words">${escapeHtml(user.description || 'Описание не добавлено')}</p>
+                ${contacts.length ? `
+                <div class="flex flex-wrap gap-2 mt-4">
+                    ${contacts.map(c => `
+                    <a href="${getContactHref(c)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 rounded-lg text-sm font-medium hover:bg-brand-100 dark:hover:bg-brand-950/60 transition-colors">
+                        <i data-lucide="${getContactIcon(c)}" class="w-3.5 h-3.5"></i>${escapeHtml(c)}
+                    </a>`).join('')}
+                </div>` : ''}
+            </div>
+        </div>`;
+
+        startupsEl.innerHTML = (startups && startups.length)
+            ? startups.map(s => renderStartupCard(s, true)).join('')
+            : '<p class="text-sm text-gray-500 italic">У участника пока нет проектов</p>';
+        refreshIcons();
+    } catch (e) {
+        showToast('Не удалось загрузить профиль', 'error');
+        navigate('home');
+    }
+}
+
+function renderMyStartupCard(startup) {
+    const vacancies = parseArray(startup.vacancies);
+    return `
+    <div class="stagger-item bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-5">
+        <div class="flex items-start justify-between gap-2 mb-3">
+            <h3 class="font-bold break-words">${escapeHtml(startup.name)}</h3>
+            ${startup.is_paid ? '<span class="text-xs px-2 py-0.5 bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-400 rounded font-semibold flex-shrink-0 inline-flex items-center gap-1"><i data-lucide="wallet" class="w-3 h-3"></i>Оплата</span>' : ''}
+        </div>
+        <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-4 break-words">${escapeHtml(startup.description || '')}</p>
+        ${vacancies.length > 0 ? `
+        <div class="mb-4 p-3 bg-gradient-to-br from-brand-50 to-orange-50 dark:from-brand-950/30 dark:to-orange-950/20 rounded-lg border border-brand-200 dark:border-brand-800/30">
+            <div class="flex items-center gap-2 mb-2">
+                <i data-lucide="users" class="w-4 h-4 text-brand-500"></i>
+                <span class="text-sm font-bold text-gray-900 dark:text-white">${vacancies.length} ${vacancies.length === 1 ? 'вакансия' : vacancies.length < 5 ? 'вакансии' : 'вакансий'}</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+                ${vacancies.map(v => `<span class="text-xs px-2.5 py-1 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-md border border-brand-200 dark:border-brand-800/30 font-medium">${escapeHtml(v)}</span>`).join('')}
+            </div>
+        </div>` : ''}
+        <div class="flex gap-2">
+            <button onclick="viewStartupInFeed(${startup.id})" class="flex-1 px-3 py-2 bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 rounded-lg text-sm font-medium hover:bg-brand-100 dark:hover:bg-brand-950/60 transition-colors flex items-center justify-center gap-1.5 btn-hover">
+                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                Подробнее
+            </button>
+            <button onclick="openEditStartup(${startup.id})" class="px-3 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors btn-hover" aria-label="Редактировать">
+                <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+            </button>
+            <button onclick="confirmDeleteStartup(${startup.id})" class="px-3 py-2 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 rounded-lg text-sm font-medium hover:bg-red-100 dark:hover:bg-red-950/50 transition-colors btn-hover" aria-label="Удалить">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+        </div>
+    </div>
+    `;
+}
+
+async function loadMyStartupsPage() {
+    if (!state.user) return;
+    try {
+        const res = await fetch(`${API_URL}/api/startups?limit=100&offset=0`);
+        if (!res.ok) return;
+        const data = await res.json();
+        const myStartups = (data.startups || []).filter(s => s.user_id === state.user.id);
+        document.getElementById('myStartupsTotal').textContent = myStartups.length;
+        const grid = document.getElementById('myStartupsPageGrid');
+        const empty = document.getElementById('myStartupsPageEmpty');
+        if (myStartups.length === 0) {
+            grid.innerHTML = '';
+            empty.classList.remove('hidden');
+        } else {
+            empty.classList.add('hidden');
+            grid.innerHTML = myStartups.map(s => renderStartupCard(s, true)).join('');
+            refreshIcons();
+        }
+    } catch (err) { console.error(err); }
+}
+
+// ============ EDIT STARTUP ============
+function openEditStartup(id) {
+    const startup = state.startups.find(s => s.id === id);
+    if (!startup) return;
+    state.editingStartupId = id;
+    state.editVacancies = parseArray(startup.vacancies);
+    state.editContacts = parseArray(startup.contacts);
+    document.getElementById('editStartupId').value = id;
+    document.getElementById('editStartupName').value = startup.name || '';
+    document.getElementById('editStartupDescription').value = startup.description || '';
+    document.getElementById('editDescCount').textContent = (startup.description || '').length;
+    document.getElementById('editStartupIsPaid').checked = !!startup.is_paid;
+    document.getElementById('editStartupStack').value = Array.isArray(startup.stack) ? startup.stack.join(', ') : (startup.stack || '');
+    document.getElementById('editStartupTelegram').value = startup.telegram || '';
+    renderEditVacanciesTags();
+    renderEditContactsTags();
+    openModal('editStartupModal');
+    refreshIcons();
+}
+function renderEditVacanciesTags() {
+    const container = document.getElementById('editVacanciesTags');
+    container.innerHTML = state.editVacancies.map((v, i) => `
+        <span class="tag">
+            ${escapeHtml(v)}
+            <button type="button" onclick="removeEditVacancy(${i})" aria-label="Удалить"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </span>
+    `).join('');
+    refreshIcons();
+}
+function removeEditVacancy(idx) { state.editVacancies.splice(idx, 1); renderEditVacanciesTags(); }
+function renderEditContactsTags() {
+    const container = document.getElementById('editContactsTags');
+    container.innerHTML = state.editContacts.map((c, i) => `
+        <span class="tag">
+            ${escapeHtml(c)}
+            <button type="button" onclick="removeEditContact(${i})" aria-label="Удалить"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </span>
+    `).join('');
+    refreshIcons();
+}
+function removeEditContact(idx) { state.editContacts.splice(idx, 1); renderEditContactsTags(); }
+
+async function handleEditStartupSubmit(e) {
+    e.preventDefault();
+    if (!validateFileSize('editStartupImage', 5)) return;
+    const formData = new FormData();
+    formData.append('name', document.getElementById('editStartupName').value);
+    formData.append('description', document.getElementById('editStartupDescription').value);
+    formData.append('is_paid', document.getElementById('editStartupIsPaid').checked);
+    formData.append('stack', document.getElementById('editStartupStack').value);
+    formData.append('telegram', cleanTelegram(document.getElementById('editStartupTelegram').value));
+    formData.append('vacancies', JSON.stringify(state.editVacancies));
+    formData.append('contacts', JSON.stringify(state.editContacts));
+    const imageFile = document.getElementById('editStartupImage')?.files[0];
+    if (imageFile) formData.append('image', imageFile);
+
+    try {
+        const res = await fetch(`${API_URL}/api/startups/${state.editingStartupId}`, {
+            method: 'PUT',
+            headers: { 'Authorization': `Bearer ${state.token}` },
+            body: formData
+        });
+        if (!res.ok) throw new Error('Ошибка сохранения');
+        showToast('Проект обновлён', 'success');
+        closeModal('editStartupModal');
+        loadStartups(true);
+        if (state.currentPage === 'profile') loadProfileData();
+        if (state.currentPage === 'myStartups') loadMyStartupsPage();
+    } catch (err) { showToast(err.message || 'Не удалось сохранить', 'error'); }
+}
+
+// ============ DELETE STARTUP ============
+function confirmDeleteStartup(id) { state.deletingStartupId = id; openModal('deleteStartupModal'); }
+async function handleDeleteStartup() {
+    try {
+        const res = await fetch(`${API_URL}/api/startups/${state.deletingStartupId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${state.token}` }
+        });
+        if (!res.ok) throw new Error('Ошибка удаления');
+        showToast('Проект удалён', 'success');
+        closeModal('deleteStartupModal');
+        state.deletingStartupId = null;
+        loadStats();
+        loadStartups(true);
+        if (state.currentPage === 'profile') loadProfileData();
+        if (state.currentPage === 'myStartups') loadMyStartupsPage();
+    } catch (err) { showToast(err.message || 'Не удалось удалить', 'error'); }
+}
+
+// ============ EDIT PROFILE ============
+function openEditProfileModal() {
+    if (!state.user) return;
+    document.getElementById('editProfileName').value = state.user.name || '';
+    document.getElementById('editProfileDescription').value = state.user.description || '';
+    document.getElementById('editProfileDescCount').textContent = (state.user.description || '').length;
+    state.editProfileContacts = parseArray(state.user.contacts);
+    renderEditProfileContactsTags();
+    openModal('editProfileModal');
+    refreshIcons();
+}
+function renderEditProfileContactsTags() {
+    const container = document.getElementById('editProfileContactsTags');
+    container.innerHTML = state.editProfileContacts.map((c, i) => `
+        <span class="tag">
+            ${escapeHtml(c)}
+            <button type="button" onclick="removeEditProfileContact(${i})" aria-label="Удалить"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </span>
+    `).join('');
+    refreshIcons();
+}
+function removeEditProfileContact(idx) { state.editProfileContacts.splice(idx, 1); renderEditProfileContactsTags(); }
+
+async function handleEditProfileSubmit(e) {
+    e.preventDefault();
+    if (!validateFileSize('editProfileImage', 5)) return;
+    const formData = new FormData();
+    formData.append('name', document.getElementById('editProfileName').value);
+    formData.append('description', document.getElementById('editProfileDescription').value);
+    formData.append('contacts', JSON.stringify(state.editProfileContacts));
+    const avatarFile = document.getElementById('editProfileImage')?.files[0];
+    if (avatarFile) formData.append('image', avatarFile);
+
+    try {
+        const res = await fetch(`${API_URL}/api/profile`, {
+            method: 'PUT',
+            headers: { 'Authorization': `Bearer ${state.token}` },
+            body: formData
+        });
+        if (!res.ok) throw new Error('Ошибка сохранения');
+        state.user = await res.json();
+        state.user.contacts = state.editProfileContacts;
+        updateAuthUI();
+        closeModal('editProfileModal');
+        showToast('Профиль обновлён', 'success');
+        loadProfileData();
+    } catch (err) { showToast(err.message || 'Не удалось сохранить', 'error'); }
+}
+
+// ============ TAG INPUTS ============
+function initTagInputs() {
+    document.getElementById('createVacancyInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const val = e.target.value.trim();
+            if (val && !state.createVacancies.includes(val)) {
+                state.createVacancies.push(val);
+                renderCreateVacanciesTags();
+                e.target.value = '';
+            }
+        }
+    });
+    document.getElementById('createContactInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const val = e.target.value.trim();
+            if (val && !state.createContacts.includes(val)) {
+                state.createContacts.push(val);
+                renderCreateContactsTags();
+                e.target.value = '';
+            }
+        }
+    });
+    document.getElementById('editVacancyInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const val = e.target.value.trim();
+            if (val && !state.editVacancies.includes(val)) {
+                state.editVacancies.push(val);
+                renderEditVacanciesTags();
+                e.target.value = '';
+            }
+        }
+    });
+    document.getElementById('editContactInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const val = e.target.value.trim();
+            if (val && !state.editContacts.includes(val)) {
+                state.editContacts.push(val);
+                renderEditContactsTags();
+                e.target.value = '';
+            }
+        }
+    });
+    document.getElementById('editProfileContactInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const val = e.target.value.trim();
+            if (val && !state.editProfileContacts.includes(val)) {
+                state.editProfileContacts.push(val);
+                renderEditProfileContactsTags();
+                e.target.value = '';
+            }
+        }
+    });
+    document.getElementById('filterStackInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const val = e.target.value.trim();
+            if (val && !state.filterStacks.map(x => x.toLowerCase()).includes(val.toLowerCase())) {
+                state.filterStacks.push(val);
+                renderFilterStackTags();
+                e.target.value = '';
+            }
+        }
+    });
+}
+function renderCreateVacanciesTags() {
+    const container = document.getElementById('createVacanciesTags');
+    container.innerHTML = state.createVacancies.map((v, i) => `
+        <span class="tag">
+            ${escapeHtml(v)}
+            <button type="button" onclick="removeCreateVacancy(${i})" aria-label="Удалить"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </span>
+    `).join('');
+    refreshIcons();
+}
+function removeCreateVacancy(idx) { state.createVacancies.splice(idx, 1); renderCreateVacanciesTags(); }
+function renderCreateContactsTags() {
+    const container = document.getElementById('createContactsTags');
+    container.innerHTML = state.createContacts.map((c, i) => `
+        <span class="tag">
+            ${escapeHtml(c)}
+            <button type="button" onclick="removeCreateContact(${i})" aria-label="Удалить"><i data-lucide="x" class="w-3 h-3"></i></button>
+        </span>
+    `).join('');
+    refreshIcons();
+}
+function removeCreateContact(idx) { state.createContacts.splice(idx, 1); renderCreateContactsTags(); }
+
+function initCharCounters() {
+    document.getElementById('createDescription').addEventListener('input', (e) => { document.getElementById('createDescCount').textContent = e.target.value.length; });
+    document.getElementById('editStartupDescription').addEventListener('input', (e) => { document.getElementById('editDescCount').textContent = e.target.value.length; });
+    document.getElementById('editProfileDescription').addEventListener('input', (e) => { document.getElementById('editProfileDescCount').textContent = e.target.value.length; });
+}
+
+// ============ MODALS (с фокус-трапом и Escape) ============
+function openModal(id) {
+    const modal = document.getElementById(id);
+    if (!modal) return;
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    if (!modal._triggerElement) modal._triggerElement = document.activeElement;
+    setTimeout(() => {
+        const focusable = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        if (focusable.length) {
+            focusable[0].focus();
+            initFocusTrap(modal, focusable);
+        }
+    }, 50);
+    modal._esc = (e) => { if (e.key === 'Escape') closeModal(id); };
+    document.addEventListener('keydown', modal._esc);
+}
+
+function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (!modal) return;
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+    if (modal._triggerElement && modal._triggerElement.focus) {
+        modal._triggerElement.focus();
+        delete modal._triggerElement;
+    }
+    if (modal._esc) {
+        document.removeEventListener('keydown', modal._esc);
+        delete modal._esc;
+    }
+    if (modal._trapHandler) {
+        modal.removeEventListener('keydown', modal._trapHandler);
+        delete modal._trapHandler;
+    }
+}
+
+function initFocusTrap(modal, focusable) {
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    modal._trapHandler = (e) => {
+        if (e.key !== 'Tab') return;
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+        }
+    };
+    modal.addEventListener('keydown', modal._trapHandler);
+}
+
+function initModalKeys() {
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('modal-backdrop')) {
+            const modalId = e.target.id;
+            if (modalId) closeModal(modalId);
+        }
+    });
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('#themeBtn') && !e.target.closest('#themeMenu')) closeThemeMenu();
+        if (!e.target.closest('#profileMenu')) document.getElementById('profileDropdown').classList.add('hidden');
+    });
+}
+
+// ============ RIPPLE (волна при нажатии на кнопки) ============
+function initRipple() {
+    document.addEventListener('pointerdown', (e) => {
+        const btn = e.target.closest('.btn-hover');
+        if (!btn) return;
+        const rect = btn.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple';
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+        ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+        btn.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+    });
+}
+
+// ============ TOAST ============
+function showToast(message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    const colors = { success: 'bg-green-500', error: 'bg-red-500', info: 'bg-brand-500' };
+    const icons = { success: 'check-circle', error: 'alert-circle', info: 'info' };
+    toast.className = `toast pointer-events-auto flex items-center gap-3 px-4 py-3 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 min-w-[280px] max-w-md`;
+    toast.innerHTML = `
+        <div class="w-8 h-8 rounded-lg ${colors[type]} flex items-center justify-center flex-shrink-0">
+            <i data-lucide="${icons[type]}" class="w-4 h-4 text-white"></i>
+        </div>
+        <p class="text-sm font-medium flex-1 break-words">${escapeHtml(message)}</p>
+    `;
+    container.appendChild(toast);
+    refreshIcons();
+    setTimeout(() => toast.remove(), 3000);
+}
+
+// ============ UTILS ============
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+function getContactHref(c) {
+    const safe = c.replace(/["'<>\\\s]/g, ''); // защита от инъекции в href
+    if (safe.startsWith('@')) return `https://t.me/${safe.slice(1)}`;
+    if (safe.includes('@') && safe.includes('.')) return `mailto:${safe}`;
+    if (safe.startsWith('http')) return safe;
+    return `https://${safe}`;
+}
+function getContactIcon(c) {
+    if (c.startsWith('@')) return 'send';
+    if (c.includes('@')) return 'mail';
+    if (c.includes('github')) return 'code';
+    if (c.includes('vk')) return 'users';
+    return 'link';
+}
+//поиск по названию
+const buttonInput = document.getElementById("buttonInput");
+buttonInput.addEventListener("click", () => {
+    search();
+});
+// handleSearch вызывается из HTML (кнопка и Enter в поле поиска)
+function handleSearch() { search(); }
+async function search() {
+    const input = document.getElementById("searchInput");
+    const query = input.value.trim();
+    if (!query) { loadStartups(true); return; }
+    try {
+        const res = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(query)}`);
+        if (!res.ok) throw new Error('Ошибка поиска');
+        const data = await res.json();
+        const list = Array.isArray(data) ? data : (data.startups || []);
+        // «Найдено проектов: N» с правильным склонением
+        const info = document.getElementById('searchResultsInfo');
+        const infoText = document.getElementById('searchResultsText');
+        if (info && infoText) {
+            const n = list.length;
+            const mod10 = n % 10, mod100 = n % 100;
+            const word = (mod10 === 1 && mod100 !== 11) ? 'проект'
+                : (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) ? 'проекта'
+                : 'проектов';
+            const verb = (word === 'проект') ? 'Найден' : 'Найдено';
+            infoText.textContent = `${verb} ${n} ${word} по запросу «${query}»`;
+            info.classList.remove('hidden');
+        }
+        const grid = document.getElementById('projectsGrid');
+        grid.innerHTML = list.map(s => renderStartupCard(s, true)).join('');
+        refreshIcons();
+        document.getElementById('projectsEmpty').classList.toggle('hidden', list.length > 0);
+        document.getElementById('projectsSection')?.scrollIntoView({ behavior: 'smooth' });
+    } catch (error) {
+        showToast('Ошибка поиска', 'error');
+    }
+}
+(function checkCookieConsent() {
+  if (!localStorage.getItem('cookieConsent')) {
+    const modal = document.getElementById('cookieModal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    }
+  }
+})();
+
+function acceptCookies() {
+  localStorage.setItem('cookieConsent', 'true');
+  document.getElementById('cookieModal')?.classList.add('hidden');
+}
+const banner = document.getElementById('offline-banner');
+
+window.addEventListener('offline', () => banner.classList.remove('hidden') || banner.classList.add('flex'));
+window.addEventListener('online', () => banner.classList.add('hidden') || banner.classList.remove('flex'));
+
+if (!navigator.onLine) banner.classList.remove('hidden') || banner.classList.add('flex');

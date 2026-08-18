@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Поддержка — StartupFinder</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+<style>
+    .glass {
+      background: rgba(20, 20, 20, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+  </style>
+<base target="_blank">
+</head>
+<body class="bg-sf-bg text-white font-sans antialiased min-h-screen flex flex-col">
+
+  <!-- Навигация -->
+  <nav class="fixed top-0 w-full z-50 glass">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="/" class="text-xl font-bold tracking-tight">Startup<span class="text-sf-accent">Finder</span></a>
+      <div class="flex items-center gap-6 text-sm text-sf-muted">
+        <a href="/" class="hover:text-white transition">Поиск</a>
+        <a href="/about" class="hover:text-white transition">О проекте</a>
+        <a href="/support" class="text-white">Поддержка</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Форма -->
+  <main class="flex-1 flex items-center justify-center px-6 pt-24 pb-12">
+    <div class="w-full max-w-lg">
+      <div class="text-center mb-10">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-sf-accent/10 border border-sf-accent/20 mb-5">
+          <svg class="w-7 h-7 text-sf-accent" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+          </svg>
+        </div>
+        <h1 class="text-3xl font-bold mb-2">Написать в поддержку</h1>
+        <p class="text-sf-muted">Нашли баг? Есть идея? Или что-то не работает? Напишите нам.</p>
+      </div>
+
+      <form id="supportForm" class="space-y-5">
+        <!-- Тип обращения -->
+        <div>
+          <label class="block text-sm font-medium mb-2">Тип обращения</label>
+          <select id="type" class="w-full px-4 py-3 bg-sf-card border border-sf-border rounded-xl text-white focus:outline-none focus:border-sf-accent transition">
+            <option value="bug">Баг / Ошибка</option>
+            <option value="idea">Идея / Предложение</option>
+            <option value="abuse">Жалоба на контент</option>
+            <option value="other">Другое</option>
+          </select>
+        </div>
+
+        <!-- Имя -->
+        <div>
+          <label class="block text-sm font-medium mb-2">Ваше имя</label>
+          <input type="text" id="name" placeholder="Как к вам обращаться?" 
+                 class="w-full px-4 py-3 bg-sf-card border border-sf-border rounded-xl text-white placeholder-sf-muted focus:outline-none focus:border-sf-accent transition">
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label class="block text-sm font-medium mb-2">Email <span class="text-red-400">*</span></label>
+          <input type="email" id="email" placeholder="you@example.com" required
+                 class="w-full px-4 py-3 bg-sf-card border border-sf-border rounded-xl text-white placeholder-sf-muted focus:outline-none focus:border-sf-accent transition">
+        </div>
+
+        <!-- Тема -->
+        <div>
+          <label class="block text-sm font-medium mb-2">Тема</label>
+          <input type="text" id="subject" placeholder="Кратко о проблеме" 
+                 class="w-full px-4 py-3 bg-sf-card border border-sf-border rounded-xl text-white placeholder-sf-muted focus:outline-none focus:border-sf-accent transition">
+        </div>
+
+        <!-- Сообщение -->
+        <div>
+          <label class="block text-sm font-medium mb-2">Сообщение <span class="text-red-400">*</span></label>
+          <textarea id="message" rows="5" placeholder="Опишите проблему подробно..." required minlength="10"
+                    class="w-full px-4 py-3 bg-sf-card border border-sf-border rounded-xl text-white placeholder-sf-muted focus:outline-none focus:border-sf-accent transition resize-none"></textarea>
+          <p class="text-xs text-sf-muted mt-1.5" id="charCount">0 символов</p>
+        </div>
+
+        <!-- Кнопка -->
+        <button type="submit" id="submitBtn" 
+                class="w-full py-3.5 bg-sf-accent hover:bg-orange-600 text-black font-semibold rounded-xl transition-all flex items-center justify-center gap-2">
+          <span>Отправить</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/>
+          </svg>
+        </button>
+
+        <!-- Статус -->
+        <p id="status" class="text-center text-sm hidden"></p>
+      </form>
+    </div>
+  </main>
+
+  <!-- Футер -->
+  <footer class="py-6 px-6 border-t border-sf-border text-center text-sm text-sf-muted">
+    <p>© 2026 StartupFinder</p>
+  </footer>
+
+  <script>
+    const API_URL = window.location.origin;
+    const form = document.getElementById('supportForm');
+    const btn = document.getElementById('submitBtn');
+    const status = document.getElementById('status');
+    const messageField = document.getElementById('message');
+    const charCount = document.getElementById('charCount');
+
+    // Счётчик символов
+    messageField.addEventListener('input', (e) => {
+      const len = e.target.value.length;
+      charCount.textContent = `${len} символов`;
+      charCount.className = len < 10 ? 'text-xs text-red-400 mt-1.5' : 'text-xs text-sf-muted mt-1.5';
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const body = {
+        type: document.getElementById('type').value,
+        name: document.getElementById('name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        subject: document.getElementById('subject').value.trim(),
+        message: messageField.value.trim()
+      };
+
+      if (body.message.length < 10) {
+        showStatus('Сообщение слишком короткое (мин. 10 символов)', 'error');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="inline-block w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin"></span> Отправка...';
+
+      try {
+        const res = await fetch(`${API_URL}/api/support`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        
+        if (res.ok) {
+          showStatus(data.message, 'success');
+          form.reset();
+          charCount.textContent = '0 символов';
+        } else {
+          showStatus(data.error || 'Ошибка', 'error');
+        }
+      } catch (err) {
+        showStatus('Не удалось отправить. Проверьте соединение.', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<span>Отправить</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/>
+          </svg>`;
+      }
+    });
+
+    function showStatus(text, type) {
+      status.textContent = text;
+      status.className = `text-center text-sm ${type === 'success' ? 'text-green-400' : 'text-red-400'}`;
+      status.classList.remove('hidden');
+      setTimeout(() => status.classList.add('hidden'), 5000);
+    }
+  </script>
+
+</body>
+</html>
