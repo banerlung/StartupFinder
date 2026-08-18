@@ -78,6 +78,8 @@ const allowedOrigins = [
     'http://startup-finder.ru',
     'https://www.startup-finder.ru',
     'http://www.startup-finder.ru',
+    'http://localhost',          // Стандартный адрес WebView на Android
+    'capacitor://localhost',  
 ];
 
 app.use(cors({
