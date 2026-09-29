@@ -3031,3 +3031,18 @@ transition: transform var(--dur-fast) var(--spring), color var(--dur-fast) var(-
 #navbar button:active {
 transform: scale(0.92);
 }
+
+/* ===== Telegram-блок: правильный вид в тёмной теме ===== */
+.dark .telegram-link {
+  background-color: rgba(23, 37, 84, 0.5) !important;
+  border: 1px solid rgba(30, 58, 138, 0.5);
+}
+.dark .telegram-link:hover {
+  background-color: rgba(23, 37, 84, 0.8) !important;
+}
+.dark .telegram-link .telegram-icon {
+  background-color: #2563eb !important;
+}
+.dark .dark\:border-red-900\/50 { border-color: rgba(127, 29, 29, 0.5); }
+.dark .dark\:border-\[\#0077FF\]\/30 { border-color: rgba(0, 119, 255, 0.3); }
+.dark .dark\:border-\[\#229ED9\]\/30 { border-color: rgba(34, 158, 217, 0.3); }

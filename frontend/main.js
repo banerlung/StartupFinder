@@ -30,7 +30,6 @@ let scrollObserver = null;
 
 // ============ INIT ============
 document.addEventListener('DOMContentLoaded', async () => {
-    
     initTheme();
     initIcons();
     initTagInputs();
@@ -67,7 +66,7 @@ function applyTheme(theme) {
     document.querySelectorAll('.theme-icon-light').forEach(el => el.classList.toggle('hidden', isDark));
     document.querySelectorAll('.theme-icon-dark').forEach(el => el.classList.toggle('hidden', !isDark));
 }
-function setTheme(theme) { applyTheme(theme); closeThemeMenu(); showToast('Тема оформления изменена', 'success'); }
+function setTheme(theme) { applyTheme(theme); closeThemeMenu(); }
 function toggleThemeMenu() {
     const menu = document.getElementById('themeMenu');
     const btn = document.getElementById('themeBtn');
@@ -190,7 +189,7 @@ async function handleLogin(e) {
                 document.getElementById('verifyEmail').textContent = email;
                 openModal('verifyModal');
                 showToast('Подтвердите email для входа', 'info');
-            } else { showToast(data.error || 'Ошибка входа', 'error'); }
+            } else { showToast(data.error?.message || 'Ошибка входа', 'error'); }
             return;
         }
         state.token = data.token;
@@ -217,7 +216,7 @@ async function handleRegister(e) {
             body: JSON.stringify({ email, password })
         });
         const data = await res.json();
-        if (!res.ok) { showToast(data.error || 'Ошибка регистрации', 'error'); return; }
+        if (!res.ok) { showToast(data.error?.message || 'Ошибка регистрации', 'error'); return; }
         closeModal('registerModal');
         state.pendingVerifyEmail = email;
         document.getElementById('verifyEmail').textContent = email;
@@ -241,7 +240,7 @@ async function handleVerify(e) {
             body: JSON.stringify({ email: state.pendingVerifyEmail, code })
         });
         const data = await res.json();
-        if (!res.ok) { showToast(data.error || 'Неверный код', 'error'); return; }
+        if (!res.ok) { showToast(data.error?.message || 'Неверный код', 'error'); return; }
         state.token = data.token;
         localStorage.setItem('token', data.token);
         await loadUser();
@@ -265,7 +264,7 @@ async function handleForgotPassword(e) {
             body: JSON.stringify({ email })
         });
         const data = await res.json();
-        if (!res.ok) { showToast(data.error || 'Ошибка', 'error'); return; }
+        if (!res.ok) { showToast(data.error?.message || 'Ошибка', 'error'); return; }
         closeModal('forgotModal');
         state.pendingResetEmail = email;
         document.getElementById('resetEmail').textContent = email;
@@ -290,7 +289,7 @@ async function handleResetPassword(e) {
             body: JSON.stringify({ email: state.pendingResetEmail, code, newPassword })
         });
         const data = await res.json();
-        if (!res.ok) { showToast(data.error || 'Ошибка', 'error'); return; }
+        if (!res.ok) { showToast(data.error?.message || 'Ошибка', 'error'); return; }
         closeModal('resetModal');
         showToast('Пароль успешно изменён!', 'success');
         openModal('loginModal');
@@ -314,7 +313,6 @@ function handleLogout() {
 }
 
 // ============ НАСТРОЙКИ ============
-// Подсветка активной темы на странице настроек
 function updateThemeButtons() {
     const current = localStorage.getItem('theme') || 'system';
     document.querySelectorAll('[data-theme-btn]').forEach(btn => {
@@ -328,7 +326,6 @@ function updateThemeButtons() {
     refreshIcons();
 }
 
-// Удаление аккаунта (152-ФЗ: право на удаление персональных данных)
 async function handleDeleteAccount() {
     const btn = document.getElementById('deleteAccountBtn');
     btn.disabled = true;
@@ -340,10 +337,9 @@ async function handleDeleteAccount() {
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) {
-            showToast(data.error || 'Не удалось удалить аккаунт', 'error');
+            showToast(data.error?.message || 'Не удалось удалить аккаунт', 'error');
             return;
         }
-        // Полный выход: чистим токен и состояние
         state.token = null;
         state.user = null;
         localStorage.removeItem('token');
@@ -402,7 +398,10 @@ async function loadStartups(reset = false) {
     const loader = document.getElementById('loadMoreLoader');
     if (loader) loader.classList.remove('hidden');
     try {
-        const res = await fetch(buildStartupsUrl(currentOffset));
+        // ИСПРАВЛЕНО: добавлен authHeaders()
+        const res = await fetch(buildStartupsUrl(currentOffset), {
+            headers: authHeaders()
+        });
         if (!res.ok) throw new Error();
         const data = await res.json();
         if (reset) {
@@ -459,7 +458,6 @@ function parseArray(val) {
     } else if (typeof val === 'string') {
         const s = val.trim();
         if (s.startsWith('{') && s.endsWith('}') && !s.includes('":')) {
-            // Литерал массива PostgreSQL: {"a","b"} или {a,b}
             arr = s.slice(1, -1).split(',')
                 .map(x => x.trim().replace(/^"|"$/g, '').replace(/\\"/g, '"'))
                 .filter(Boolean);
@@ -474,7 +472,6 @@ function parseArray(val) {
     } else {
         return [];
     }
-    // Распаковка старых записей: элементы вида '{"@user"}' (JSON внутри массива)
     const out = [];
     for (const item of arr) {
         if (typeof item === 'string' && (item.trim().startsWith('{') || item.trim().startsWith('['))) {
@@ -502,7 +499,6 @@ function hasExpandableContent(startup) {
 }
 
 function toggleExpand(startupId, btnEl) {
-    // Ищем карточку от самой кнопки вверх — так нас не ломают дубли id на разных страницах
     const card = btnEl ? btnEl.closest('article') : document.getElementById(`startup-card-${startupId}`);
     if (!card) return;
     const isExpanded = state.expandedStartups.has(startupId);
@@ -546,9 +542,11 @@ async function viewStartupInFeed(startupId) {
     });
     document.getElementById('activeFiltersCount').classList.add('hidden');
     navigate('home');
-    // Загружаем все стартапы, чтобы гарантировать нахождение нужного
     try {
-        const res = await fetch(`${API_URL}/api/startups?limit=200&offset=0&payment=all`);
+        // ИСПРАВЛЕНО: добавлен authHeaders()
+        const res = await fetch(`${API_URL}/api/startups?limit=200&offset=0&payment=all`, {
+            headers: authHeaders()
+        });
         if (res.ok) {
             const data = await res.json();
             state.startups = data.startups || [];
@@ -573,13 +571,8 @@ async function viewStartupInFeed(startupId) {
     } catch (e) { console.error(e); }
 }
 function updateMyStartupsCount() {
-    // Если пользователь не вошел или стартапы еще не загрузились — выходим
     if (!state.user || !state.startups) return;
-    
-    // Считаем только твои стартапы
     const count = state.startups.filter(s => Number(s.user_id) === Number(state.user.id)).length;
-    
-    // Обновляем цифру в меню
     const badge = document.getElementById('myStartupsCount');
     if (badge) {
         badge.textContent = count;
@@ -603,7 +596,6 @@ function renderStartupCard(startup, animate = true) {
     <article id="startup-card-${startup.id}" class="${animClass} bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
         <div class="p-6 md:p-8">
             
-            <!-- Шапка: Картинка/Буква + Название + Бейдж -->
             <div class="flex items-start gap-4 mb-5">
                 ${startup.image_url ? `
                 <div class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-gray-50 dark:bg-gray-800 ring-1 ring-gray-100 dark:ring-gray-700">
@@ -629,14 +621,12 @@ function renderStartupCard(startup, animate = true) {
                 </div>
             </div>
 
-            <!-- Описание -->
             <div class="mb-6">
                 <p class="startup-desc text-sm text-gray-600 dark:text-gray-400 leading-relaxed break-words ${isExpanded ? '' : 'line-clamp-3'}">
                     ${escapeHtml(startup.description || '')}
                 </p>
             </div>
 
-            <!-- Автор -->
             <a href="${authorLink}" target="_self" class="inline-flex items-center gap-2.5 mb-6 group/author" aria-label="Профиль автора">
                 <div class="w-7 h-7 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 text-xs font-semibold overflow-hidden flex-shrink-0 ring-2 ring-white dark:ring-gray-900">
                     ${startup.author_avatar ? `<img src="${startup.author_avatar}" class="w-full h-full object-cover" loading="lazy" alt="">` : authorInitial}
@@ -646,13 +636,11 @@ function renderStartupCard(startup, animate = true) {
                 </span>
             </a>
 
-            <!-- Стек (Теги) -->
             ${stacks.length > 0 ? `
             <div class="flex flex-wrap gap-2 mb-6">
                 ${stacks.map(s => `<span class="px-2.5 py-1 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-medium rounded-md border border-gray-100 dark:border-gray-700">${escapeHtml(s)}</span>`).join('')}
             </div>` : ''}
 
-            <!-- Вакансии (Сделали чище, без агрессивного градиента) -->
             ${vacancies.length > 0 ? `
             <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-800">
                 <div class="flex items-center gap-2 mb-3">
@@ -669,31 +657,29 @@ function renderStartupCard(startup, animate = true) {
                 </div>
             </div>` : ''}
 
-            <!-- Раскрывающийся контент (Контакты) -->
             <div class="expand-content ${isExpanded ? 'expanded' : ''}">
                 <div class="pt-5 border-t border-gray-100 dark:border-gray-800 space-y-3">
                     ${contacts.length > 0 || startup.telegram ? `
                     <div>
                         <div class="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-3">Контакты</div>
                         <div class="space-y-2">
-                            ${startup.telegram ? `
-                            <a href="https://t.me/${escapeHtml(cleanTelegram(startup.telegram))}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-950/40 transition-colors group/link">
-                                <div class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center flex-shrink-0 shadow-sm shadow-blue-500/20">
-                                    <i data-lucide="send" class="w-4 h-4 text-white"></i>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <div class="text-[10px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Telegram</div>
-                                    <div class="text-sm font-medium text-gray-900 dark:text-white truncate">@${escapeHtml(cleanTelegram(startup.telegram))}</div>
-                                </div>
-                                <i data-lucide="arrow-up-right" class="w-4 h-4 text-gray-400 flex-shrink-0 group-hover/link:text-blue-500 transition-colors"></i>
-                            </a>` : ''}
+                        ${startup.telegram ? `
+<a href="https://t.me/${escapeHtml(cleanTelegram(startup.telegram))}" target="_blank" rel="noopener noreferrer" class="telegram-link flex items-center gap-3 p-3 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors group/link">
+    <div class="telegram-icon w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center flex-shrink-0 shadow-sm shadow-blue-500/20">
+        <i data-lucide="send" class="w-4 h-4 text-white"></i>
+    </div>
+    <div class="flex-1 min-w-0">
+        <div class="text-[10px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Telegram</div>
+        <div class="text-sm font-medium text-gray-900 dark:text-white truncate">@${escapeHtml(cleanTelegram(startup.telegram))}</div>
+    </div>
+    <i data-lucide="arrow-up-right" class="w-4 h-4 text-gray-400 flex-shrink-0 group-hover/link:text-blue-500 transition-colors"></i>
+</a>` : ''}
                             ${contacts.map(c => renderContactLink(c)).join('')}
                         </div>
                     </div>` : ''}
                 </div>
             </div>
 
-            <!-- Футер карточки (Кнопки) -->
             <div class="flex items-center gap-3 pt-5 border-t border-gray-100 dark:border-gray-800 mt-2">
                ${expandable ? `
                 <button onclick="toggleExpand(${startup.id}, this)" class="expand-btn flex-1 px-4 py-2.5 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm font-medium transition-colors flex items-center justify-center gap-1.5" aria-expanded="${isExpanded}">
@@ -871,7 +857,7 @@ async function handleCreateSubmit(e) {
             headers: { 'Authorization': `Bearer ${state.token}` },
             body: formData
         });
-        if (!res.ok) { const err = await res.json(); throw new Error(err.error || 'Ошибка'); }
+        if (!res.ok) { const err = await res.json(); throw new Error(err.error?.message || 'Ошибка'); }
         showToast('Проект опубликован!', 'success');
         navigate('home');
         loadStats();
@@ -888,14 +874,12 @@ async function handleCreateSubmit(e) {
 async function loadProfileData() {
     if (!state.user) return;
 
-    // 1. Базовые данные (с проверкой на существование)
     const nameEl = document.getElementById('profileNameBig');
     if (nameEl) nameEl.textContent = state.user.name || 'Без имени';
     
     const descEl = document.getElementById('profileDescription');
     if (descEl) descEl.textContent = state.user.description || 'Описание пока не добавлено';
 
-    // 2. КОНТАКТЫ (Рендерим сразу, независимо от других запросов)
     const contacts = parseArray(state.user.contacts);
     
     const contactsCountEl = document.getElementById('profileContactsCount');
@@ -912,13 +896,15 @@ async function loadProfileData() {
                     ${escapeHtml(c)}
                 </a>
             `).join('');
-            refreshIcons(); // Обновляем иконки после вставки HTML
+            refreshIcons();
         }
     }
 
-    // 3. Стартапы (загружаем отдельно, ошибки здесь больше не сломают контакты)
     try {
-        const res = await fetch(`${API_URL}/api/startups?limit=100&offset=0`);
+        // ИСПРАВЛЕНО: добавлен authHeaders()
+        const res = await fetch(`${API_URL}/api/startups?limit=100&offset=0`, {
+            headers: authHeaders()
+        });
         if (res.ok) {
             const data = await res.json();
             const arr = Array.isArray(data) ? data : (data.startups || []);
@@ -956,7 +942,6 @@ async function loadProfileData() {
 // ============ ПУБЛИЧНЫЙ ПРОФИЛЬ УЧАСТНИКА ============
 async function showUserProfile(id) {
     if (!id) return navigate('home');
-    // Свой профиль — сразу в «Мой профиль»
     if (state.user && Number(state.user.id) === Number(id)) return navigate('profile');
 
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -970,7 +955,10 @@ async function showUserProfile(id) {
     startupsEl.innerHTML = '';
 
     try {
-        const res = await fetch(`${API_URL}/api/users/${id}`);
+        // ИСПРАВЛЕНО: добавлен authHeaders() — теперь бэкенд знает, кто зритель, и может отдать контакты
+        const res = await fetch(`${API_URL}/api/users/${id}`, {
+            headers: authHeaders()
+        });
         if (!res.ok) throw new Error();
         const { user, startups } = await res.json();
         const initial = (user.name || 'U')[0].toUpperCase();
@@ -1043,11 +1031,13 @@ function renderMyStartupCard(startup) {
 async function loadMyStartupsPage() {
     if (!state.user) return;
     try {
-        const res = await fetch(`${API_URL}/api/startups?limit=100&offset=0`);
+        // ИСПРАВЛЕНО: добавлен authHeaders()
+        const res = await fetch(`${API_URL}/api/startups?limit=100&offset=0`, {
+            headers: authHeaders()
+        });
         if (!res.ok) return;
         const data = await res.json();
         
-        // ИСПРАВЛЕНИЕ: добавляем Number() для надежного сравнения
         const myStartups = (data.startups || []).filter(s => Number(s.user_id) === Number(state.user.id));
         
         document.getElementById('myStartupsTotal').textContent = myStartups.length;
@@ -1367,7 +1357,7 @@ function initModalKeys() {
     });
 }
 
-// ============ RIPPLE (волна при нажатии на кнопки) ============
+// ============ RIPPLE ============
 function initRipple() {
     document.addEventListener('pointerdown', (e) => {
         const btn = e.target.closest('.btn-hover');
@@ -1407,8 +1397,14 @@ function escapeHtml(str) {
     if (!str) return '';
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 }
+
+// ИСПРАВЛЕНО: хелпер для передачи токена в запросах, где важно знать зрителя
+function authHeaders() {
+    return state.token ? { 'Authorization': `Bearer ${state.token}` } : {};
+}
+
 function getContactHref(c) {
-    const safe = c.replace(/["'<>\\\s]/g, ''); // защита от инъекции в href
+    const safe = c.replace(/["'<>\\\s]/g, '');
     if (safe.startsWith('@')) return `https://t.me/${safe.slice(1)}`;
     if (safe.includes('@') && safe.includes('.')) return `mailto:${safe}`;
     if (safe.startsWith('http')) return safe;
@@ -1421,23 +1417,24 @@ function getContactIcon(c) {
     if (c.includes('vk')) return 'users';
     return 'link';
 }
-//поиск по названию
+
 const buttonInput = document.getElementById("buttonInput");
 buttonInput.addEventListener("click", () => {
     search();
 });
-// handleSearch вызывается из HTML (кнопка и Enter в поле поиска)
 function handleSearch() { search(); }
 async function search() {
     const input = document.getElementById("searchInput");
     const query = input.value.trim();
     if (!query) { loadStartups(true); return; }
     try {
-        const res = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(query)}`);
+        // ИСПРАВЛЕНО: добавлен authHeaders()
+        const res = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(query)}`, {
+            headers: authHeaders()
+        });
         if (!res.ok) throw new Error('Ошибка поиска');
         const data = await res.json();
         const list = Array.isArray(data) ? data : (data.startups || []);
-        // «Найдено проектов: N» с правильным склонением
         const info = document.getElementById('searchResultsInfo');
         const infoText = document.getElementById('searchResultsText');
         if (info && infoText) {
