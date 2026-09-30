@@ -333,18 +333,39 @@
           </p>
         </div>
 
-        <!-- ===== НОВЫЙ БЛОК: Профессиональная информация ===== -->
+        <!-- ===== Блок: Профессиональная информация ===== -->
         <div id="profileProfessional" class="mb-8 hidden">
           <h3 class="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-3">Профессиональная информация</h3>
-          <div class="flex flex-wrap gap-2">
-            <span id="profileRoleBadge" class="hidden px-3 py-1.5 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 rounded-lg text-sm font-medium"></span>
-            <span id="profileLevelBadge" class="hidden px-3 py-1.5 bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-400 rounded-lg text-sm font-medium"></span>
-            <span id="profileExperienceBadge" class="hidden px-3 py-1.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium"></span>
+
+          <div class="space-y-3">
+            <!-- Роль -->
+            <p id="profileRoleLine" class="text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed hidden">
+              <span class="text-gray-400 dark:text-gray-500">Роль:</span>
+              <span id="profileRoleValue" class="text-gray-900 dark:text-white font-medium"></span>
+            </p>
+
+            <!-- Уровень и опыт -->
+            <p id="profileLevelLine" class="text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed hidden">
+              <span class="text-gray-400 dark:text-gray-500">Уровень:</span>
+              <span id="profileLevelValue" class="text-gray-900 dark:text-white font-medium"></span>
+            </p>
+
+            <!-- Стек -->
+            <div id="profileStackSection" class="hidden">
+              <p class="text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed mb-2">
+                <span class="text-gray-400 dark:text-gray-500">Стек:</span>
+              </p>
+              <div id="profileStackTags" class="flex flex-wrap gap-1.5"></div>
+            </div>
+
+            <!-- GitHub -->
+            <p id="profileGithubLine" class="text-sm md:text-base leading-relaxed hidden">
+              <span class="text-gray-400 dark:text-gray-500">GitHub:</span>
+              <a id="profileGithubLink" href="#" target="_blank" rel="noopener noreferrer" class="text-brand-600 dark:text-brand-400 font-medium hover:underline"></a>
+            </p>
           </div>
-          <div id="profileStackTags" class="flex flex-wrap gap-2 mt-3"></div>
-          <a id="profileGithubLink" target="_blank" rel="noopener noreferrer" class="hidden items-center gap-1.5 mt-3 text-sm text-brand-600 dark:text-brand-400 hover:underline"></a>
         </div>
-        <!-- ===== /НОВЫЙ БЛОК ===== -->
+        <!-- ===== /Блок ===== -->
 
         <!-- Контакты -->
         <div>

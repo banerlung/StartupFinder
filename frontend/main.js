@@ -398,7 +398,6 @@ async function loadStartups(reset = false) {
     const loader = document.getElementById('loadMoreLoader');
     if (loader) loader.classList.remove('hidden');
     try {
-        // ИСПРАВЛЕНО: добавлен authHeaders()
         const res = await fetch(buildStartupsUrl(currentOffset), {
             headers: authHeaders()
         });
@@ -543,7 +542,6 @@ async function viewStartupInFeed(startupId) {
     document.getElementById('activeFiltersCount').classList.add('hidden');
     navigate('home');
     try {
-        // ИСПРАВЛЕНО: добавлен authHeaders()
         const res = await fetch(`${API_URL}/api/startups?limit=200&offset=0&payment=all`, {
             headers: authHeaders()
         });
@@ -882,10 +880,13 @@ async function loadProfileData() {
 
     // ===== Профессиональная информация =====
     const profBlock = document.getElementById('profileProfessional');
-    const roleBadge = document.getElementById('profileRoleBadge');
-    const levelBadge = document.getElementById('profileLevelBadge');
-    const expBadge = document.getElementById('profileExperienceBadge');
+    const roleLine = document.getElementById('profileRoleLine');
+    const roleValue = document.getElementById('profileRoleValue');
+    const levelLine = document.getElementById('profileLevelLine');
+    const levelValue = document.getElementById('profileLevelValue');
+    const stackSection = document.getElementById('profileStackSection');
     const stackTags = document.getElementById('profileStackTags');
+    const githubLine = document.getElementById('profileGithubLine');
     const githubLink = document.getElementById('profileGithubLink');
 
     if (profBlock) {
@@ -893,60 +894,50 @@ async function loadProfileData() {
         profBlock.classList.toggle('hidden', !hasProf);
 
         // Роль
-        if (roleBadge) {
-            if (state.user.role) {
-                roleBadge.textContent = state.user.role;
-                roleBadge.classList.remove('hidden');
-            } else {
-                roleBadge.classList.add('hidden');
-            }
+        if (state.user.role) {
+            roleValue.textContent = state.user.role;
+            roleLine.classList.remove('hidden');
+        } else {
+            roleLine.classList.add('hidden');
         }
 
-        // Уровень
+        // Уровень + опыт
         const levelLabels = { 1: 'Junior', 2: 'Middle', 3: 'Senior', 4: 'Lead' };
-        if (levelBadge) {
-            if (state.user.level) {
-                levelBadge.textContent = levelLabels[state.user.level] || `Уровень ${state.user.level}`;
-                levelBadge.classList.remove('hidden');
-            } else {
-                levelBadge.classList.add('hidden');
-            }
+        const levelParts = [];
+        if (state.user.level && levelLabels[state.user.level]) levelParts.push(levelLabels[state.user.level]);
+        if (state.user.experience) {
+            const n = state.user.experience;
+            const mod10 = n % 10, mod100 = n % 100;
+            const word = (mod10 === 1 && mod100 !== 11) ? 'год'
+                : (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) ? 'года'
+                : 'лет';
+            levelParts.push(`${n} ${word} опыта`);
         }
-
-        // Опыт
-        if (expBadge) {
-            if (state.user.experience) {
-                const n = state.user.experience;
-                const mod10 = n % 10, mod100 = n % 100;
-                const word = (mod10 === 1 && mod100 !== 11) ? 'год'
-                    : (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) ? 'года'
-                    : 'лет';
-                expBadge.textContent = `${n} ${word} опыта`;
-                expBadge.classList.remove('hidden');
-            } else {
-                expBadge.classList.add('hidden');
-            }
+        if (levelParts.length) {
+            levelValue.textContent = levelParts.join(' · ');
+            levelLine.classList.remove('hidden');
+        } else {
+            levelLine.classList.add('hidden');
         }
 
         // Стек
-        if (stackTags) {
-            if (state.user.stack) {
-                const stacks = state.user.stack.split(',').map(s => s.trim()).filter(Boolean);
-                stackTags.innerHTML = stacks.map(s => `<span class="px-2.5 py-1 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-medium rounded-md border border-gray-100 dark:border-gray-700">${escapeHtml(s)}</span>`).join('');
-            } else {
-                stackTags.innerHTML = '';
-            }
+        if (state.user.stack) {
+            const items = state.user.stack.split(',').map(s => s.trim()).filter(Boolean);
+            stackTags.innerHTML = items.map(s =>
+                `<span class="px-2.5 py-1 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-medium rounded-md border border-gray-100 dark:border-gray-700">${escapeHtml(s)}</span>`
+            ).join('');
+            stackSection.classList.remove('hidden');
+        } else {
+            stackSection.classList.add('hidden');
         }
 
         // GitHub
-        if (githubLink) {
-            if (state.user.github) {
-                githubLink.href = `https://github.com/${encodeURIComponent(state.user.github)}`;
-                githubLink.innerHTML = `<i data-lucide="github" class="w-3.5 h-3.5"></i>github.com/${escapeHtml(state.user.github)}`;
-                githubLink.classList.remove('hidden');
-            } else {
-                githubLink.classList.add('hidden');
-            }
+        if (state.user.github) {
+            githubLink.textContent = `github.com/${state.user.github}`;
+            githubLink.href = `https://github.com/${encodeURIComponent(state.user.github)}`;
+            githubLine.classList.remove('hidden');
+        } else {
+            githubLine.classList.add('hidden');
         }
 
         refreshIcons();
@@ -1036,44 +1027,58 @@ async function showUserProfile(id) {
         const initial = (user.name || 'U')[0].toUpperCase();
         const contacts = parseArray(user.contacts);
 
-        // ===== Собираем блок профессиональной информации =====
+        // ===== Профессиональная информация =====
         const levelLabels = { 1: 'Junior', 2: 'Middle', 3: 'Senior', 4: 'Lead' };
 
-        // Склонение слова "год"
-        let expText = '';
+        const levelParts = [];
+        if (user.level && levelLabels[user.level]) levelParts.push(levelLabels[user.level]);
         if (user.experience) {
             const n = user.experience;
             const mod10 = n % 10, mod100 = n % 100;
             const word = (mod10 === 1 && mod100 !== 11) ? 'год'
                 : (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) ? 'года'
                 : 'лет';
-            expText = `${n} ${word} опыта`;
+            levelParts.push(`${n} ${word} опыта`);
         }
 
-        // Стек
         const stackItems = user.stack
             ? user.stack.split(',').map(s => s.trim()).filter(Boolean)
             : [];
 
-        // Проверяем, есть ли хоть что-то профессиональное
-        const hasProf = user.role || user.level || user.experience || stackItems.length || user.github;
+        const hasProf = user.role || levelParts.length || stackItems.length || user.github;
 
         const profHtml = hasProf ? `
-        <div class="mt-6 pt-5 border-t border-gray-100 dark:border-gray-800">
+        <div class="mt-8">
             <h3 class="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-3">Профессиональная информация</h3>
-            <div class="flex flex-wrap gap-2">
-                ${user.role ? `<span class="px-3 py-1.5 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 rounded-lg text-sm font-medium">${escapeHtml(user.role)}</span>` : ''}
-                ${user.level && levelLabels[user.level] ? `<span class="px-3 py-1.5 bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-400 rounded-lg text-sm font-medium">${levelLabels[user.level]}</span>` : ''}
-                ${expText ? `<span class="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium">${escapeHtml(expText)}</span>` : ''}
+            <div class="space-y-3">
+                ${user.role ? `
+                <p class="text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed">
+                    <span class="text-gray-400 dark:text-gray-500">Роль:</span>
+                    <span class="text-gray-900 dark:text-white font-medium">${escapeHtml(user.role)}</span>
+                </p>` : ''}
+
+                ${levelParts.length ? `
+                <p class="text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed">
+                    <span class="text-gray-400 dark:text-gray-500">Уровень:</span>
+                    <span class="text-gray-900 dark:text-white font-medium">${escapeHtml(levelParts.join(' · '))}</span>
+                </p>` : ''}
+
+                ${stackItems.length ? `
+                <div>
+                    <p class="text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed mb-2">
+                        <span class="text-gray-400 dark:text-gray-500">Стек:</span>
+                    </p>
+                    <div class="flex flex-wrap gap-1.5">
+                        ${stackItems.map(s => `<span class="px-2.5 py-1 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-medium rounded-md border border-gray-100 dark:border-gray-700">${escapeHtml(s)}</span>`).join('')}
+                    </div>
+                </div>` : ''}
+
+                ${user.github ? `
+                <p class="text-sm md:text-base leading-relaxed">
+                    <span class="text-gray-400 dark:text-gray-500">GitHub:</span>
+                    <a href="https://github.com/${encodeURIComponent(user.github)}" target="_blank" rel="noopener noreferrer" class="text-brand-600 dark:text-brand-400 font-medium hover:underline">github.com/${escapeHtml(user.github)}</a>
+                </p>` : ''}
             </div>
-            ${stackItems.length ? `
-            <div class="flex flex-wrap gap-2 mt-3">
-                ${stackItems.map(s => `<span class="px-2.5 py-1 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-medium rounded-md border border-gray-100 dark:border-gray-700">${escapeHtml(s)}</span>`).join('')}
-            </div>` : ''}
-            ${user.github ? `
-            <a href="https://github.com/${encodeURIComponent(user.github)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 mt-3 text-sm text-brand-600 dark:text-brand-400 hover:underline">
-                <i data-lucide="github" class="w-3.5 h-3.5"></i>github.com/${escapeHtml(user.github)}
-            </a>` : ''}
         </div>` : '';
 
         contentEl.innerHTML = `
@@ -1087,7 +1092,7 @@ async function showUserProfile(id) {
                 <p class="text-gray-700 dark:text-gray-300 leading-relaxed mt-3 break-words">${escapeHtml(user.description || 'Описание не добавлено')}</p>
                 ${profHtml}
                 ${contacts.length ? `
-                <div class="flex flex-wrap gap-2 mt-4">
+                <div class="flex flex-wrap gap-2 mt-6">
                     ${contacts.map(c => `
                     <a href="${getContactHref(c)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 rounded-lg text-sm font-medium hover:bg-brand-100 dark:hover:bg-brand-950/60 transition-colors">
                         <i data-lucide="${getContactIcon(c)}" class="w-3.5 h-3.5"></i>${escapeHtml(c)}
@@ -1144,7 +1149,6 @@ function renderMyStartupCard(startup) {
 async function loadMyStartupsPage() {
     if (!state.user) return;
     try {
-        // ИСПРАВЛЕНО: добавлен authHeaders()
         const res = await fetch(`${API_URL}/api/startups?limit=100&offset=0`, {
             headers: authHeaders()
         });
@@ -1536,7 +1540,6 @@ function escapeHtml(str) {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 }
 
-// ИСПРАВЛЕНО: хелпер для передачи токена в запросах, где важно знать зрителя
 function authHeaders() {
     return state.token ? { 'Authorization': `Bearer ${state.token}` } : {};
 }
@@ -1566,7 +1569,6 @@ async function search() {
     const query = input.value.trim();
     if (!query) { loadStartups(true); return; }
     try {
-        // ИСПРАВЛЕНО: добавлен authHeaders()
         const res = await fetch(`${API_URL}/api/search?q=${encodeURIComponent(query)}`, {
             headers: authHeaders()
         });
