@@ -876,12 +876,85 @@ async function loadProfileData() {
 
     const nameEl = document.getElementById('profileNameBig');
     if (nameEl) nameEl.textContent = state.user.name || 'Без имени';
-    
+
     const descEl = document.getElementById('profileDescription');
     if (descEl) descEl.textContent = state.user.description || 'Описание пока не добавлено';
 
+    // ===== Профессиональная информация =====
+    const profBlock = document.getElementById('profileProfessional');
+    const roleBadge = document.getElementById('profileRoleBadge');
+    const levelBadge = document.getElementById('profileLevelBadge');
+    const expBadge = document.getElementById('profileExperienceBadge');
+    const stackTags = document.getElementById('profileStackTags');
+    const githubLink = document.getElementById('profileGithubLink');
+
+    if (profBlock) {
+        const hasProf = state.user.role || state.user.level || state.user.experience || state.user.stack || state.user.github;
+        profBlock.classList.toggle('hidden', !hasProf);
+
+        // Роль
+        if (roleBadge) {
+            if (state.user.role) {
+                roleBadge.textContent = state.user.role;
+                roleBadge.classList.remove('hidden');
+            } else {
+                roleBadge.classList.add('hidden');
+            }
+        }
+
+        // Уровень
+        const levelLabels = { 1: 'Junior', 2: 'Middle', 3: 'Senior', 4: 'Lead' };
+        if (levelBadge) {
+            if (state.user.level) {
+                levelBadge.textContent = levelLabels[state.user.level] || `Уровень ${state.user.level}`;
+                levelBadge.classList.remove('hidden');
+            } else {
+                levelBadge.classList.add('hidden');
+            }
+        }
+
+        // Опыт
+        if (expBadge) {
+            if (state.user.experience) {
+                const n = state.user.experience;
+                const mod10 = n % 10, mod100 = n % 100;
+                const word = (mod10 === 1 && mod100 !== 11) ? 'год'
+                    : (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) ? 'года'
+                    : 'лет';
+                expBadge.textContent = `${n} ${word} опыта`;
+                expBadge.classList.remove('hidden');
+            } else {
+                expBadge.classList.add('hidden');
+            }
+        }
+
+        // Стек
+        if (stackTags) {
+            if (state.user.stack) {
+                const stacks = state.user.stack.split(',').map(s => s.trim()).filter(Boolean);
+                stackTags.innerHTML = stacks.map(s => `<span class="px-2.5 py-1 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-medium rounded-md border border-gray-100 dark:border-gray-700">${escapeHtml(s)}</span>`).join('');
+            } else {
+                stackTags.innerHTML = '';
+            }
+        }
+
+        // GitHub
+        if (githubLink) {
+            if (state.user.github) {
+                githubLink.href = `https://github.com/${encodeURIComponent(state.user.github)}`;
+                githubLink.innerHTML = `<i data-lucide="github" class="w-3.5 h-3.5"></i>github.com/${escapeHtml(state.user.github)}`;
+                githubLink.classList.remove('hidden');
+            } else {
+                githubLink.classList.add('hidden');
+            }
+        }
+
+        refreshIcons();
+    }
+
+    // ===== Контакты =====
     const contacts = parseArray(state.user.contacts);
-    
+
     const contactsCountEl = document.getElementById('profileContactsCount');
     if (contactsCountEl) contactsCountEl.textContent = contacts.length;
 
@@ -900,8 +973,8 @@ async function loadProfileData() {
         }
     }
 
+    // ===== Загрузка стартапов =====
     try {
-        // ИСПРАВЛЕНО: добавлен authHeaders()
         const res = await fetch(`${API_URL}/api/startups?limit=100&offset=0`, {
             headers: authHeaders()
         });
@@ -922,7 +995,7 @@ async function loadProfileData() {
 
             const grid = document.getElementById('myStartupsGrid');
             const empty = document.getElementById('myStartupsEmpty');
-            
+
             if (grid && empty) {
                 if (myStartups.length === 0) {
                     grid.innerHTML = '';
@@ -955,7 +1028,6 @@ async function showUserProfile(id) {
     startupsEl.innerHTML = '';
 
     try {
-        // ИСПРАВЛЕНО: добавлен authHeaders() — теперь бэкенд знает, кто зритель, и может отдать контакты
         const res = await fetch(`${API_URL}/api/users/${id}`, {
             headers: authHeaders()
         });
@@ -963,6 +1035,46 @@ async function showUserProfile(id) {
         const { user, startups } = await res.json();
         const initial = (user.name || 'U')[0].toUpperCase();
         const contacts = parseArray(user.contacts);
+
+        // ===== Собираем блок профессиональной информации =====
+        const levelLabels = { 1: 'Junior', 2: 'Middle', 3: 'Senior', 4: 'Lead' };
+
+        // Склонение слова "год"
+        let expText = '';
+        if (user.experience) {
+            const n = user.experience;
+            const mod10 = n % 10, mod100 = n % 100;
+            const word = (mod10 === 1 && mod100 !== 11) ? 'год'
+                : (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) ? 'года'
+                : 'лет';
+            expText = `${n} ${word} опыта`;
+        }
+
+        // Стек
+        const stackItems = user.stack
+            ? user.stack.split(',').map(s => s.trim()).filter(Boolean)
+            : [];
+
+        // Проверяем, есть ли хоть что-то профессиональное
+        const hasProf = user.role || user.level || user.experience || stackItems.length || user.github;
+
+        const profHtml = hasProf ? `
+        <div class="mt-6 pt-5 border-t border-gray-100 dark:border-gray-800">
+            <h3 class="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-3">Профессиональная информация</h3>
+            <div class="flex flex-wrap gap-2">
+                ${user.role ? `<span class="px-3 py-1.5 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 rounded-lg text-sm font-medium">${escapeHtml(user.role)}</span>` : ''}
+                ${user.level && levelLabels[user.level] ? `<span class="px-3 py-1.5 bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-400 rounded-lg text-sm font-medium">${levelLabels[user.level]}</span>` : ''}
+                ${expText ? `<span class="px-3 py-1.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium">${escapeHtml(expText)}</span>` : ''}
+            </div>
+            ${stackItems.length ? `
+            <div class="flex flex-wrap gap-2 mt-3">
+                ${stackItems.map(s => `<span class="px-2.5 py-1 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-medium rounded-md border border-gray-100 dark:border-gray-700">${escapeHtml(s)}</span>`).join('')}
+            </div>` : ''}
+            ${user.github ? `
+            <a href="https://github.com/${encodeURIComponent(user.github)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 mt-3 text-sm text-brand-600 dark:text-brand-400 hover:underline">
+                <i data-lucide="github" class="w-3.5 h-3.5"></i>github.com/${escapeHtml(user.github)}
+            </a>` : ''}
+        </div>` : '';
 
         contentEl.innerHTML = `
         <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden stagger-item">
@@ -973,6 +1085,7 @@ async function showUserProfile(id) {
                 </div>
                 <h1 class="text-2xl font-bold">${escapeHtml(user.name || 'Участник')}</h1>
                 <p class="text-gray-700 dark:text-gray-300 leading-relaxed mt-3 break-words">${escapeHtml(user.description || 'Описание не добавлено')}</p>
+                ${profHtml}
                 ${contacts.length ? `
                 <div class="flex flex-wrap gap-2 mt-4">
                     ${contacts.map(c => `
@@ -1147,11 +1260,24 @@ async function handleDeleteStartup() {
 // ============ EDIT PROFILE ============
 function openEditProfileModal() {
     if (!state.user) return;
+
+    // Основное
+    document.getElementById('editProfileImage').value = '';
     document.getElementById('editProfileName').value = state.user.name || '';
     document.getElementById('editProfileDescription').value = state.user.description || '';
     document.getElementById('editProfileDescCount').textContent = (state.user.description || '').length;
+
+    // Профессиональная информация (новые поля)
+    document.getElementById('editProfileRole').value = state.user.role || '';
+    document.getElementById('editProfileStack').value = state.user.stack || '';
+    document.getElementById('editProfileExperience').value = state.user.experience ?? '';
+    document.getElementById('editProfileLevel').value = state.user.level ?? '';
+    document.getElementById('editProfileGithub').value = state.user.github || '';
+
+    // Контакты
     state.editProfileContacts = parseArray(state.user.contacts);
     renderEditProfileContactsTags();
+
     openModal('editProfileModal');
     refreshIcons();
 }
@@ -1170,10 +1296,19 @@ function removeEditProfileContact(idx) { state.editProfileContacts.splice(idx, 1
 async function handleEditProfileSubmit(e) {
     e.preventDefault();
     if (!validateFileSize('editProfileImage', 5)) return;
+
     const formData = new FormData();
     formData.append('name', document.getElementById('editProfileName').value);
     formData.append('description', document.getElementById('editProfileDescription').value);
     formData.append('contacts', JSON.stringify(state.editProfileContacts));
+
+    // Профессиональная информация
+    formData.append('role', document.getElementById('editProfileRole').value.trim());
+    formData.append('stack', document.getElementById('editProfileStack').value.trim());
+    formData.append('experience', document.getElementById('editProfileExperience').value);
+    formData.append('level', document.getElementById('editProfileLevel').value);
+    formData.append('github', document.getElementById('editProfileGithub').value.trim());
+
     const avatarFile = document.getElementById('editProfileImage')?.files[0];
     if (avatarFile) formData.append('image', avatarFile);
 
@@ -1183,7 +1318,10 @@ async function handleEditProfileSubmit(e) {
             headers: { 'Authorization': `Bearer ${state.token}` },
             body: formData
         });
-        if (!res.ok) throw new Error('Ошибка сохранения');
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.error?.message || 'Ошибка сохранения');
+        }
         state.user = await res.json();
         state.user.contacts = state.editProfileContacts;
         updateAuthUI();

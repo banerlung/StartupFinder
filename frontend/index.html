@@ -34,12 +34,10 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
       
-      <!-- Логотип: SF + лупа -->
       <a href="#/" target="_self" class="flex items-center gap-2.5 shrink-0" onclick="navigate('home')">
         <span class="font-bold text-lg tracking-tight">Startup<span class="gradient-text">Finder</span></span>
       </a>
 
-      <!-- Центральная навигация (десктоп) -->
       <div class="hidden md:flex items-center gap-1">
         <a href="#/" onclick="navigate('home')" target="_self" class="nav-link px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-50 dark:hover:bg-gray-800 transition-all" data-page="home">
           Главная
@@ -52,9 +50,7 @@
         </a>
       </div>
 
-      <!-- Правая часть -->
       <div class="flex items-center gap-2">
-        <!-- Тема -->
         <div class="relative">
           <button id="themeBtn" onclick="toggleThemeMenu()" class="p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" title="Тема оформления" aria-expanded="false" aria-haspopup="true" aria-label="Выбрать тему">
             <i data-lucide="sun" class="w-5 h-5 theme-icon-light"></i>
@@ -67,13 +63,11 @@
           </div>
         </div>
 
-        <!-- Auth (десктоп) -->
         <div id="authButtons" class="hidden md:flex items-center gap-2">
           <button onclick="openModal('loginModal')" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-brand-600 dark:hover:text-brand-400 transition-colors" id="loginB">Войти</button>
           <button onclick="openModal('registerModal')" class="px-4 py-2 text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 rounded-lg transition-colors shadow-sm shadow-brand-500/20" id="registerB">Регистрация</button>
         </div>
 
-        <!-- Профиль (десктоп) -->
         <div id="profileMenu" class="hidden relative">
           <button onclick="toggleProfileMenu()" class="flex items-center gap-2 p-1 pr-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" aria-expanded="false" aria-haspopup="true" aria-label="Меню профиля">
             <div class="w-8 h-8 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-semibold text-sm overflow-hidden"><span id="userAvatar">U</span></div>
@@ -97,16 +91,13 @@
           </div>
         </div>
 
-        <!-- Бургер -->
         <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" aria-label="Открыть меню"><i data-lucide="menu" class="w-5 h-5"></i></button>
       </div>
     </div>
   </div>
 
-  <!-- Мобильное меню (улучшенное) -->
   <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
     <div class="px-4 py-3 space-y-1">
-      <!-- Навигация -->
       <a href="#/" target="_self" onclick="navigate('home'); toggleMobileMenu()" class="mobile-nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors" data-page="home">
         <i data-lucide="home" class="w-4 h-4"></i>Главная
       </a>
@@ -119,18 +110,14 @@
       
       <div class="border-t border-gray-100 dark:border-gray-800 my-2"></div>
       
-      <!-- Auth -->
       <div id="mobileAuthButtons" class="space-y-1">
         <button onclick="openModal('loginModal'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3"><i data-lucide="log-in" class="w-4 h-4"></i>Войти</button>
         <button onclick="openModal('registerModal'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3"><i data-lucide="user-plus" class="w-4 h-4"></i>Регистрация</button>
       </div>
-            <div id="mobileAuthMenu" class="hidden space-y-1">
+      <div id="mobileAuthMenu" class="hidden space-y-1">
         <button onclick="navigate('profile'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3"><i data-lucide="user" class="w-4 h-4"></i>Мой профиль</button>
         <button onclick="navigate('myStartups'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3"><i data-lucide="layout-grid" class="w-4 h-4"></i>Мои стартапы</button>
-        
-        <!-- НОВАЯ КНОПКА НАСТРОЕК -->
         <button onclick="navigate('settings'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3"><i data-lucide="settings" class="w-4 h-4"></i>Настройки</button>
-        
         <div class="border-t border-gray-100 dark:border-gray-800 my-1"></div>
         <button onclick="confirmLogout(); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors flex items-center gap-3"><i data-lucide="log-out" class="w-4 h-4"></i>Выйти</button>
       </div>
@@ -143,17 +130,14 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="max-w-3xl mx-auto text-center">
       
-      <!-- Заголовок: тонкий, большой -->
       <h1 class="text-5xl sm:text-6xl md:text-7xl font-extralight tracking-tight text-gray-900 dark:text-white mb-6 leading-tight">
         Найди команду<br>для своего проекта
       </h1>
       
-      <!-- Подзаголовок: лёгкий, серый -->
       <p class="text-lg md:text-xl font-light text-gray-500 dark:text-gray-400 mb-12">
         Выложи идею, собери команду и запусти стартап вместе с единомышленниками
       </p>
       
-      <!-- Кнопки: поднял выше (mb-12 вместо mb-20) -->
       <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
         <button onclick="document.getElementById('projectsSection').scrollIntoView({behavior:'smooth'})" class="px-8 py-3.5 bg-brand-500 hover:bg-brand-600 text-white rounded-full font-medium transition-all duration-200 flex items-center gap-2 hover:scale-105 active:scale-95">
           <i data-lucide="search" class="w-4 h-4"></i>
@@ -165,7 +149,6 @@
         </a>
       </div>
       
-      <!-- Статистика: серая, компактная -->
       <div class="grid grid-cols-3 gap-8 max-w-2xl mx-auto">
         <div class="text-center">
           <div class="text-3xl font-semibold text-gray-900 dark:text-white mb-1" id="statStartups">0</div>
@@ -193,7 +176,6 @@
   </div>
   
   <div class="flex items-center gap-2.5 w-full lg:w-auto">
-    <!-- Единый блок поиска -->
     <div class="flex items-center flex-1 lg:w-96 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden shadow-sm focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:border-brand-400 dark:focus-within:border-brand-600 transition-all">
       <div class="pl-3.5 text-gray-400">
         <i data-lucide="search" class="w-4 h-4"></i>
@@ -211,7 +193,6 @@
       </button>
     </div>
     
-    <!-- Фильтры — только иконка, не отвлекает -->
     <button onclick="openFiltersModal()" class="inline-flex items-center justify-center w-10 h-10 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl text-gray-600 dark:text-gray-400 hover:border-brand-400 dark:hover:border-brand-600 hover:text-brand-600 dark:hover:text-brand-400 transition-all shadow-sm shrink-0" title="Фильтры">
       <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
       <span id="activeFiltersCount" class="hidden absolute -top-1 -right-1 bg-brand-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">0</span>
@@ -316,7 +297,6 @@
 <div id="profilePage" class="page">
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
 
-    <!-- Хлебные крошки -->
     <div class="flex items-center gap-2 text-sm text-gray-400 mb-8">
       <button onclick="navigate('home')" class="hover:text-brand-500 transition-colors flex items-center gap-1.5">
         <i data-lucide="home" class="w-4 h-4"></i> Главная
@@ -325,13 +305,10 @@
       <span class="text-gray-900 dark:text-white font-medium">Мой профиль</span>
     </div>
 
-    <!-- КАРТОЧКА ПРОФИЛЯ: мягкая, с легкой тенью и скруглениями -->
     <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden mb-10">
       <div class="p-8 md:p-10">
         
-        <!-- Шапка карточки -->
         <div class="flex flex-col sm:flex-row sm:items-center gap-6 mb-10">
-          <!-- Аватар: с белой обводкой, чтобы выделяться -->
           <div id="profileAvatar" class="w-24 h-24 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white text-3xl font-semibold border-4 border-white dark:border-gray-900 shadow-md overflow-hidden flex-shrink-0 -mt-16 sm:-mt-20 sm:mb-0 mb-4">
             U
           </div>
@@ -341,7 +318,6 @@
               <h1 id="profileNameBig" class="text-2xl md:text-3xl font-semibold tracking-tight text-gray-900 dark:text-white truncate">
                 User Name
               </h1>
-              <!-- Кнопка редактирования: спокойная, серая, круглая -->
               <button onclick="openEditProfileModal()" class="inline-flex items-center gap-2 px-5 py-2 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm font-medium transition-colors flex-shrink-0 border border-gray-200 dark:border-gray-700">
                 <i data-lucide="edit-2" class="w-3.5 h-3.5"></i> Редактировать
               </button>
@@ -357,6 +333,19 @@
           </p>
         </div>
 
+        <!-- ===== НОВЫЙ БЛОК: Профессиональная информация ===== -->
+        <div id="profileProfessional" class="mb-8 hidden">
+          <h3 class="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-3">Профессиональная информация</h3>
+          <div class="flex flex-wrap gap-2">
+            <span id="profileRoleBadge" class="hidden px-3 py-1.5 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 rounded-lg text-sm font-medium"></span>
+            <span id="profileLevelBadge" class="hidden px-3 py-1.5 bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-400 rounded-lg text-sm font-medium"></span>
+            <span id="profileExperienceBadge" class="hidden px-3 py-1.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium"></span>
+          </div>
+          <div id="profileStackTags" class="flex flex-wrap gap-2 mt-3"></div>
+          <a id="profileGithubLink" target="_blank" rel="noopener noreferrer" class="hidden items-center gap-1.5 mt-3 text-sm text-brand-600 dark:text-brand-400 hover:underline"></a>
+        </div>
+        <!-- ===== /НОВЫЙ БЛОК ===== -->
+
         <!-- Контакты -->
         <div>
           <h3 class="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-4">Контакты</h3>
@@ -368,14 +357,12 @@
       </div>
     </div>
 
-    <!-- СЕКЦИЯ СТАРТАПОВ: отдельно, но в едином стиле -->
     <div>
       <div class="flex items-center justify-between mb-6">
         <div>
           <h2 class="text-xl md:text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">Мои стартапы</h2>
           <p class="text-sm text-gray-500 mt-1">Управление вашими проектами</p>
         </div>
-        <!-- Кнопка добавить: круглая, с легкой анимацией -->
         <button onclick="navigate('create')" class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white rounded-full text-sm font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-sm shadow-brand-500/20">
           <i data-lucide="plus" class="w-4 h-4"></i> Добавить
         </button>
@@ -383,7 +370,6 @@
 
       <div id="myStartupsGrid" class="space-y-4"></div>
 
-      <!-- Пустое состояние: пунктирная рамка, аккуратное -->
       <div id="myStartupsEmpty" class="hidden text-center py-16 bg-gray-50 dark:bg-gray-900/30 rounded-2xl border border-dashed border-gray-200 dark:border-gray-800">
         <div class="w-14 h-14 mx-auto mb-5 rounded-full bg-white dark:bg-gray-800 shadow-sm flex items-center justify-center">
           <i data-lucide="folder-open" class="w-7 h-7 text-gray-400"></i>
@@ -410,12 +396,10 @@
 <div id="userProfileStartups" class="space-y-6"></div>
 </div>
 </div>
-<!--МОИ СТАРТАПЫ-->
 <!-- МОИ СТАРТАПЫ (Отдельная страница) -->
 <div id="myStartupsPage" class="page">
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
 
-    <!-- Хлебные крошки -->
     <div class="flex items-center gap-2 text-sm text-gray-400 mb-10">
       <button onclick="navigate('home')" class="hover:text-brand-500 transition-colors flex items-center gap-1.5">
         <i data-lucide="home" class="w-4 h-4"></i> Главная
@@ -424,7 +408,6 @@
       <span class="text-gray-900 dark:text-white font-medium">Мои стартапы</span>
     </div>
 
-    <!-- Заголовок страницы -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-12">
       <div>
         <h1 class="text-3xl md:text-4xl font-semibold tracking-tight text-gray-900 dark:text-white mb-2">Мои стартапы</h1>
@@ -435,10 +418,8 @@
       </button>
     </div>
 
-    <!-- Сетка стартапов -->
     <div id="myStartupsPageGrid" class="space-y-6"></div>
 
-    <!-- Пустое состояние -->
     <div id="myStartupsPageEmpty" class="hidden text-center py-20 bg-gray-50 dark:bg-gray-900/30 rounded-2xl border border-dashed border-gray-200 dark:border-gray-800">
       <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-white dark:bg-gray-800 shadow-sm flex items-center justify-center">
         <i data-lucide="folder-open" class="w-8 h-8 text-gray-400"></i>
@@ -463,7 +444,6 @@
 
 <h1 class="text-2xl md:text-3xl font-bold mb-8">Настройки</h1>
 
-<!-- Внешний вид -->
 <section class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6 mb-6">
 <div class="flex items-center gap-3 mb-4">
 <div class="w-10 h-10 rounded-lg bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center"><i data-lucide="palette" class="w-5 h-5 text-brand-600 dark:text-brand-400"></i></div>
@@ -485,7 +465,6 @@
 </div>
 </section>
 
-<!-- Аккаунт -->
 <section class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6 mb-6">
 <div class="flex items-center gap-3 mb-4">
 <div class="w-10 h-10 rounded-lg bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center"><i data-lucide="user-cog" class="w-5 h-5 text-brand-600 dark:text-brand-400"></i></div>
@@ -501,7 +480,6 @@
 </button>
 </section>
 
-<!-- Опасная зона -->
 <section class="bg-white dark:bg-gray-900 rounded-xl border-2 border-red-200 dark:border-red-900/50 p-6">
 <div class="flex items-center gap-3 mb-4">
 <div class="w-10 h-10 rounded-lg bg-red-50 dark:bg-red-950/30 flex items-center justify-center"><i data-lucide="alert-triangle" class="w-5 h-5 text-red-500"></i></div>
@@ -524,7 +502,6 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
       
-      <!-- Бренд -->
       <div>
         <div class="flex items-center gap-2 mb-4">
           <span class="font-bold text-lg">Startup<span class="gradient-text">Finder</span></span>
@@ -534,7 +511,6 @@
         </p>
       </div>
 
-      <!-- Навигация -->
       <div>
         <h4 class="font-semibold text-sm uppercase tracking-wider text-gray-900 dark:text-gray-100 mb-4">Навигация</h4>
         <ul class="space-y-3">
@@ -556,16 +532,13 @@
           <li>
             <a href="help.html" class="text-sm text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors">Поддержка</a>
           </li>
-         
         </ul>
       </div>
 
-      <!-- Соцсети -->
       <div>
         <h4 class="font-semibold text-sm uppercase tracking-wider text-gray-900 dark:text-gray-100 mb-4">Мы в соцсетях</h4>
         <div class="flex items-center gap-3">
           
-          <!-- VK -->
           <a href="https://vk.com/startup_finder_dev" target="_blank" rel="noopener noreferrer" 
              class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-[#0077FF] hover:border-[#0077FF]/30 dark:hover:border-[#0077FF]/30 hover:bg-[#0077FF]/10 transition-all duration-200" 
              aria-label="VK">
@@ -574,7 +547,6 @@
             </svg>
           </a>
 
-          <!-- Telegram -->
           <a href="https://t.me/startup_finder_dev" target="_blank" rel="noopener noreferrer" 
              class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-[#229ED9] hover:border-[#229ED9]/30 dark:hover:border-[#229ED9]/30 hover:bg-[#229ED9]/10 transition-all duration-200" 
              aria-label="Telegram">
@@ -583,7 +555,6 @@
             </svg>
           </a>
 
-          <!-- TikTok -->
           <a href="https://tiktok.com/@startup_finder" target="_blank" rel="noopener noreferrer" 
              class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:border-gray-400 dark:hover:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-800 transition-all duration-200" 
              aria-label="TikTok">
@@ -597,7 +568,6 @@
 
     </div>
 
-    <!-- Нижняя строка -->
     <div class="mt-10 pt-6 border-t border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
       <p class="text-sm text-gray-500 flex items-center gap-1.5">
         © 2026 StartupFinder. Сделано с 
@@ -808,22 +778,90 @@
 </div>
 
 <div id="editProfileModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="editProfileTitle">
-<div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-lg overflow-hidden max-h-[90vh] flex flex-col animate-scale-in">
-<div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
-<h2 id="editProfileTitle" class="text-xl font-bold">Редактировать профиль</h2>
-<button onclick="closeModal('editProfileModal')" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" aria-label="Закрыть"><i data-lucide="x" class="w-5 h-5"></i></button>
-</div>
-<form id="editProfileForm" onsubmit="handleEditProfileSubmit(event)" class="p-6 overflow-y-auto flex-1 space-y-4">
-<div><label class="block text-sm font-semibold mb-1.5">Аватар профиля</label><input type="file" id="editProfileImage" accept="image/*" class="input-field w-full px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100"><p class="text-xs text-gray-500 mt-1">Оставьте пустым, чтобы сохранить текущий аватар. Максимум 5 МБ.</p></div>
-<div><label class="block text-sm font-semibold mb-1.5">Имя / Никнейм</label><input type="text" id="editProfileName" required maxlength="50" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none"></div>
-<div><label class="block text-sm font-semibold mb-1.5">О себе</label><textarea id="editProfileDescription" maxlength="500" rows="4" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none resize-none"></textarea><div class="flex justify-end mt-1 text-xs text-gray-500"><span id="editProfileDescCount">0</span> / 500</div></div>
-<div><label class="block text-sm font-semibold mb-1.5">Контакты</label><div id="editProfileContactsTags" class="flex flex-wrap gap-2 mb-2"></div><input type="text" id="editProfileContactInput" placeholder="Введите контакт и нажмите Enter" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none"></div>
-<button type="submit" class="hidden" aria-hidden="true"></button>
-</form>
-<div class="p-6 border-t border-gray-200 dark:border-gray-800">
-<button onclick="document.getElementById('editProfileForm').requestSubmit()" class="w-full px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white rounded-lg font-semibold transition-colors btn-hover">Сохранить</button>
-</div>
-</div>
+  <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-lg overflow-hidden max-h-[90vh] flex flex-col animate-scale-in">
+    <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
+      <h2 id="editProfileTitle" class="text-xl font-bold">Редактировать профиль</h2>
+      <button onclick="closeModal('editProfileModal')" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" aria-label="Закрыть"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+
+    <form id="editProfileForm" onsubmit="handleEditProfileSubmit(event)" class="p-6 overflow-y-auto flex-1 space-y-4">
+
+      <div>
+        <label class="block text-sm font-semibold mb-1.5">Аватар профиля</label>
+        <input type="file" id="editProfileImage" accept="image/*" class="input-field w-full px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100">
+        <p class="text-xs text-gray-500 mt-1">Оставьте пустым, чтобы сохранить текущий аватар. Максимум 5 МБ.</p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1.5">Имя / Никнейм</label>
+        <input type="text" id="editProfileName" required maxlength="50" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none">
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-1.5">О себе</label>
+        <textarea id="editProfileDescription" maxlength="500" rows="4" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none resize-none"></textarea>
+        <div class="flex justify-end mt-1 text-xs text-gray-500"><span id="editProfileDescCount">0</span> / 500</div>
+      </div>
+
+      <!-- ===== НОВЫЙ БЛОК: Профессиональная информация ===== -->
+      <div class="pt-4 border-t border-gray-100 dark:border-gray-800">
+        <h3 class="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-4">Профессиональная информация</h3>
+
+        <div class="space-y-4">
+
+          <div>
+            <label class="block text-sm font-semibold mb-1.5">Роль / Специализация</label>
+            <input type="text" id="editProfileRole" maxlength="100" placeholder="Frontend-разработчик" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none">
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-1.5">Стек технологий</label>
+            <input type="text" id="editProfileStack" placeholder="React, Node.js, PostgreSQL" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none">
+            <p class="text-xs text-gray-500 mt-1">Через запятую</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-sm font-semibold mb-1.5">Опыт (лет)</label>
+              <input type="number" id="editProfileExperience" min="0" max="50" placeholder="3" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-1.5">Уровень</label>
+              <select id="editProfileLevel" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none">
+                <option value="">Не указан</option>
+                <option value="1">Junior</option>
+                <option value="2">Middle</option>
+                <option value="3">Senior</option>
+                <option value="4">Lead</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold mb-1.5">GitHub</label>
+            <div class="flex items-center gap-2">
+              <span class="text-gray-400 text-sm select-none">github.com/</span>
+              <input type="text" id="editProfileGithub" maxlength="50" placeholder="username" class="input-field flex-1 px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none">
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <!-- ===== /НОВЫЙ БЛОК ===== -->
+
+      <div>
+        <label class="block text-sm font-semibold mb-1.5">Контакты</label>
+        <div id="editProfileContactsTags" class="flex flex-wrap gap-2 mb-2"></div>
+        <input type="text" id="editProfileContactInput" placeholder="Введите контакт и нажмите Enter" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none">
+      </div>
+
+      <button type="submit" class="hidden" aria-hidden="true"></button>
+    </form>
+
+    <div class="p-6 border-t border-gray-200 dark:border-gray-800">
+      <button onclick="document.getElementById('editProfileForm').requestSubmit()" class="w-full px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white rounded-lg font-semibold transition-colors btn-hover">Сохранить</button>
+    </div>
+  </div>
 </div>
 
 <div id="toastContainer" class="fixed top-20 right-4 z-[100] space-y-2 pointer-events-none" role="status" aria-live="polite" aria-atomic="true"></div>
@@ -839,6 +877,6 @@
   </svg>
   <span class="text-sm font-medium text-zinc-300">Нет подключения к интернету</span>
 </div>
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="main.js"></script>
+<script src="main.js"></script>
 </body>
 </html>
