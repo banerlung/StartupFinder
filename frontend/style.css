@@ -2803,7 +2803,7 @@ background: #FFF7ED;
 color: #C2410C;
 border-radius: 6px;
 font-size: 13px;
-font-weight: 500;
+font-weight: 400;
 transition: all 0.2s;
 animation: tagPop var(--dur-med) var(--spring) both;
 }

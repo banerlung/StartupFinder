@@ -14,10 +14,8 @@
 </script>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-600-normal.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/cyrillic-400-normal.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/cyrillic-500-normal.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/cyrillic-600-normal.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/cyrillic-700-normal.css">
 <link rel="icon" href="icons/logo.png">
@@ -36,13 +34,13 @@
       </a>
 
       <div class="hidden md:flex items-center gap-1">
-        <a href="#/" onclick="navigate('home')" target="_self" class="nav-link px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-50 dark:hover:bg-gray-800 transition-all" data-page="home">
+        <a href="#/" onclick="navigate('home')" target="_self" class="nav-link px-3 py-2 rounded-lg text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-50 dark:hover:bg-gray-800 transition-all" data-page="home">
           Главная
         </a>
-        <a href="#/" target="_self" onclick="document.getElementById('projectsSection')?.scrollIntoView({behavior:'smooth'}); return false;" class="nav-link px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-50 dark:hover:bg-gray-800 transition-all" data-page="projects">
+        <a href="#/" target="_self" onclick="document.getElementById('projectsSection')?.scrollIntoView({behavior:'smooth'}); return false;" class="nav-link px-3 py-2 rounded-lg text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-50 dark:hover:bg-gray-800 transition-all" data-page="projects">
           Проекты
         </a>
-        <a href="#/create" onclick="handleCreateClick()" target="_self" class="nav-link px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-50 dark:hover:bg-gray-800 transition-all" data-page="create">
+        <a href="#/create" onclick="handleCreateClick()" target="_self" class="nav-link px-3 py-2 rounded-lg text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-50 dark:hover:bg-gray-800 transition-all" data-page="create">
           Создать
         </a>
       </div>
@@ -61,14 +59,14 @@
         </div>
 
         <div id="authButtons" class="hidden md:flex items-center gap-2">
-          <button onclick="openModal('loginModal')" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-brand-600 dark:hover:text-brand-400 transition-colors" id="loginB">Войти</button>
+          <button onclick="openModal('loginModal')" class="px-4 py-2 text-sm font-normal text-gray-700 dark:text-gray-300 hover:text-brand-600 dark:hover:text-brand-400 transition-colors" id="loginB">Войти</button>
           <button onclick="openModal('registerModal')" class="px-4 py-2 text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 rounded-lg transition-colors shadow-sm shadow-brand-500/20" id="registerB">Регистрация</button>
         </div>
 
         <div id="profileMenu" class="hidden relative">
           <button onclick="toggleProfileMenu()" class="flex items-center gap-2 p-1 pr-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" aria-expanded="false" aria-haspopup="true" aria-label="Меню профиля">
             <div class="w-8 h-8 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-semibold text-sm overflow-hidden"><span id="userAvatar">U</span></div>
-            <span id="userNameNav" class="hidden sm:block text-sm font-medium max-w-[120px] truncate"></span>
+            <span id="userNameNav" class="hidden sm:block text-sm font-normal max-w-[120px] truncate"></span>
             <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500"></i>
           </button>
           <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-56 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 overflow-hidden" role="menu">
@@ -79,7 +77,7 @@
             <div class="p-1.5">
               <button onclick="navigate('profile'); toggleProfileMenu()" class="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors" role="menuitem"><i data-lucide="user" class="w-4 h-4"></i><span>Мой профиль</span></button>
               <button onclick="navigate('create'); toggleProfileMenu()" class="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors" role="menuitem"><i data-lucide="plus-circle" class="w-4 h-4"></i><span>Создать проект</span></button>
-              <button onclick="navigate('myStartups'); toggleProfileMenu()" class="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors" role="menuitem"><i data-lucide="layout-grid" class="w-4 h-4"></i><span>Мои стартапы</span><span id="myStartupsCount" class="ml-auto text-xs bg-brand-100 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 px-2 py-0.5 rounded-full font-medium">0</span></button>
+              <button onclick="navigate('myStartups'); toggleProfileMenu()" class="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors" role="menuitem"><i data-lucide="layout-grid" class="w-4 h-4"></i><span>Мои стартапы</span><span id="myStartupsCount" class="ml-auto text-xs bg-brand-100 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 px-2 py-0.5 rounded-full font-normal">0</span></button>
               <button onclick="navigate('settings'); toggleProfileMenu()" class="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors" role="menuitem"><i data-lucide="settings" class="w-4 h-4"></i><span>Настройки</span></button>
             </div>
             <div class="p-1.5 border-t border-gray-100 dark:border-gray-800">
@@ -95,28 +93,28 @@
 
   <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
     <div class="px-4 py-3 space-y-1">
-      <a href="#/" target="_self" onclick="navigate('home'); toggleMobileMenu()" class="mobile-nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors" data-page="home">
+      <a href="#/" target="_self" onclick="navigate('home'); toggleMobileMenu()" class="mobile-nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-normal hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors" data-page="home">
         <i data-lucide="home" class="w-4 h-4"></i>Главная
       </a>
-      <a href="#/" target="_self" onclick="document.getElementById('projectsSection')?.scrollIntoView({behavior:'smooth'}); toggleMobileMenu(); return false;" class="mobile-nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors" data-page="projects">
+      <a href="#/" target="_self" onclick="document.getElementById('projectsSection')?.scrollIntoView({behavior:'smooth'}); toggleMobileMenu(); return false;" class="mobile-nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-normal hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors" data-page="projects">
         <i data-lucide="compass" class="w-4 h-4"></i>Проекты
       </a>
-      <a href="#/create" target="_self" onclick="handleCreateClick(); toggleMobileMenu()" class="mobile-nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors" data-page="create">
+      <a href="#/create" target="_self" onclick="handleCreateClick(); toggleMobileMenu()" class="mobile-nav-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-normal hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors" data-page="create">
         <i data-lucide="plus-circle" class="w-4 h-4"></i>Создать проект
       </a>
       
       <div class="border-t border-gray-100 dark:border-gray-800 my-2"></div>
       
       <div id="mobileAuthButtons" class="space-y-1">
-        <button onclick="openModal('loginModal'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3"><i data-lucide="log-in" class="w-4 h-4"></i>Войти</button>
+        <button onclick="openModal('loginModal'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-normal hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3"><i data-lucide="log-in" class="w-4 h-4"></i>Войти</button>
         <button onclick="openModal('registerModal'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3"><i data-lucide="user-plus" class="w-4 h-4"></i>Регистрация</button>
       </div>
       <div id="mobileAuthMenu" class="hidden space-y-1">
-        <button onclick="navigate('profile'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3"><i data-lucide="user" class="w-4 h-4"></i>Мой профиль</button>
-        <button onclick="navigate('myStartups'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3"><i data-lucide="layout-grid" class="w-4 h-4"></i>Мои стартапы</button>
-        <button onclick="navigate('settings'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3"><i data-lucide="settings" class="w-4 h-4"></i>Настройки</button>
+        <button onclick="navigate('profile'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-normal hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3"><i data-lucide="user" class="w-4 h-4"></i>Мой профиль</button>
+        <button onclick="navigate('myStartups'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-normal hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3"><i data-lucide="layout-grid" class="w-4 h-4"></i>Мои стартапы</button>
+        <button onclick="navigate('settings'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-normal hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3"><i data-lucide="settings" class="w-4 h-4"></i>Настройки</button>
         <div class="border-t border-gray-100 dark:border-gray-800 my-1"></div>
-        <button onclick="confirmLogout(); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors flex items-center gap-3"><i data-lucide="log-out" class="w-4 h-4"></i>Выйти</button>
+        <button onclick="confirmLogout(); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-normal text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors flex items-center gap-3"><i data-lucide="log-out" class="w-4 h-4"></i>Выйти</button>
       </div>
     </div>
   </div>
@@ -127,11 +125,11 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="max-w-3xl mx-auto text-center">
       
-      <h1 class="text-5xl sm:text-6xl md:text-7xl font-extralight tracking-tight text-gray-900 dark:text-white mb-6 leading-tight">
+      <h1 class="text-5xl sm:text-6xl md:text-7xl font-normal tracking-tight text-gray-900 dark:text-white mb-6 leading-tight">
         Найди команду<br>для своего проекта
       </h1>
       
-      <p class="text-lg md:text-xl font-light text-gray-500 dark:text-gray-400">
+      <p class="text-lg md:text-xl font-normal text-gray-500 dark:text-gray-400">
         Выложи идею, собери команду и запусти стартап вместе с единомышленниками
       </p>  
     </div>
@@ -204,7 +202,7 @@
 <div class="flex items-center gap-2 text-sm text-gray-500 mb-6">
 <button onclick="navigate('home')" class="hover:text-brand-600 dark:hover:text-brand-400 transition-colors flex items-center gap-1"><i data-lucide="home" class="w-4 h-4"></i><span>На главную</span></button>
 <i data-lucide="chevron-right" class="w-4 h-4"></i>
-<span class="text-gray-900 dark:text-white font-medium">Создать проект</span>
+<span class="text-gray-900 dark:text-white font-semibold">Создать проект</span>
 </div>
 <div class="mb-8">
 <h1 class="text-3xl font-bold mb-2">Создать проект</h1>
@@ -222,7 +220,7 @@
 </div>
 <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6">
 <label class="block text-sm font-semibold mb-2">Изображение проекта (необязательно)</label>
-<input type="file" id="createImage" accept="image/jpeg,image/png,image/webp" ...>
+<input type="file" id="createImage" accept="image/jpeg,image/png,image/webp" class="input-field w-full px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100">
 <p class="text-xs text-gray-500 mt-1">Максимум 5 МБ. Форматы: JPG, PNG, WebP.</p>
 </div>
 <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6">
@@ -272,7 +270,7 @@
         <i data-lucide="home" class="w-4 h-4"></i> Главная
       </button>
       <i data-lucide="chevron-right" class="w-3 h-3"></i>
-      <span class="text-gray-900 dark:text-white font-medium">Мой профиль</span>
+      <span class="text-gray-900 dark:text-white font-semibold">Мой профиль</span>
     </div>
 
     <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden mb-10">
@@ -288,7 +286,7 @@
               <h1 id="profileNameBig" class="text-2xl md:text-3xl font-semibold tracking-tight text-gray-900 dark:text-white truncate">
                 User Name
               </h1>
-              <button onclick="openEditProfileModal()" class="inline-flex items-center gap-2 px-5 py-2 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm font-medium transition-colors flex-shrink-0 border border-gray-200 dark:border-gray-700">
+              <button onclick="openEditProfileModal()" class="inline-flex items-center gap-2 px-5 py-2 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm font-normal transition-colors flex-shrink-0 border border-gray-200 dark:border-gray-700">
                 <i data-lucide="edit-2" class="w-3.5 h-3.5"></i> Редактировать
               </button>
             </div>
@@ -311,13 +309,13 @@
             <!-- Роль -->
             <p id="profileRoleLine" class="text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed hidden">
               <span class="text-gray-400 dark:text-gray-500">Роль:</span>
-              <span id="profileRoleValue" class="text-gray-900 dark:text-white font-medium"></span>
+              <span id="profileRoleValue" class="text-gray-900 dark:text-white font-semibold"></span>
             </p>
 
             <!-- Уровень и опыт -->
             <p id="profileLevelLine" class="text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed hidden">
               <span class="text-gray-400 dark:text-gray-500">Уровень:</span>
-              <span id="profileLevelValue" class="text-gray-900 dark:text-white font-medium"></span>
+              <span id="profileLevelValue" class="text-gray-900 dark:text-white font-semibold"></span>
             </p>
 
             <!-- Стек -->
@@ -331,7 +329,7 @@
             <!-- GitHub -->
             <p id="profileGithubLine" class="text-sm md:text-base leading-relaxed hidden">
               <span class="text-gray-400 dark:text-gray-500">GitHub:</span>
-              <a id="profileGithubLink" href="#" target="_blank" rel="noopener noreferrer" class="text-brand-600 dark:text-brand-400 font-medium hover:underline"></a>
+              <a id="profileGithubLink" href="#" target="_blank" rel="noopener noreferrer" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline"></a>
             </p>
           </div>
         </div>
@@ -354,7 +352,7 @@
           <h2 class="text-xl md:text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">Мои стартапы</h2>
           <p class="text-sm text-gray-500 mt-1">Управление вашими проектами</p>
         </div>
-        <button onclick="navigate('create')" class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white rounded-full text-sm font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-sm shadow-brand-500/20">
+        <button onclick="navigate('create')" class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white rounded-full text-sm font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-sm shadow-brand-500/20">
           <i data-lucide="plus" class="w-4 h-4"></i> Добавить
         </button>
       </div>
@@ -367,7 +365,7 @@
         </div>
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">У вас пока нет стартапов</h3>
         <p class="text-sm text-gray-500 mb-6 max-w-sm mx-auto">Опубликуйте свою первую идею и найдите команду</p>
-        <button onclick="navigate('create')" class="inline-flex items-center gap-2 px-6 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+        <button onclick="navigate('create')" class="inline-flex items-center gap-2 px-6 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
           <i data-lucide="plus" class="w-4 h-4"></i> Создать проект
         </button>
       </div>
@@ -380,7 +378,7 @@
 <div class="flex items-center gap-2 text-sm text-gray-500 mb-6">
 <button onclick="navigate('home')" class="hover:text-brand-600 dark:hover:text-brand-400 transition-colors flex items-center gap-1"><i data-lucide="home" class="w-4 h-4"></i><span>На главную</span></button>
 <i data-lucide="chevron-right" class="w-4 h-4"></i>
-<span class="text-gray-900 dark:text-white font-medium">Профиль участника</span>
+<span class="text-gray-900 dark:text-white font-semibold">Профиль участника</span>
 </div>
 <div id="userProfileContent"></div>
 <h2 class="text-xl font-bold mt-8 mb-4">Проекты автора</h2>
@@ -396,7 +394,7 @@
         <i data-lucide="home" class="w-4 h-4"></i> Главная
       </button>
       <i data-lucide="chevron-right" class="w-3 h-3"></i>
-      <span class="text-gray-900 dark:text-white font-medium">Мои стартапы</span>
+      <span class="text-gray-900 dark:text-white font-semibold">Мои стартапы</span>
     </div>
 
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-12">
@@ -404,7 +402,7 @@
         <h1 class="text-3xl md:text-4xl font-semibold tracking-tight text-gray-900 dark:text-white mb-2">Мои стартапы</h1>
         <p class="text-sm text-gray-500"><span id="myStartupsTotal">0</span> проектов</p>
       </div>
-      <button onclick="navigate('create')" class="inline-flex items-center gap-2 px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-full text-sm font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
+      <button onclick="navigate('create')" class="inline-flex items-center gap-2 px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-full text-sm font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
         <i data-lucide="plus" class="w-4 h-4"></i> Новый проект
       </button>
     </div>
@@ -417,7 +415,7 @@
       </div>
       <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">У вас пока нет стартапов</h3>
       <p class="text-sm text-gray-500 mb-8 max-w-md mx-auto">Опубликуйте свою первую идею и найдите команду для её реализации</p>
-      <button onclick="navigate('create')" class="inline-flex items-center gap-2 px-8 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-full text-sm font-medium transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
+      <button onclick="navigate('create')" class="inline-flex items-center gap-2 px-8 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-full text-sm font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
         <i data-lucide="plus" class="w-4 h-4"></i> Создать проект
       </button>
     </div>
@@ -430,7 +428,7 @@
 <div class="flex items-center gap-2 text-sm text-gray-500 mb-6">
 <button onclick="navigate('home')" class="hover:text-brand-600 dark:hover:text-brand-400 transition-colors flex items-center gap-1"><i data-lucide="home" class="w-4 h-4"></i><span>На главную</span></button>
 <i data-lucide="chevron-right" class="w-4 h-4"></i>
-<span class="text-gray-900 dark:text-white font-medium">Настройки</span>
+<span class="text-gray-900 dark:text-white font-semibold">Настройки</span>
 </div>
 
 <h1 class="text-2xl md:text-3xl font-bold mb-8">Настройки</h1>
@@ -445,13 +443,13 @@
 </div>
 <div class="grid grid-cols-3 gap-3">
 <button onclick="setTheme('light'); updateThemeButtons()" data-theme-btn="light" class="theme-choice flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-colors">
-<i data-lucide="sun" class="w-5 h-5"></i><span class="text-sm font-medium">Светлая</span>
+<i data-lucide="sun" class="w-5 h-5"></i><span class="text-sm font-normal">Светлая</span>
 </button>
 <button onclick="setTheme('dark'); updateThemeButtons()" data-theme-btn="dark" class="theme-choice flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-colors">
-<i data-lucide="moon" class="w-5 h-5"></i><span class="text-sm font-medium">Тёмная</span>
+<i data-lucide="moon" class="w-5 h-5"></i><span class="text-sm font-normal">Тёмная</span>
 </button>
 <button onclick="setTheme('system'); updateThemeButtons()" data-theme-btn="system" class="theme-choice flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-colors">
-<i data-lucide="monitor" class="w-5 h-5"></i><span class="text-sm font-medium">Системная</span>
+<i data-lucide="monitor" class="w-5 h-5"></i><span class="text-sm font-normal">Системная</span>
 </button>
 </div>
 </section>
@@ -466,7 +464,7 @@
 </div>
 <button onclick="confirmLogout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left">
 <i data-lucide="log-out" class="w-5 h-5 text-gray-500"></i>
-<span class="font-medium">Выйти из аккаунта</span>
+<span class="font-semibold">Выйти из аккаунта</span>
 <i data-lucide="chevron-right" class="w-4 h-4 ml-auto text-gray-400"></i>
 </button>
 </section>
@@ -481,7 +479,7 @@
 </div>
 <button onclick="openModal('deleteAccountModal')" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors text-left">
 <i data-lucide="trash-2" class="w-5 h-5"></i>
-<span class="font-medium">Удалить аккаунт</span>
+<span class="font-semibold">Удалить аккаунт</span>
 <i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i>
 </button>
 <p class="text-xs text-gray-500 dark:text-gray-400 mt-3">Удалятся ваш аккаунт, все ваши проекты и личные данные. Согласно политике конфиденциальности, восстановить их будет невозможно.</p>
@@ -576,8 +574,8 @@
 <button onclick="closeModal('loginModal')" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" aria-label="Закрыть"><i data-lucide="x" class="w-5 h-5"></i></button>
 </div>
 <form onsubmit="handleLogin(event)" class="space-y-4">
-<div><label class="block text-sm font-medium mb-1.5">Email</label><input type="email" id="loginEmail" required class="input-field w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none" placeholder="you@example.com"></div>
-<div><label class="block text-sm font-medium mb-1.5">Пароль</label><input type="password" id="loginPassword" required class="input-field w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none" placeholder="••••••••"></div>
+<div><label class="block text-sm font-normal mb-1.5">Email</label><input type="email" id="loginEmail" required class="input-field w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none" placeholder="you@example.com"></div>
+<div><label class="block text-sm font-normal mb-1.5">Пароль</label><input type="password" id="loginPassword" required class="input-field w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none" placeholder="••••••••"></div>
 <div class="flex justify-end"><button type="button" onclick="closeModal('loginModal'); openModal('forgotModal')" class="text-sm text-brand-600 dark:text-brand-400 hover:underline">Забыли пароль?</button></div>
 <button type="submit" id="loginSubmitBtn" class="w-full px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-lg font-semibold transition-colors btn-hover">Войти</button>
 <p class="text-center text-sm text-gray-600 dark:text-gray-400">Нет аккаунта? <button type="button" onclick="closeModal('loginModal'); openModal('registerModal')" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline">Зарегистрироваться</button></p>
@@ -594,11 +592,11 @@
 <button onclick="closeModal('registerModal')" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" aria-label="Закрыть"><i data-lucide="x" class="w-5 h-5"></i></button>
 </div>
 <form onsubmit="handleRegister(event)" class="space-y-4">
-<div><label class="block text-sm font-medium mb-1.5">Email</label><input type="email" id="registerEmail" required class="input-field w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none" placeholder="you@example.com"></div>
-<div><label class="block text-sm font-medium mb-1.5">Пароль <span class="text-gray-400 font-normal"></span></label><input type="password" id="registerPassword" required minlength="6" class="input-field w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none" placeholder="минимум 6 символов"></div>
+<div><label class="block text-sm font-normal mb-1.5">Email</label><input type="email" id="registerEmail" required class="input-field w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none" placeholder="you@example.com"></div>
+<div><label class="block text-sm font-normal mb-1.5">Пароль <span class="text-gray-400 font-normal"></span></label><input type="password" id="registerPassword" required minlength="6" class="input-field w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none" placeholder="минимум 6 символов"></div>
 <label class="flex items-start gap-3 cursor-pointer text-left">
 <input type="checkbox" id="registerConsent" required class="mt-0.5 w-4 h-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500">
-<span class="text-xs text-gray-600 dark:text-gray-400">Я соглашаюсь с <a href="terms.html" target="_blank" rel="noopener" class="text-brand-600 dark:text-brand-400 font-medium hover:underline">пользовательским соглашением</a> и <a href="privacy.html" target="_blank" rel="noopener" class="text-brand-600 dark:text-brand-400 font-medium hover:underline">политикой конфиденциальности</a>, даю согласие на обработку персональных данных</span>
+<span class="text-xs text-gray-600 dark:text-gray-400">Я соглашаюсь с <a href="terms.html" target="_blank" rel="noopener" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline">пользовательским соглашением</a> и <a href="privacy.html" target="_blank" rel="noopener" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline">политикой конфиденциальности</a>, даю согласие на обработку персональных данных</span>
 </label>
 <button type="submit" id="registerSubmitBtn" class="w-full px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-lg font-semibold transition-colors btn-hover">Создать аккаунт</button>
 <p class="text-center text-sm text-gray-600 dark:text-gray-400">Уже есть аккаунт? <button type="button" onclick="closeModal('registerModal'); openModal('loginModal')" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline">Войти</button></p>
@@ -616,7 +614,7 @@
 <p class="text-sm text-gray-600 dark:text-gray-400">Мы отправили 6-значный код на <br><span id="verifyEmail" class="font-semibold text-gray-900 dark:text-white"></span></p>
 </div>
 <form onsubmit="handleVerify(event)" class="space-y-4">
-<div><label class="block text-sm font-medium mb-1.5">Введите код</label><input type="text" id="verifyCode" required maxlength="6" pattern="[0-9]{6}" inputmode="numeric" autocomplete="one-time-code" class="input-field w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-center text-2xl font-mono tracking-widest focus:outline-none" placeholder="000000"></div>
+<div><label class="block text-sm font-normal mb-1.5">Введите код</label><input type="text" id="verifyCode" required maxlength="6" pattern="[0-9]{6}" inputmode="numeric" autocomplete="one-time-code" class="input-field w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-center text-2xl font-mono tracking-widest focus:outline-none" placeholder="000000"></div>
 <button type="submit" id="verifySubmitBtn" class="w-full px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-lg font-semibold transition-colors btn-hover">Подтвердить</button>
 <button type="button" onclick="closeModal('verifyModal'); openModal('loginModal')" class="w-full text-center text-sm text-gray-600 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors">← Вернуться ко входу</button>
 </form>
@@ -633,7 +631,7 @@
 </div>
 <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">Введите email, привязанный к аккаунту. Мы отправим на него 6-значный код для сброса пароля.</p>
 <form onsubmit="handleForgotPassword(event)" class="space-y-4">
-<div><label class="block text-sm font-medium mb-1.5">Email</label><input type="email" id="forgotEmail" required class="input-field w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none" placeholder="you@example.com"></div>
+<div><label class="block text-sm font-normal mb-1.5">Email</label><input type="email" id="forgotEmail" required class="input-field w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none" placeholder="you@example.com"></div>
 <button type="submit" id="forgotSubmitBtn" class="w-full px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-lg font-semibold transition-colors btn-hover">Получить код</button>
 <button type="button" onclick="closeModal('forgotModal'); openModal('loginModal')" class="w-full text-center text-sm text-gray-600 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors">← Вернуться ко входу</button>
 </form>
@@ -650,9 +648,9 @@
 </div>
 <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">Код отправлен на <span id="resetEmail" class="font-semibold text-gray-900 dark:text-white"></span>. Введите его и новый пароль.</p>
 <form onsubmit="handleResetPassword(event)" class="space-y-4">
-<div><label class="block text-sm font-medium mb-1.5">Код из почты</label><input type="text" id="resetCode" required maxlength="6" pattern="[0-9]{6}" inputmode="numeric" autocomplete="one-time-code" class="input-field w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-center text-xl font-mono tracking-widest focus:outline-none" placeholder="000000"></div>
-<div><label class="block text-sm font-medium mb-1.5">Новый пароль</label><input type="password" id="resetNewPassword" required minlength="6" class="input-field w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none" placeholder="••••••••"></div>
-<div><label class="block text-sm font-medium mb-1.5">Повторите новый пароль</label><input type="password" id="resetConfirmPassword" required minlength="6" class="input-field w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none" placeholder="••••••••"></div>
+<div><label class="block text-sm font-normal mb-1.5">Код из почты</label><input type="text" id="resetCode" required maxlength="6" pattern="[0-9]{6}" inputmode="numeric" autocomplete="one-time-code" class="input-field w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-center text-xl font-mono tracking-widest focus:outline-none" placeholder="000000"></div>
+<div><label class="block text-sm font-normal mb-1.5">Новый пароль</label><input type="password" id="resetNewPassword" required minlength="6" class="input-field w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none" placeholder="••••••••"></div>
+<div><label class="block text-sm font-normal mb-1.5">Повторите новый пароль</label><input type="password" id="resetConfirmPassword" required minlength="6" class="input-field w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none" placeholder="••••••••"></div>
 <button type="submit" id="resetSubmitBtn" class="w-full px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-lg font-semibold transition-colors btn-hover">Сменить пароль</button>
 <button type="button" onclick="closeModal('resetModal'); openModal('forgotModal')" class="w-full text-center text-sm text-gray-600 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors">← Запросить код заново</button>
 </form>
@@ -735,8 +733,8 @@
 <input type="hidden" id="editStartupId">
 <div><label class="block text-sm font-semibold mb-1.5">Название проекта</label><input type="text" id="editStartupName" required maxlength="100" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none"></div>
 <div><label class="block text-sm font-semibold mb-1.5">Описание</label><textarea id="editStartupDescription" required maxlength="1000" rows="5" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none resize-none"></textarea><div class="flex justify-end mt-1 text-xs text-gray-500"><span id="editDescCount">0</span> / 1000</div></div>
-<div><label class="block text-sm font-semibold mb-1.5">Изображение проекта</label><input type="file" id="editStartupImage" accept="image/*" class="input-field w-full px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100"><p class="text-xs text-gray-500 mt-1">Оставьте пустым, чтобы сохранить текущее изображение. Максимум 5 МБ.</p></div>
-<label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="editStartupIsPaid" class="w-4 h-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"><span class="text-sm font-medium flex items-center gap-1.5"><i data-lucide="wallet" class="w-4 h-4 text-green-600 dark:text-green-400"></i>Проект с оплатой</span></label>
+<div><label class="block text-sm font-semibold mb-1.5">Изображение проекта</label><input type="file" id="editStartupImage" accept="image/jpeg,image/png,image/webp" class="input-field w-full px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100"><p class="text-xs text-gray-500 mt-1">Оставьте пустым, чтобы сохранить текущее изображение. Максимум 5 МБ.</p></div>
+<label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="editStartupIsPaid" class="w-4 h-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"><span class="text-sm font-semibold flex items-center gap-1.5"><i data-lucide="wallet" class="w-4 h-4 text-green-600 dark:text-green-400"></i>Проект с оплатой</span></label>
 <div><label class="block text-sm font-semibold mb-1.5">Технологии (стек)</label><input type="text" id="editStartupStack" placeholder="React, Node.js, ..." class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none"></div>
 <div><label class="block text-sm font-semibold mb-1.5">Кого вы ищете (вакансии)</label><div id="editVacanciesTags" class="flex flex-wrap gap-2 mb-2"></div><input type="text" id="editVacancyInput" placeholder="Введите должность и нажмите Enter" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none"></div>
 <div><label class="block text-sm font-semibold mb-1.5">Telegram для связи (без @)</label><input type="text" id="editStartupTelegram" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none"></div>
@@ -777,7 +775,7 @@
 
       <div>
         <label class="block text-sm font-semibold mb-1.5">Аватар профиля</label>
-        <input type="file" id="editProfileImage" accept="image/*" class="input-field w-full px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100">
+        <input type="file" id="editProfileImage" accept="image/jpeg,image/png,image/webp" class="input-field w-full px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100">
         <p class="text-xs text-gray-500 mt-1">Оставьте пустым, чтобы сохранить текущий аватар. Максимум 5 МБ.</p>
       </div>
 
@@ -864,7 +862,7 @@
     <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
     <line x1="12" y1="20" x2="12.01" y2="20"/>
   </svg>
-  <span class="text-sm font-medium text-zinc-300">Нет подключения к интернету</span>
+  <span class="text-sm font-normal text-zinc-300">Нет подключения к интернету</span>
 </div>
 <script src="main.js" defer></script>
 </body>

@@ -595,11 +595,11 @@ function renderStartupCard(startup, animate = true) {
                             ${escapeHtml(startup.name)}
                         </h3>
                         ${startup.is_paid 
-                          ? '<span class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-medium rounded-full"><i data-lucide="wallet" class="w-3 h-3"></i>С оплатой</span>' 
-                          : '<span class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-medium rounded-full"><i data-lucide="handshake" class="w-3 h-3"></i>Без оплаты</span>'
+                          ? '<span class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-semibold rounded-full"><i data-lucide="wallet" class="w-3 h-3"></i>С оплатой</span>' 
+                          : '<span class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-semibold rounded-full"><i data-lucide="handshake" class="w-3 h-3"></i>Без оплаты</span>'
                         }
                     </div>
-                    <p class="text-xs font-medium text-gray-400 dark:text-gray-500">${timeAgo}</p>
+                    <p class="text-xs font-normal text-gray-400 dark:text-gray-500">${timeAgo}</p>
                 </div>
             </div>
 
@@ -613,14 +613,14 @@ function renderStartupCard(startup, animate = true) {
                 <div class="w-7 h-7 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 text-xs font-semibold overflow-hidden flex-shrink-0 ring-2 ring-white dark:ring-gray-900">
                     ${startup.author_avatar ? `<img src="${startup.author_avatar}" class="w-full h-full object-cover" alt="">` : authorInitial}
                 </div>
-                <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover/author:text-brand-500 transition-colors">
+                <span class="text-sm font-normal text-gray-700 dark:text-gray-300 group-hover/author:text-brand-500 transition-colors">
                     ${escapeHtml(authorName)}
                 </span>
             </a>
 
             ${stacks.length > 0 ? `
             <div class="flex flex-wrap gap-2 mb-6">
-                ${stacks.map(s => `<span class="px-2.5 py-1 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-medium rounded-md border border-gray-100 dark:border-gray-700">${escapeHtml(s)}</span>`).join('')}
+                ${stacks.map(s => `<span class="px-2.5 py-1 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-normal rounded-md border border-gray-100 dark:border-gray-700">${escapeHtml(s)}</span>`).join('')}
             </div>` : ''}
 
             ${vacancies.length > 0 ? `
@@ -631,7 +631,7 @@ function renderStartupCard(startup, animate = true) {
                 </div>
                 <div class="flex flex-wrap gap-2">
                     ${vacancies.map(v => `
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 text-sm font-normal text-gray-700 dark:text-gray-300 shadow-sm">
                         <i data-lucide="briefcase" class="w-3.5 h-3.5 text-gray-400"></i>
                         ${escapeHtml(v)}
                     </span>
@@ -652,7 +652,7 @@ function renderStartupCard(startup, animate = true) {
     </div>
     <div class="flex-1 min-w-0">
         <div class="text-[10px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Telegram</div>
-        <div class="text-sm font-medium text-gray-900 dark:text-white truncate">@${escapeHtml(cleanTelegram(startup.telegram))}</div>
+        <div class="text-sm font-normal text-gray-900 dark:text-white truncate">@${escapeHtml(cleanTelegram(startup.telegram))}</div>
     </div>
     <i data-lucide="arrow-up-right" class="w-4 h-4 text-gray-400 flex-shrink-0 group-hover/link:text-blue-500 transition-colors"></i>
 </a>` : ''}
@@ -664,7 +664,7 @@ function renderStartupCard(startup, animate = true) {
 
             <div class="flex items-center gap-3 pt-5 border-t border-gray-100 dark:border-gray-800 mt-2">
                ${expandable ? `
-                <button onclick="toggleExpand(${startup.id}, this)" class="expand-btn flex-1 px-4 py-2.5 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm font-medium transition-colors flex items-center justify-center gap-1.5" aria-expanded="${isExpanded}">
+                <button onclick="toggleExpand(${startup.id}, this)" class="expand-btn flex-1 px-4 py-2.5 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center gap-1.5" aria-expanded="${isExpanded}">
                 <i data-lucide="${isExpanded ? 'chevron-up' : 'chevron-down'}" class="expand-btn-icon w-4 h-4"></i>
                 <span class="expand-btn-text">${isExpanded ? 'Скрыть' : 'Подробнее'}</span>
                 </button>
@@ -702,7 +702,7 @@ function renderContactLink(contact) {
             <i data-lucide="${icon}" class="w-4 h-4 text-brand-500"></i>
         </div>
         <div class="flex-1 min-w-0">
-            <div class="text-sm font-medium truncate">${escapeHtml(label)}</div>
+            <div class="text-sm font-normal truncate">${escapeHtml(label)}</div>
         </div>
         <i data-lucide="external-link" class="w-4 h-4 text-gray-400 flex-shrink-0"></i>
     </a>
@@ -907,7 +907,7 @@ async function loadProfileData() {
         if (state.user.stack) {
             const items = state.user.stack.split(',').map(s => s.trim()).filter(Boolean);
             stackTags.innerHTML = items.map(s =>
-                `<span class="px-2.5 py-1 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-medium rounded-md border border-gray-100 dark:border-gray-700">${escapeHtml(s)}</span>`
+                `<span class="px-2.5 py-1 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-normal rounded-md border border-gray-100 dark:border-gray-700">${escapeHtml(s)}</span>`
             ).join('');
             stackSection.classList.remove('hidden');
         } else {
@@ -938,7 +938,7 @@ async function loadProfileData() {
             contactsList.innerHTML = '<span class="text-sm text-gray-500 italic">Контакты не указаны</span>';
         } else {
             contactsList.innerHTML = contacts.map(c => `
-                <a href="${getContactHref(c)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 rounded-lg text-sm font-medium hover:bg-brand-100 dark:hover:bg-brand-950/60 transition-colors">
+                <a href="${getContactHref(c)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 rounded-lg text-sm font-normal hover:bg-brand-100 dark:hover:bg-brand-950/60 transition-colors">
                     <i data-lucide="${getContactIcon(c)}" class="w-3.5 h-3.5"></i>
                     ${escapeHtml(c)}
                 </a>
@@ -1037,13 +1037,13 @@ async function showUserProfile(id) {
                 ${user.role ? `
                 <p class="text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed">
                     <span class="text-gray-400 dark:text-gray-500">Роль:</span>
-                    <span class="text-gray-900 dark:text-white font-medium">${escapeHtml(user.role)}</span>
+                    <span class="text-gray-900 dark:text-white font-semibold">${escapeHtml(user.role)}</span>
                 </p>` : ''}
 
                 ${levelParts.length ? `
                 <p class="text-sm md:text-base text-gray-600 dark:text-gray-400 leading-relaxed">
                     <span class="text-gray-400 dark:text-gray-500">Уровень:</span>
-                    <span class="text-gray-900 dark:text-white font-medium">${escapeHtml(levelParts.join(' · '))}</span>
+                    <span class="text-gray-900 dark:text-white font-semibold">${escapeHtml(levelParts.join(' · '))}</span>
                 </p>` : ''}
 
                 ${stackItems.length ? `
@@ -1052,14 +1052,14 @@ async function showUserProfile(id) {
                         <span class="text-gray-400 dark:text-gray-500">Стек:</span>
                     </p>
                     <div class="flex flex-wrap gap-1.5">
-                        ${stackItems.map(s => `<span class="px-2.5 py-1 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-medium rounded-md border border-gray-100 dark:border-gray-700">${escapeHtml(s)}</span>`).join('')}
+                        ${stackItems.map(s => `<span class="px-2.5 py-1 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-normal rounded-md border border-gray-100 dark:border-gray-700">${escapeHtml(s)}</span>`).join('')}
                     </div>
                 </div>` : ''}
 
                 ${user.github ? `
                 <p class="text-sm md:text-base leading-relaxed">
                     <span class="text-gray-400 dark:text-gray-500">GitHub:</span>
-                    <a href="https://github.com/${encodeURIComponent(user.github)}" target="_blank" rel="noopener noreferrer" class="text-brand-600 dark:text-brand-400 font-medium hover:underline">github.com/${escapeHtml(user.github)}</a>
+                    <a href="https://github.com/${encodeURIComponent(user.github)}" target="_blank" rel="noopener noreferrer" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline">github.com/${escapeHtml(user.github)}</a>
                 </p>` : ''}
             </div>
         </div>` : '';
@@ -1077,7 +1077,7 @@ async function showUserProfile(id) {
                 ${contacts.length ? `
                 <div class="flex flex-wrap gap-2 mt-6">
                     ${contacts.map(c => `
-                    <a href="${getContactHref(c)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 rounded-lg text-sm font-medium hover:bg-brand-100 dark:hover:bg-brand-950/60 transition-colors">
+                    <a href="${getContactHref(c)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 rounded-lg text-sm font-normal hover:bg-brand-100 dark:hover:bg-brand-950/60 transition-colors">
                         <i data-lucide="${getContactIcon(c)}" class="w-3.5 h-3.5"></i>${escapeHtml(c)}
                     </a>`).join('')}
                 </div>` : ''}
@@ -1110,18 +1110,18 @@ function renderMyStartupCard(startup) {
                 <span class="text-sm font-bold text-gray-900 dark:text-white">${vacancies.length} ${vacancies.length === 1 ? 'вакансия' : vacancies.length < 5 ? 'вакансии' : 'вакансий'}</span>
             </div>
             <div class="flex flex-wrap gap-1.5">
-                ${vacancies.map(v => `<span class="text-xs px-2.5 py-1 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-md border border-brand-200 dark:border-brand-800/30 font-medium">${escapeHtml(v)}</span>`).join('')}
+                ${vacancies.map(v => `<span class="text-xs px-2.5 py-1 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-md border border-brand-200 dark:border-brand-800/30 font-normal">${escapeHtml(v)}</span>`).join('')}
             </div>
         </div>` : ''}
         <div class="flex gap-2">
-            <button onclick="viewStartupInFeed(${startup.id})" class="flex-1 px-3 py-2 bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 rounded-lg text-sm font-medium hover:bg-brand-100 dark:hover:bg-brand-950/60 transition-colors flex items-center justify-center gap-1.5 btn-hover">
+            <button onclick="viewStartupInFeed(${startup.id})" class="flex-1 px-3 py-2 bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400 rounded-lg text-sm font-semibold hover:bg-brand-100 dark:hover:bg-brand-950/60 transition-colors flex items-center justify-center gap-1.5 btn-hover">
                 <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                 Подробнее
             </button>
-            <button onclick="openEditStartup(${startup.id})" class="px-3 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors btn-hover" aria-label="Редактировать">
+            <button onclick="openEditStartup(${startup.id})" class="px-3 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-normal hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors btn-hover" aria-label="Редактировать">
                 <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
             </button>
-            <button onclick="confirmDeleteStartup(${startup.id})" class="px-3 py-2 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 rounded-lg text-sm font-medium hover:bg-red-100 dark:hover:bg-red-950/50 transition-colors btn-hover" aria-label="Удалить">
+            <button onclick="confirmDeleteStartup(${startup.id})" class="px-3 py-2 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 rounded-lg text-sm font-normal hover:bg-red-100 dark:hover:bg-red-950/50 transition-colors btn-hover" aria-label="Удалить">
                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
             </button>
         </div>
@@ -1488,7 +1488,7 @@ function showToast(message, type = 'info') {
         <div class="w-8 h-8 rounded-lg ${colors[type]} flex items-center justify-center flex-shrink-0">
             <i data-lucide="${icons[type]}" class="w-4 h-4 text-white"></i>
         </div>
-        <p class="text-sm font-medium flex-1 break-words">${escapeHtml(message)}</p>
+        <p class="text-sm font-normal flex-1 break-words">${escapeHtml(message)}</p>
     `;
     container.appendChild(toast);
     refreshIcons();
