@@ -147,7 +147,7 @@ function updateAuthUI() {
         mobileAuth.classList.add('hidden'); mobileAuthMenu.classList.remove('hidden');
         const initial = (state.user.name || state.user.email || 'U')[0].toUpperCase();
         const avatarHtml = state.user.avatar_url 
-            ? `<img src="${state.user.avatar_url}" class="w-full h-full object-cover" loading="lazy" alt="">` 
+            ? `<img src="${state.user.avatar_url}" class="w-full h-full object-cover" alt="">` 
             : initial;
         document.getElementById('userAvatar').innerHTML = avatarHtml;
         document.getElementById('profileAvatar').innerHTML = avatarHtml;
@@ -581,7 +581,7 @@ function renderStartupCard(startup, animate = true) {
             <div class="flex items-start gap-4 mb-5">
                 ${startup.image_url ? `
                 <div class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-gray-50 dark:bg-gray-800 ring-1 ring-gray-100 dark:ring-gray-700">
-                    <img src="${startup.image_url}" alt="${escapeHtml(startup.name)}" class="w-full h-full object-cover" loading="lazy">
+                    <img src="${startup.image_url}" alt="${escapeHtml(startup.name)}" class="w-full h-full object-cover" fetchpriority="high">
                 </div>
                 ` : `
                 <div class="w-16 h-16 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-400 font-semibold text-2xl flex-shrink-0 ring-1 ring-gray-100 dark:ring-gray-700">
@@ -611,7 +611,7 @@ function renderStartupCard(startup, animate = true) {
 
             <a href="${authorLink}" target="_self" class="inline-flex items-center gap-2.5 mb-6 group/author" aria-label="Профиль автора">
                 <div class="w-7 h-7 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 text-xs font-semibold overflow-hidden flex-shrink-0 ring-2 ring-white dark:ring-gray-900">
-                    ${startup.author_avatar ? `<img src="${startup.author_avatar}" class="w-full h-full object-cover" loading="lazy" alt="">` : authorInitial}
+                    ${startup.author_avatar ? `<img src="${startup.author_avatar}" class="w-full h-full object-cover" alt="">` : authorInitial}
                 </div>
                 <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover/author:text-brand-500 transition-colors">
                     ${escapeHtml(authorName)}
