@@ -36,7 +36,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     initCharCounters();
     initModalKeys();
     await loadUser();
-    loadStats();
     await loadStartups(true);
     updateMyStartupsCount();
     initRouteHandler();
@@ -355,21 +354,6 @@ async function handleDeleteAccount() {
         btn.disabled = false;
         btn.textContent = 'Удалить';
     }
-}
-
-// ============ СТАТИСТИКА ============
-async function loadStats() {
-    try {
-        const res = await fetch(`${API_URL}/api/stats`);
-        if (!res.ok) throw new Error();
-        const stats = await res.json();
-        const elStartups = document.getElementById('statStartups');
-        const elUsers = document.getElementById('statUsers');
-        const elVacancies = document.getElementById('statVacancies');
-        if (elStartups) elStartups.textContent = stats.startups;
-        if (elUsers) elUsers.textContent = stats.users;
-        if (elVacancies) elVacancies.textContent = stats.vacancies || 0;
-    } catch (err) { console.error('Ошибка загрузки статистики:', err); }
 }
 
 // ============ STARTUPS (СЕРВЕРНАЯ ПАГИНАЦИЯ) ============
@@ -858,7 +842,6 @@ async function handleCreateSubmit(e) {
         if (!res.ok) { const err = await res.json(); throw new Error(err.error?.message || 'Ошибка'); }
         showToast('Проект опубликован!', 'success');
         navigate('home');
-        loadStats();
         loadStartups(true);
     } catch (err) { showToast(err.message || 'Не удалось создать проект', 'error'); }
     finally {
@@ -1254,7 +1237,6 @@ async function handleDeleteStartup() {
         showToast('Проект удалён', 'success');
         closeModal('deleteStartupModal');
         state.deletingStartupId = null;
-        loadStats();
         loadStartups(true);
         if (state.currentPage === 'profile') loadProfileData();
         if (state.currentPage === 'myStartups') loadMyStartupsPage();
