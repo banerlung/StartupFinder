@@ -1247,20 +1247,17 @@ async function handleDeleteStartup() {
 function openEditProfileModal() {
     if (!state.user) return;
 
-    // Основное
     document.getElementById('editProfileImage').value = '';
     document.getElementById('editProfileName').value = state.user.name || '';
     document.getElementById('editProfileDescription').value = state.user.description || '';
     document.getElementById('editProfileDescCount').textContent = (state.user.description || '').length;
 
-    // Профессиональная информация (новые поля)
     document.getElementById('editProfileRole').value = state.user.role || '';
     document.getElementById('editProfileStack').value = state.user.stack || '';
     document.getElementById('editProfileExperience').value = state.user.experience ?? '';
     document.getElementById('editProfileLevel').value = state.user.level ?? '';
     document.getElementById('editProfileGithub').value = state.user.github || '';
 
-    // Контакты
     state.editProfileContacts = parseArray(state.user.contacts);
     renderEditProfileContactsTags();
 
@@ -1288,7 +1285,6 @@ async function handleEditProfileSubmit(e) {
     formData.append('description', document.getElementById('editProfileDescription').value);
     formData.append('contacts', JSON.stringify(state.editProfileContacts));
 
-    // Профессиональная информация
     formData.append('role', document.getElementById('editProfileRole').value.trim());
     formData.append('stack', document.getElementById('editProfileStack').value.trim());
     formData.append('experience', document.getElementById('editProfileExperience').value);
@@ -1481,23 +1477,6 @@ function initModalKeys() {
     });
 }
 
-// ============ RIPPLE ============
-function initRipple() {
-    document.addEventListener('pointerdown', (e) => {
-        const btn = e.target.closest('.btn-hover');
-        if (!btn) return;
-        const rect = btn.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height);
-        const ripple = document.createElement('span');
-        ripple.className = 'ripple';
-        ripple.style.width = ripple.style.height = size + 'px';
-        ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
-        ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
-        btn.appendChild(ripple);
-        setTimeout(() => ripple.remove(), 600);
-    });
-}
-
 // ============ TOAST ============
 function showToast(message, type = 'info') {
     const container = document.getElementById('toastContainer');
@@ -1578,23 +1557,20 @@ async function search() {
         showToast('Ошибка поиска', 'error');
     }
 }
-(function checkCookieConsent() {
-  if (!localStorage.getItem('cookieConsent')) {
-    const modal = document.getElementById('cookieModal');
-    if (modal) {
-      modal.classList.remove('hidden');
-      if (window.lucide) lucide.createIcons();
-    }
-  }
-})();
 
-function acceptCookies() {
-  localStorage.setItem('cookieConsent', 'true');
-  document.getElementById('cookieModal')?.classList.add('hidden');
-}
+// ============ OFFLINE BANNER ============
 const banner = document.getElementById('offline-banner');
 
-window.addEventListener('offline', () => banner.classList.remove('hidden') || banner.classList.add('flex'));
-window.addEventListener('online', () => banner.classList.add('hidden') || banner.classList.remove('flex'));
+window.addEventListener('offline', () => {
+    banner.classList.remove('hidden');
+    banner.classList.add('flex');
+});
+window.addEventListener('online', () => {
+    banner.classList.add('hidden');
+    banner.classList.remove('flex');
+});
 
-if (!navigator.onLine) banner.classList.remove('hidden') || banner.classList.add('flex');
+if (!navigator.onLine) {
+    banner.classList.remove('hidden');
+    banner.classList.add('flex');
+}

@@ -2714,6 +2714,21 @@ body {
 font-family: 'Inter', system-ui, sans-serif;
 }
 
+/* ================================================
+   ЧАСТЬ 2: Твои кастомные стили (бывший style.css)
+   Все свои правки пиши сюда
+   ================================================ */
+* {
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+html {
+scroll-behavior: smooth;
+}
+body {
+font-family: 'Inter', system-ui, sans-serif;
+}
+
 /* ===== Кривые анимаций (единые для всего проекта) ===== */
 :root {
 --spring: cubic-bezier(0.34, 1.56, 0.64, 1);   /* «пружина» с лёгким перелётом */
@@ -2779,11 +2794,6 @@ transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 transform: translateY(-4px);
 box-shadow: 0 12px 32px -8px rgba(249, 115, 22, 0.2);
 }
-.modal-backdrop {
-background: rgba(0, 0, 0, 0.4);
-backdrop-filter: blur(4px);
--webkit-backdrop-filter: blur(4px);
-}
 .tag {
 display: inline-flex;
 align-items: center;
@@ -2795,6 +2805,7 @@ border-radius: 6px;
 font-size: 13px;
 font-weight: 500;
 transition: all 0.2s;
+animation: tagPop var(--dur-med) var(--spring) both;
 }
 .dark .tag {
 background: rgba(249, 115, 22, 0.1);
@@ -2807,6 +2818,10 @@ transition: opacity 0.2s;
 }
 .tag button:hover {
 opacity: 1;
+}
+@keyframes tagPop {
+from { opacity: 0; transform: scale(0.7); }
+to { opacity: 1; transform: scale(1); }
 }
 .input-field {
 transition: all 0.2s;
@@ -2850,22 +2865,6 @@ animation: pageIn var(--dur-slow) var(--smooth) both;
 from { opacity: 0; transform: translateY(18px); }
 to { opacity: 1; transform: translateY(0); }
 }
-.line-clamp-2 {
-display: -webkit-box;
--webkit-line-clamp: 2;
--webkit-box-orient: vertical;
-overflow: hidden;
-}
-.line-clamp-3 {
-display: -webkit-box;
--webkit-line-clamp: 3;
--webkit-box-orient: vertical;
-overflow: hidden;
-}
-.break-words {
-overflow-wrap: break-word;
-word-wrap: break-word;
-}
 .stagger-item {
 opacity: 0;
 animation: staggerIn var(--dur-slow) var(--spring) forwards;
@@ -2886,8 +2885,8 @@ to { opacity: 1; transform: translateY(0) scale(1); }
 .expand-content {
 max-height: 0;
 overflow: hidden;
-transition: max-height 0.4s ease-out, opacity 0.3s ease-out;
 opacity: 0;
+transition: max-height var(--dur-slow) var(--smooth), opacity var(--dur-med) var(--smooth);
 }
 .expand-content.expanded {
 max-height: 1000px;
@@ -2905,6 +2904,7 @@ transform: translateY(0);
 .startup-highlight {
 animation: highlight 2s ease-out;
 }
+
 /* Активная ссылка в навигации */
 .nav-link.active {
   color: #F97316;
@@ -2923,6 +2923,11 @@ animation: highlight 2s ease-out;
 .dark .mobile-nav-link.active {
   color: #FB923C;
   background: rgba(249, 115, 22, 0.1);
+}
+
+/* Ссылки в навигации: плавное изменение цвета и фона */
+.nav-link {
+transition: color var(--dur-fast) var(--smooth), background-color var(--dur-fast) var(--smooth);
 }
 
 /* Логотип — убираем подчеркивание у ссылки */
@@ -2947,46 +2952,11 @@ a[onclick*="navigate('home')"] {
 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
 }
 
-/* prefers-reduced-motion */
-@media (prefers-reduced-motion: reduce) {
-*, *::before, *::after {
-animation-duration: 0.01ms !important;
-animation-iteration-count: 1 !important;
-transition-duration: 0.01ms !important;
-scroll-behavior: auto !important;
-}
-.stagger-item {
-opacity: 1;
-animation: none;
-}
-.toast {
-animation: none;
-}
-}
-@media(max-width: 780px) {
-  #loginB {
-   background-color: rgb(249, 115, 22);
-   border-radius: 7px;
-   color: #ffffff;
-  }
-  #registerB {
-    display: none;
-  }
-  #buttonInput {
-    height: 40px;
-  }
-}
-/* ===== Появление тегов (стек, вакансии, контакты) ===== */
-.tag {
-animation: tagPop var(--dur-med) var(--spring) both;
-}
-@keyframes tagPop {
-from { opacity: 0; transform: scale(0.7); }
-to { opacity: 1; transform: scale(1); }
-}
-
-/* ===== Модалки: плавное затемнение фона ===== */
+/* Модалки: базовый фон + плавное появление */
 .modal-backdrop {
+background: rgba(0, 0, 0, 0.4);
+backdrop-filter: blur(4px);
+-webkit-backdrop-filter: blur(4px);
 animation: backdropIn var(--dur-fast) var(--smooth) both;
 }
 @keyframes backdropIn {
@@ -2994,12 +2964,43 @@ from { opacity: 0; }
 to { opacity: 1; }
 }
 
-/* ===== Плавное раскрытие карточки («Подробнее») ===== */
-.expand-content {
-transition: max-height var(--dur-slow) var(--smooth), opacity var(--dur-med) var(--smooth);
+/* Иконка-бургер и кнопки в шапке */
+#navbar button, #navbar a {
+transition: transform var(--dur-fast) var(--spring), color var(--dur-fast) var(--smooth), background-color var(--dur-fast) var(--smooth);
+}
+#navbar button:active {
+transform: scale(0.92);
 }
 
-/* ===== View Transitions: кросс-фейд при смене страниц ===== */
+/* Telegram-блок: правильный вид в тёмной теме */
+.dark .telegram-link {
+  background-color: rgba(23, 37, 84, 0.5) !important;
+  border: 1px solid rgba(30, 58, 138, 0.5);
+}
+.dark .telegram-link:hover {
+  background-color: rgba(23, 37, 84, 0.8) !important;
+}
+.dark .telegram-link .telegram-icon {
+  background-color: #2563eb !important;
+}
+
+/* Отсутствующие в компиляции Tailwind-классы */
+.dark .dark\:border-red-900\/50 { border-color: rgba(127, 29, 29, 0.5); }
+.dark .dark\:border-\[\#0077FF\]\/30 { border-color: rgba(0, 119, 255, 0.3); }
+.dark .dark\:border-\[\#229ED9\]\/30 { border-color: rgba(34, 158, 217, 0.3); }
+
+/* Классы, которых нет в скомпилированном Tailwind */
+.pt-16 { padding-top: 4rem; }
+
+@media (min-width: 768px) {
+  .md\:block { display: block; }
+  .md\:pt-4 { padding-top: 1rem; }
+  .md\:pt-6 { padding-top: 1.5rem; }
+  .md\:pt-10 { padding-top: 2.5rem; }
+  .md\:pb-24 { padding-bottom: 6rem; }
+}
+
+/* View Transitions: кросс-фейд при смене страниц */
 ::view-transition-old(root),
 ::view-transition-new(root) {
 animation-duration: 250ms;
@@ -3019,39 +3020,34 @@ from { opacity: 0; transform: translateY(10px); }
 to { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== Ссылки в навигации: плавное «подчёркивание-фон» ===== */
-.nav-link {
-transition: color var(--dur-fast) var(--smooth), background-color var(--dur-fast) var(--smooth);
+/* prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+*, *::before, *::after {
+animation-duration: 0.01ms !important;
+animation-iteration-count: 1 !important;
+transition-duration: 0.01ms !important;
+scroll-behavior: auto !important;
+}
+.stagger-item {
+opacity: 1;
+animation: none;
+}
+.toast {
+animation: none;
+}
 }
 
-/* ===== Иконка-бургер и кнопки в шапке ===== */
-#navbar button, #navbar a {
-transition: transform var(--dur-fast) var(--spring), color var(--dur-fast) var(--smooth), background-color var(--dur-fast) var(--smooth);
-}
-#navbar button:active {
-transform: scale(0.92);
-}
-
-/* ===== Telegram-блок: правильный вид в тёмной теме ===== */
-.dark .telegram-link {
-  background-color: rgba(23, 37, 84, 0.5) !important;
-  border: 1px solid rgba(30, 58, 138, 0.5);
-}
-.dark .telegram-link:hover {
-  background-color: rgba(23, 37, 84, 0.8) !important;
-}
-.dark .telegram-link .telegram-icon {
-  background-color: #2563eb !important;
-}
-.dark .dark\:border-red-900\/50 { border-color: rgba(127, 29, 29, 0.5); }
-.dark .dark\:border-\[\#0077FF\]\/30 { border-color: rgba(0, 119, 255, 0.3); }
-.dark .dark\:border-\[\#229ED9\]\/30 { border-color: rgba(34, 158, 217, 0.3); }
-/* ===== Отсутствующие в компиляции Tailwind-классы ===== */
-@media (min-width: 768px) {
-  .md\:block { display: block; }
-  .md\:pt-4 { padding-top: 1rem; }
-  .md\:pt-6 { padding-top: 1.5rem; }
-  .md\:pb-24 { padding-bottom: 6rem; }
-  .md\:pt-10 { padding-top: 2.5rem; }
-  .pt-16 { padding-top: 4rem; }
+/* Мобильные правки */
+@media(max-width: 780px) {
+  #loginB {
+   background-color: rgb(249, 115, 22);
+   border-radius: 7px;
+   color: #ffffff;
+  }
+  #registerB {
+    display: none;
+  }
+  #buttonInput {
+    height: 40px;
+  }
 }
