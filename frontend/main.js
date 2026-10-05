@@ -815,6 +815,11 @@ async function handleCreateSubmit(e) {
         showToast('Укажите хотя бы один способ связи', 'error');
         return;
     }
+    if(state.vacancies.length === 0) {
+        showToast('Укажите хотя бы одну вакансию', 'error');
+        document.getElementById('createVacancyInput').focus();
+        return;
+    }
     document.getElementById('createContactsError').classList.add('hidden');
     if (!validateFileSize('createImage', 5)) return;
 
