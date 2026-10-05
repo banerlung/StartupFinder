@@ -1203,6 +1203,10 @@ function removeEditContact(idx) { state.editContacts.splice(idx, 1); renderEditC
 
 async function handleEditStartupSubmit(e) {
     e.preventDefault();
+    if(state.editVacancies.length === 0) {
+        showToast("Нельзя сохранить проект без указания хотя бы одной вакансии ", "error");
+        return;
+    }
     if (!validateFileSize('editStartupImage', 5)) return;
     const formData = new FormData();
     formData.append('name', document.getElementById('editStartupName').value);
