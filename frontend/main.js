@@ -809,15 +809,34 @@ function validateFileSize(inputId, maxMB = 5) {
 async function handleCreateSubmit(e) {
     e.preventDefault();
     if (!state.user) { openModal('loginModal'); return; }
+
+    // Дозабираем набранный, но не добавленный Enter'ом контакт
+    const contactInput = document.getElementById('createContactInput');
+    const pendingContact = contactInput.value.trim();
+    if (pendingContact && !state.createContacts.includes(pendingContact)) {
+        state.createContacts.push(pendingContact);
+        renderCreateContactsTags();
+        contactInput.value = '';
+    }
+
+    // То же самое для вакансии — иначе набранная без Enter теряется
+    const vacancyInput = document.getElementById('createVacancyInput');
+    const pendingVacancy = vacancyInput.value.trim();
+    if (pendingVacancy && !state.createVacancies.includes(pendingVacancy)) {
+        state.createVacancies.push(pendingVacancy);
+        renderCreateVacanciesTags();
+        vacancyInput.value = '';
+    }
+
     const telegram = cleanTelegram(document.getElementById('createTelegram').value);
     if (!telegram && state.createContacts.length === 0) {
         document.getElementById('createContactsError').classList.remove('hidden');
         showToast('Укажите хотя бы один способ связи', 'error');
         return;
     }
-    if(state.vacancies.length === 0) {
+    if (state.createVacancies.length === 0) {
         showToast('Укажите хотя бы одну вакансию', 'error');
-        document.getElementById('createVacancyInput').focus();
+        vacancyInput.focus();
         return;
     }
     document.getElementById('createContactsError').classList.add('hidden');
