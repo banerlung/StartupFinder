@@ -574,11 +574,17 @@ function renderStartupCard(startup, animate = true) {
     const expandable = hasExpandableContent(startup);
     const animClass = animate ? 'stagger-item' : '';
 
+    const fullDesc = escapeHtml(startup.description || '');
+    const MAX_LEN = 180;
+    const shortDesc = isExpanded
+        ? fullDesc
+        : (fullDesc.length > MAX_LEN ? fullDesc.slice(0, MAX_LEN).trimEnd() + '…' : fullDesc);
+
     return `
-    <article id="startup-card-${startup.id}" class="${animClass} bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
-        <div class="p-6 md:p-8">
-            
-            <div class="flex items-start gap-4 mb-5">
+    <article id="startup-card-${startup.id}" class="${animClass} startup-card bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
+        <div class="startup-card-body p-6 md:p-10">
+
+            <div class="startup-row flex items-start gap-4 mb-5">
                 ${startup.image_url ? `
                 <div class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-gray-50 dark:bg-gray-800 ring-1 ring-gray-100 dark:ring-gray-700">
                     <img src="${startup.image_url}" alt="${escapeHtml(startup.name)}" class="w-full h-full object-cover" fetchpriority="high">
@@ -588,14 +594,14 @@ function renderStartupCard(startup, animate = true) {
                     ${initial}
                 </div>
                 `}
-                
+
                 <div class="flex-1 min-w-0 pt-1">
                     <div class="flex items-start justify-between gap-3 mb-1">
                         <h3 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white break-words leading-tight">
                             ${escapeHtml(startup.name)}
                         </h3>
-                        ${startup.is_paid 
-                          ? '<span class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-semibold rounded-full"><i data-lucide="wallet" class="w-3 h-3"></i>С оплатой</span>' 
+                        ${startup.is_paid
+                          ? '<span class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-semibold rounded-full"><i data-lucide="wallet" class="w-3 h-3"></i>С оплатой</span>'
                           : '<span class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-semibold rounded-full"><i data-lucide="handshake" class="w-3 h-3"></i>Без оплаты</span>'
                         }
                     </div>
@@ -603,13 +609,13 @@ function renderStartupCard(startup, animate = true) {
                 </div>
             </div>
 
-            <div class="mb-6">
-                <p class="startup-desc text-sm text-gray-600 dark:text-gray-400 leading-relaxed break-words ${isExpanded ? '' : 'line-clamp-3'}">
-                    ${escapeHtml(startup.description || '')}
+            <div class="startup-row mb-6">
+                <p class="startup-desc text-sm text-gray-600 dark:text-gray-400 leading-relaxed break-words">
+                    ${shortDesc}
                 </p>
             </div>
 
-            <a href="${authorLink}" target="_self" class="inline-flex items-center gap-2.5 mb-6 group/author" aria-label="Профиль автора">
+            <a href="${authorLink}" target="_self" class="startup-row flex items-center gap-2.5 mb-6 group/author" aria-label="Профиль автора">
                 <div class="w-7 h-7 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 text-xs font-semibold overflow-hidden flex-shrink-0 ring-2 ring-white dark:ring-gray-900">
                     ${startup.author_avatar ? `<img src="${startup.author_avatar}" class="w-full h-full object-cover" alt="">` : authorInitial}
                 </div>
@@ -619,12 +625,12 @@ function renderStartupCard(startup, animate = true) {
             </a>
 
             ${stacks.length > 0 ? `
-            <div class="flex flex-wrap gap-2 mb-6">
+            <div class="startup-row flex flex-wrap gap-2 mb-6">
                 ${stacks.map(s => `<span class="px-2.5 py-1 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-normal rounded-md border border-gray-100 dark:border-gray-700">${escapeHtml(s)}</span>`).join('')}
             </div>` : ''}
 
             ${vacancies.length > 0 ? `
-            <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-800">
+            <div class="startup-row mb-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-800">
                 <div class="flex items-center gap-2 mb-3">
                     <i data-lucide="users" class="w-4 h-4 text-gray-500 dark:text-gray-400"></i>
                     <span class="text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider">Ищут в команду</span>
@@ -639,7 +645,7 @@ function renderStartupCard(startup, animate = true) {
                 </div>
             </div>` : ''}
 
-            <div class="expand-content ${isExpanded ? 'expanded' : ''}">
+            <div class="expand-content ${isExpanded ? 'expanded' : ''} startup-row">
                 <div class="pt-5 border-t border-gray-100 dark:border-gray-800 space-y-3">
                     ${contacts.length > 0 || startup.telegram ? `
                     <div>
@@ -662,14 +668,14 @@ function renderStartupCard(startup, animate = true) {
                 </div>
             </div>
 
-            <div class="flex items-center gap-3 pt-5 border-t border-gray-100 dark:border-gray-800 mt-2">
+            <div class="startup-row flex flex-wrap items-center gap-3 pt-5 border-t border-gray-100 dark:border-gray-800 mt-2">
                ${expandable ? `
                 <button onclick="toggleExpand(${startup.id}, this)" class="expand-btn flex-1 px-4 py-2.5 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center gap-1.5" aria-expanded="${isExpanded}">
                 <i data-lucide="${isExpanded ? 'chevron-up' : 'chevron-down'}" class="expand-btn-icon w-4 h-4"></i>
                 <span class="expand-btn-text">${isExpanded ? 'Скрыть' : 'Подробнее'}</span>
                 </button>
                     ` : '<div class="flex-1"></div>'}
-                
+
                 ${isOwner ? `
                 <div class="flex items-center gap-2">
                     <button onclick="openEditStartup(${startup.id})" class="p-2.5 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors" aria-label="Редактировать">

@@ -3051,3 +3051,49 @@ animation: none;
     height: 40px;
   }
 }
+
+.startup-card {
+  display: block;
+  width: 100%;
+  contain: layout style;
+}
+
+.startup-card-body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.startup-card-body > .startup-row,
+.startup-card-body > .expand-content {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  min-width: 0;
+}
+
+.startup-card-body > .startup-row.startup-desc-wrap,
+.startup-card-body > div.mb-6 {
+
+}
+
+.startup-card-body > .startup-row:last-child {
+  flex-wrap: wrap;
+}
+
+.startup-desc {
+  display: block;
+  width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+@media (min-width: 768px) {
+  .md\:p-10 { padding: 2.5rem; }
+}
+
+.line-clamp-2,
+.line-clamp-3 {
+  display: block;
+  overflow: hidden;
+}
