@@ -141,6 +141,8 @@ function updateAuthUI() {
     const profileMenu = document.getElementById('profileMenu');
     const mobileAuth = document.getElementById('mobileAuthButtons');
     const mobileAuthMenu = document.getElementById('mobileAuthMenu');
+    const guestInfoBtn = document.getElementById('guestInfoBtn');
+    
     if (state.user) {
         authBtns.classList.add('hidden'); authBtns.classList.remove('md:flex');
         profileMenu.classList.remove('hidden'); profileMenu.classList.add('md:flex');
@@ -153,10 +155,12 @@ function updateAuthUI() {
         document.getElementById('profileAvatar').innerHTML = avatarHtml;
         document.getElementById('userNameNav').textContent = state.user.name || state.user.email;
         document.getElementById('profileName').textContent = state.user.name || state.user.email;
+        guestInfoBtn.classList.add('hidden');
     } else {
         authBtns.classList.remove('hidden'); authBtns.classList.add('md:flex');
         profileMenu.classList.add('hidden'); profileMenu.classList.remove('md:flex');
         mobileAuth.classList.remove('hidden'); mobileAuthMenu.classList.add('hidden');
+        guestInfoBtn.classList.remove('hidden');
     }
 }
 function toggleProfileMenu() {
@@ -1506,9 +1510,10 @@ function initModalKeys() {
         }
     });
     document.addEventListener('click', (e) => {
-        if (!e.target.closest('#themeBtn') && !e.target.closest('#themeMenu')) closeThemeMenu();
-        if (!e.target.closest('#profileMenu')) document.getElementById('profileDropdown').classList.add('hidden');
-    });
+    if (!e.target.closest('#themeBtn') && !e.target.closest('#themeMenu')) closeThemeMenu();
+    if (!e.target.closest('#guestInfoBtn')) closeGuestInfoMenu();
+    if (!e.target.closest('#profileMenu')) document.getElementById('profileDropdown').classList.add('hidden');
+});
 }
 
 // ============ TOAST ============
@@ -1607,4 +1612,18 @@ window.addEventListener('online', () => {
 if (!navigator.onLine) {
     banner.classList.remove('hidden');
     banner.classList.add('flex');
+}
+
+function toggleGuestInfoMenu() {
+    const menu = document.getElementById('guestInfoMenu');
+    const btn = document.querySelector('#guestInfoBtn > button');
+    const isHidden = menu.classList.toggle('hidden');
+    if (btn) btn.setAttribute('aria-expanded', !isHidden);
+}
+
+function closeGuestInfoMenu() {
+    const menu = document.getElementById('guestInfoMenu');
+    if (menu) menu.classList.add('hidden');
+    const btn = document.querySelector('#guestInfoBtn > button');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
 }

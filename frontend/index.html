@@ -57,6 +57,22 @@
             <button onclick="setTheme('system')" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors" role="menuitem"><i data-lucide="monitor" class="w-4 h-4"></i><span>Системная</span></button>
           </div>
         </div>
+        <!-- Кнопка информации для гостей -->
+<div id="guestInfoBtn" class="relative hidden md:block">
+  <button onclick="toggleGuestInfoMenu()" class="p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" title="Правовая информация" aria-expanded="false" aria-haspopup="true" aria-label="Правовая информация">
+    <i data-lucide="info" class="w-5 h-5"></i>
+  </button>
+  <div id="guestInfoMenu" class="hidden absolute right-0 mt-2 w-64 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 overflow-hidden" role="menu">
+    <a href="privacy.html" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 dark:text-gray-400 hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors" role="menuitem">
+      <i data-lucide="shield-check" class="w-4 h-4"></i>
+      <span>Политика конфиденциальности</span>
+    </a>
+    <a href="terms.html" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 dark:text-gray-400 hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors" role="menuitem">
+      <i data-lucide="file-text" class="w-4 h-4"></i>
+      <span>Пользовательское соглашение</span>
+    </a>
+  </div>
+</div>
 
         <div id="authButtons" class="hidden md:flex items-center gap-2">
           <button onclick="openModal('loginModal')" class="px-4 py-2 text-sm font-normal text-gray-700 dark:text-gray-300 hover:text-brand-600 dark:hover:text-brand-400 transition-colors" id="loginB">Войти</button>
@@ -79,6 +95,13 @@
               <button onclick="navigate('create'); toggleProfileMenu()" class="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors" role="menuitem"><i data-lucide="plus-circle" class="w-4 h-4"></i><span>Создать проект</span></button>
               <button onclick="navigate('myStartups'); toggleProfileMenu()" class="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors" role="menuitem"><i data-lucide="layout-grid" class="w-4 h-4"></i><span>Мои стартапы</span><span id="myStartupsCount" class="ml-auto text-xs bg-brand-100 dark:bg-brand-900/40 text-brand-700 dark:text-brand-400 px-2 py-0.5 rounded-full font-normal">0</span></button>
               <button onclick="navigate('settings'); toggleProfileMenu()" class="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors" role="menuitem"><i data-lucide="settings" class="w-4 h-4"></i><span>Настройки</span></button>
+              <div class="border-t border-gray-100 dark:border-gray-800 my-1"></div>
+                <a href="privacy.html" target="_blank" rel="noopener noreferrer" class="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors" role="menuitem">
+                <i data-lucide="shield-check" class="w-4 h-4"></i><span>Политика конфиденциальности</span>
+                </a>
+                <a href="terms.html" target="_blank" rel="noopener noreferrer" class="w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors" role="menuitem">
+                <i data-lucide="file-text" class="w-4 h-4"></i><span>Пользовательское соглашение</span>
+                </a>
             </div>
             <div class="p-1.5 border-t border-gray-100 dark:border-gray-800">
               <button onclick="confirmLogout()" class="w-full flex items-center gap-3 px-3 py-2 text-sm text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors" role="menuitem"><i data-lucide="log-out" class="w-4 h-4"></i><span>Выйти</span></button>
@@ -108,6 +131,13 @@
       <div id="mobileAuthButtons" class="space-y-1">
         <button onclick="openModal('loginModal'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-normal hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3"><i data-lucide="log-in" class="w-4 h-4"></i>Войти</button>
         <button onclick="openModal('registerModal'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3"><i data-lucide="user-plus" class="w-4 h-4"></i>Регистрация</button>
+        <div class="border-t border-gray-100 dark:border-gray-800 my-2"></div>
+<a href="privacy.html" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-normal hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors">
+  <i data-lucide="shield-check" class="w-4 h-4"></i>Политика конфиденциальности
+</a>
+<a href="terms.html" target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-normal hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors">
+  <i data-lucide="file-text" class="w-4 h-4"></i>Пользовательское соглашение
+</a>
       </div>
       <div id="mobileAuthMenu" class="hidden space-y-1">
         <button onclick="navigate('profile'); toggleMobileMenu()" class="w-full text-left px-3 py-2.5 rounded-lg text-sm font-normal hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors flex items-center gap-3"><i data-lucide="user" class="w-4 h-4"></i>Мой профиль</button>
