@@ -1,5 +1,9 @@
 // ============ CONFIG ============
-const API_URL = window.location.origin;
+const API_URL = "https://startup-finder.ru";
+function imgUrl(path) {
+    if (!path) return '';
+    return path.startsWith('/') ? API_URL + path : path;
+}
 const PAGE_SIZE = 5;
 
 // ============ STATE ============
@@ -149,7 +153,7 @@ function updateAuthUI() {
         mobileAuth.classList.add('hidden'); mobileAuthMenu.classList.remove('hidden');
         const initial = (state.user.name || state.user.email || 'U')[0].toUpperCase();
         const avatarHtml = state.user.avatar_url 
-            ? `<img src="${state.user.avatar_url}" class="w-full h-full object-cover" alt="">` 
+            ? `<img src="${imgUrl(state.user.avatar_url)}" class="w-full h-full object-cover" alt="">` 
             : initial;
         document.getElementById('userAvatar').innerHTML = avatarHtml;
         document.getElementById('profileAvatar').innerHTML = avatarHtml;
@@ -591,7 +595,7 @@ function renderStartupCard(startup, animate = true) {
             <div class="startup-row flex items-start gap-4 mb-5">
                 ${startup.image_url ? `
                 <div class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-gray-50 dark:bg-gray-800 ring-1 ring-gray-100 dark:ring-gray-700">
-                    <img src="${startup.image_url}" alt="${escapeHtml(startup.name)}" class="w-full h-full object-cover" fetchpriority="high">
+                   <img src="${imgUrl(startup.image_url)}" alt="${escapeHtml(startup.name)}" class="w-full h-full object-cover" fetchpriority="high">
                 </div>
                 ` : `
                 <div class="w-16 h-16 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-400 font-semibold text-2xl flex-shrink-0 ring-1 ring-gray-100 dark:ring-gray-700">
@@ -621,7 +625,7 @@ function renderStartupCard(startup, animate = true) {
 
             <a href="${authorLink}" target="_self" class="startup-row flex items-center gap-2.5 mb-6 group/author" aria-label="Профиль автора">
                 <div class="w-7 h-7 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 text-xs font-semibold overflow-hidden flex-shrink-0 ring-2 ring-white dark:ring-gray-900">
-                    ${startup.author_avatar ? `<img src="${startup.author_avatar}" class="w-full h-full object-cover" alt="">` : authorInitial}
+                    ${startup.author_avatar ? `<img src="${imgUrl(startup.author_avatar)}" class="w-full h-full object-cover" alt="">` : authorInitial}
                 </div>
                 <span class="text-sm font-normal text-gray-700 dark:text-gray-300 group-hover/author:text-brand-500 transition-colors">
                     ${escapeHtml(authorName)}
@@ -1103,7 +1107,7 @@ async function showUserProfile(id) {
             <div class="h-24 bg-gradient-to-br from-brand-400 to-brand-600"></div>
             <div class="px-6 md:px-8 pb-8">
                 <div class="w-24 h-24 rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white text-3xl font-bold border-4 border-white dark:border-gray-900 overflow-hidden -mt-12 mb-4">
-                    ${user.avatar_url ? `<img src="${user.avatar_url}" class="w-full h-full object-cover" alt="">` : initial}
+                    ${user.avatar_url ? `<img src="${imgUrl(user.avatar_url)}" class="w-full h-full object-cover" alt="">` : initial}
                 </div>
                 <h1 class="text-2xl font-bold">${escapeHtml(user.name || 'Участник')}</h1>
                 <p class="text-gray-700 dark:text-gray-300 leading-relaxed mt-3 break-words">${escapeHtml(user.description || 'Описание не добавлено')}</p>
