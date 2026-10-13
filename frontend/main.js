@@ -117,6 +117,7 @@ function navigate(page, updateHash = true) {
     if (page === 'create') resetCreateForm();
     refreshIcons();
 }
+
 function switchMainTab(tab) {
     state.currentMainTab = tab;
     const projectsSection = document.getElementById('projectsSection');
@@ -124,20 +125,36 @@ function switchMainTab(tab) {
     const tabProjects = document.getElementById('tabProjects');
     const tabPeople = document.getElementById('tabPeople');
     
+    const isDark = document.documentElement.classList.contains('dark');
+    
     if (tab === 'projects') {
         projectsSection.classList.remove('hidden');
         peopleSection.classList.add('hidden');
-        tabProjects.classList.add('bg-white', 'dark:bg-gray-700', 'shadow-sm', 'text-gray-900', 'dark:text-white');
-        tabProjects.classList.remove('text-gray-500', 'dark:text-gray-400');
-        tabPeople.classList.remove('bg-white', 'dark:bg-gray-700', 'shadow-sm', 'text-gray-900', 'dark:text-white');
-        tabPeople.classList.add('text-gray-500', 'dark:text-gray-400');
+        
+        // Активная вкладка Projects
+        tabProjects.style.backgroundColor = isDark ? '#374151' : '#ffffff';
+        tabProjects.style.color = isDark ? '#ffffff' : '#111827';
+        tabProjects.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
+        
+        // Неактивная вкладка People
+        tabPeople.style.backgroundColor = 'transparent';
+        tabPeople.style.color = isDark ? '#9ca3af' : '#6b7280';
+        tabPeople.style.boxShadow = 'none';
+        
     } else {
         projectsSection.classList.add('hidden');
         peopleSection.classList.remove('hidden');
-        tabPeople.classList.add('bg-white', 'dark:bg-gray-700', 'shadow-sm', 'text-gray-900', 'dark:text-white');
-        tabPeople.classList.remove('text-gray-500', 'dark:text-gray-400');
-        tabProjects.classList.remove('bg-white', 'dark:bg-gray-700', 'shadow-sm', 'text-gray-900', 'dark:text-white');
-        tabProjects.classList.add('text-gray-500', 'dark:text-gray-400');
+        
+        // Активная вкладка People
+        tabPeople.style.backgroundColor = isDark ? '#374151' : '#ffffff';
+        tabPeople.style.color = isDark ? '#ffffff' : '#111827';
+        tabPeople.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
+        
+        // Неактивная вкладка Projects
+        tabProjects.style.backgroundColor = 'transparent';
+        tabProjects.style.color = isDark ? '#9ca3af' : '#6b7280';
+        tabProjects.style.boxShadow = 'none';
+        
         if (state.people.length === 0) loadPeople();
     }
 }
