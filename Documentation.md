@@ -1,6 +1,6 @@
 # StartupFinder API — Документация
 
-Версия: 2.1
+Версия: 2.2
 Базовый URL: `https://startup-finder.ru`
 
 ## Стек
@@ -237,11 +237,50 @@ Authorization: Bearer <token>
     "stack": "React, Node.js, PostgreSQL",
     "experience": 3,
     "level": 2,
-    "github": "kirill"
+    "github": "kirill",
+    "is_open_to_work": true,
+    "desired_role": "Backend-разработчик, CTO"
   }
   ```
 - `401 UNAUTHORIZED`: нет токена или токен невалиден.
 - `404 NOT_FOUND`: пользователь не найден.
+
+---
+
+### GET /api/users
+
+Список участников платформы (для раздела «Люди»). Без email и других приватных полей.
+
+**Параметры URL (query):**
+
+| Параметр | Тип | По умолчанию | Описание |
+|---|---|---|---|
+| `isOpenToWork` | string (`"true"`/`"false"`) | — | Если `true` — только участники, открытые к предложениям |
+
+**Заголовки:** `Authorization: Bearer <token>` — **опционально**.
+
+**Ответ:**
+- `200 OK`:
+  ```json
+  {
+    "users": [
+      {
+        "id": 5,
+        "name": "Иван",
+        "description": "Backend-разработчик",
+        "avatar_url": "/uploads/avatar-yyy.jpg",
+        "role": "Backend-разработчик",
+        "stack": "Node.js, PostgreSQL, Redis",
+        "experience": 5,
+        "level": 3,
+        "github": "ivan-dev",
+        "is_open_to_work": true,
+        "desired_role": "CTO",
+        "created_at": "2026-09-15T12:00:00.000Z"
+      }
+    ]
+  }
+  ```
 
 ---
 
@@ -317,6 +356,8 @@ Authorization: Bearer <token>
 | `experience` | number | Нет | Опыт в годах (0–50) |
 | `level` | number | Нет | Уровень: `1`=Junior, `2`=Middle, `3`=Senior, `4`=Lead |
 | `github` | string | Нет | GitHub username (без `@`) |
+| `is_open_to_work` | string (`"true"`/`"false"`) | Нет | Открыт к предложениям — профиль попадает в раздел «Люди» |
+| `desired_role` | string | Нет | Желаемая роль (до 100 символов) |
 
 **Ответ:**
 - `200 OK`: обновлённый объект пользователя (те же поля, что в `GET /api/me`).
@@ -575,7 +616,11 @@ Multer + проверка `file-type`.
 
 ## История изменений
 
-### v2.1 (текущая)
+### v2.2 (текущая)
+- Добавлены поля `is_open_to_work`, `desired_role` в модель User.
+- Новый эндпоинт `GET /api/users` — список участников для раздела «Люди» (фильтр `isOpenToWork`).
+
+### v2.1
 - Добавлены поля `role`, `stack`, `experience`, `level`, `github` в модель User.
 - Единый формат ошибок с полем `code`.
 - Rate limiting на Redis.

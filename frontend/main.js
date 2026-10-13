@@ -25,6 +25,8 @@ let state = {
     filterStacks: [],
     expandedStartups: new Set(),
     authLoaded: false,
+    people: [],
+    currentMainTab: 'projects',
 };
 
 let currentOffset = 0;
@@ -115,7 +117,30 @@ function navigate(page, updateHash = true) {
     if (page === 'create') resetCreateForm();
     refreshIcons();
 }
-
+function switchMainTab(tab) {
+    state.currentMainTab = tab;
+    const projectsSection = document.getElementById('projectsSection');
+    const peopleSection = document.getElementById('peopleSection');
+    const tabProjects = document.getElementById('tabProjects');
+    const tabPeople = document.getElementById('tabPeople');
+    
+    if (tab === 'projects') {
+        projectsSection.classList.remove('hidden');
+        peopleSection.classList.add('hidden');
+        tabProjects.classList.add('bg-white', 'dark:bg-gray-700', 'shadow-sm', 'text-gray-900', 'dark:text-white');
+        tabProjects.classList.remove('text-gray-500', 'dark:text-gray-400');
+        tabPeople.classList.remove('bg-white', 'dark:bg-gray-700', 'shadow-sm', 'text-gray-900', 'dark:text-white');
+        tabPeople.classList.add('text-gray-500', 'dark:text-gray-400');
+    } else {
+        projectsSection.classList.add('hidden');
+        peopleSection.classList.remove('hidden');
+        tabPeople.classList.add('bg-white', 'dark:bg-gray-700', 'shadow-sm', 'text-gray-900', 'dark:text-white');
+        tabPeople.classList.remove('text-gray-500', 'dark:text-gray-400');
+        tabProjects.classList.remove('bg-white', 'dark:bg-gray-700', 'shadow-sm', 'text-gray-900', 'dark:text-white');
+        tabProjects.classList.add('text-gray-500', 'dark:text-gray-400');
+        if (state.people.length === 0) loadPeople();
+    }
+}
 // ============ AUTH ============
 async function loadUser() {
     if (!state.token) {
@@ -426,6 +451,84 @@ async function loadStartups(reset = false) {
     }
 }
 
+async function loadPeople() {
+    const grid = document.getElementById('peopleGrid');
+    const empty = document.getElementById('peopleEmpty');
+    try {
+        const res = await fetch(`${API_URL}/api/users?isOpenToWork=true`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        state.people = Array.isArray(data) ? data : (data.users || []);
+        if (state.people.length === 0) {
+            grid.innerHTML = '';
+            empty.classList.remove('hidden');
+        } else {
+            empty.classList.add('hidden');
+            grid.innerHTML = state.people.map(u => renderPeopleCard(u)).join('');
+            refreshIcons();
+        }
+    } catch (err) {
+        showToast('Не удалось загрузить участников', 'error');
+    }
+}
+
+function renderPeopleCard(user) {
+    const stackItems = user.stack ? user.stack.split(',').map(s => s.trim()).filter(Boolean) : [];
+    const levelLabels = { 1: 'Junior', 2: 'Middle', 3: 'Senior', 4: 'Lead' };
+    const initial = (user.name || 'U')[0].toUpperCase();
+    
+    return `
+    <article class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-6 md:p-8">
+        <div class="flex items-start gap-4 mb-4">
+            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white text-xl font-semibold flex-shrink-0">
+                ${user.avatar_url ? `<img src="${imgUrl(user.avatar_url)}" class="w-full h-full object-cover rounded-full" alt="">` : initial}
+            </div>
+            <div class="flex-1 min-w-0">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">${escapeHtml(user.name || 'Без имени')}</h3>
+                ${user.role ? `<p class="text-sm text-gray-500 dark:text-gray-400">${escapeHtml(user.role)}</p>` : ''}
+                ${user.desired_role ? `<p class="text-sm text-brand-600 dark:text-brand-400">Ищет: ${escapeHtml(user.desired_role)}</p>` : ''}
+            </div>
+        </div>
+        
+        ${user.description ? `<p class="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">${escapeHtml(user.description)}</p>` : ''}
+        
+        ${stackItems.length ? `
+        <div class="flex flex-wrap gap-2 mb-4">
+            ${stackItems.map(s => `<span class="px-2.5 py-1 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-normal rounded-md border border-gray-100 dark:border-gray-700">${escapeHtml(s)}</span>`).join('')}
+        </div>` : ''}
+        
+        <div class="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-800">
+            <div class="flex items-center gap-2 text-sm text-gray-500">
+                ${user.level ? `<span class="px-2 py-0.5 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 rounded text-xs font-medium">${levelLabels[user.level] || ''}</span>` : ''}
+                ${user.experience ? `<span>${user.experience} лет опыта</span>` : ''}
+            </div>
+            <a href="#/user/${user.id}" target="_self" class="text-sm font-semibold text-brand-600 dark:text-brand-400 hover:underline">Профиль</a>
+        </div>
+    </article>
+    `;
+}
+
+async function handlePeopleSearch() {
+    const q = document.getElementById('peopleSearchInput').value.trim().toLowerCase();
+    if (!q) { loadPeople(); return; }
+    const filtered = state.people.filter(u => 
+        (u.role || '').toLowerCase().includes(q) ||
+        (u.stack || '').toLowerCase().includes(q) ||
+        (u.name || '').toLowerCase().includes(q) ||
+        (u.desired_role || '').toLowerCase().includes(q)
+    );
+    const grid = document.getElementById('peopleGrid');
+    const empty = document.getElementById('peopleEmpty');
+    if (filtered.length === 0) {
+        grid.innerHTML = '';
+        empty.classList.remove('hidden');
+    } else {
+        empty.classList.add('hidden');
+        grid.innerHTML = filtered.map(u => renderPeopleCard(u)).join('');
+        refreshIcons();
+    }
+}
+
 function setupScrollObserver() {
     if (scrollObserver) scrollObserver.disconnect();
     const sentinel = document.getElementById('scrollSentinel');
@@ -694,7 +797,11 @@ function renderStartupCard(startup, animate = true) {
                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                     </button>
                 </div>
-                ` : ''}
+                ` : `
+                <button onclick="applyToStartup(${startup.id})" class="px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-sm font-semibold transition-colors flex items-center gap-1.5">
+                    <i data-lucide="user-plus" class="w-4 h-4"></i>Присоединиться
+                </button>
+                `}
             </div>
 
         </div>
@@ -723,7 +830,18 @@ function renderContactLink(contact) {
     </a>
     `;
 }
-
+async function applyToStartup(startupId) {
+    if (!state.user) { openModal('loginModal'); return; }
+    try {
+        const res = await fetch(`${API_URL}/api/startups/${startupId}/apply`, {
+            method: 'POST',
+            headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: '' })
+        });
+        if (!res.ok) throw new Error();
+        showToast('Заявка отправлена!', 'success');
+    } catch (err) { showToast('Не удалось отправить заявку', 'error'); }
+}
 function getTimeAgo(dateStr) {
     if (!dateStr) return '';
     const date = new Date(dateStr);
@@ -869,6 +987,7 @@ async function handleCreateSubmit(e) {
     formData.append('telegram', telegram);
     formData.append('vacancies', JSON.stringify(state.createVacancies));
     formData.append('contacts', JSON.stringify(state.createContacts));
+    
     const imageFile = document.getElementById('createImage')?.files[0];
     if (imageFile) formData.append('image', imageFile);
 
@@ -899,6 +1018,15 @@ async function loadProfileData() {
 
     const descEl = document.getElementById('profileDescription');
     if (descEl) descEl.textContent = state.user.description || 'Описание пока не добавлено';
+
+    // ===== Открыт к предложениям =====
+    const openToWorkLine = document.getElementById('profileOpenToWorkLine');
+    if (openToWorkLine) {
+        const desiredRoleEl = document.getElementById('profileDesiredRole');
+        if (desiredRoleEl) desiredRoleEl.textContent = state.user.desired_role ? ` · ${state.user.desired_role}` : '';
+        openToWorkLine.classList.toggle('hidden', !state.user.is_open_to_work);
+        refreshIcons();
+    }
 
     // ===== Профессиональная информация =====
     const profBlock = document.getElementById('profileProfessional');
@@ -1111,6 +1239,8 @@ async function showUserProfile(id) {
                     ${user.avatar_url ? `<img src="${imgUrl(user.avatar_url)}" class="w-full h-full object-cover" alt="">` : initial}
                 </div>
                 <h1 class="text-2xl font-bold">${escapeHtml(user.name || 'Участник')}</h1>
+                ${user.is_open_to_work ? `
+                <div class="mt-3"><span class="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-medium rounded-full"><i data-lucide="check-circle" class="w-3 h-3"></i>Открыт к предложениям${user.desired_role ? ` · ${escapeHtml(user.desired_role)}` : ''}</span></div>` : ''}
                 <p class="text-gray-700 dark:text-gray-300 leading-relaxed mt-3 break-words">${escapeHtml(user.description || 'Описание не добавлено')}</p>
                 ${profHtml}
                 ${contacts.length ? `
@@ -1300,6 +1430,8 @@ function openEditProfileModal() {
     document.getElementById('editProfileExperience').value = state.user.experience ?? '';
     document.getElementById('editProfileLevel').value = state.user.level ?? '';
     document.getElementById('editProfileGithub').value = state.user.github || '';
+    document.getElementById('editProfileIsOpenToWork').checked = !!state.user.is_open_to_work;
+    document.getElementById('editProfileDesiredRole').value = state.user.desired_role || '';
 
     state.editProfileContacts = parseArray(state.user.contacts);
     renderEditProfileContactsTags();
@@ -1333,6 +1465,8 @@ async function handleEditProfileSubmit(e) {
     formData.append('experience', document.getElementById('editProfileExperience').value);
     formData.append('level', document.getElementById('editProfileLevel').value);
     formData.append('github', document.getElementById('editProfileGithub').value.trim());
+    formData.append('is_open_to_work', document.getElementById('editProfileIsOpenToWork').checked);
+    formData.append('desired_role', document.getElementById('editProfileDesiredRole').value.trim());
 
     const avatarFile = document.getElementById('editProfileImage')?.files[0];
     if (avatarFile) formData.append('image', avatarFile);
