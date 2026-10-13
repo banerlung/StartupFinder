@@ -3097,3 +3097,16 @@ animation: none;
   display: block;
   overflow: hidden;
 }
+.startup-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 4px;
+}
+@media (max-width: 639px) {
+    .startup-card-head {
+        flex-direction: column;
+        gap: 4px;
+    }
+}

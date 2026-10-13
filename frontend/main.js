@@ -326,7 +326,7 @@ function updateThemeButtons() {
         const active = btn.dataset.themeBtn === current;
         btn.classList.toggle('border-brand-500', active);
         btn.classList.toggle('bg-brand-50', active);
-        btn.classList.toggle('dark:bg-brand-950/30', active);
+        btn.classList.toggle('dark:bg-brand-950/40', active);
         btn.classList.toggle('border-gray-200', !active);
         btn.classList.toggle('dark:border-gray-700', !active);
     });
@@ -568,6 +568,7 @@ function updateMyStartupsCount() {
         badge.textContent = count;
     }
 }
+
 function renderStartupCard(startup, animate = true) {
     const stacks = parseArray(startup.stack);
     const vacancies = parseArray(startup.vacancies);
@@ -604,13 +605,13 @@ function renderStartupCard(startup, animate = true) {
                 `}
 
                 <div class="flex-1 min-w-0 pt-1">
-                    <div class="flex items-start justify-between gap-3 mb-1">
+                    <div class="startup-card-head">
                         <h3 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white break-words leading-tight">
                             ${escapeHtml(startup.name)}
                         </h3>
                         ${startup.is_paid
-                          ? '<span class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-semibold rounded-full"><i data-lucide="wallet" class="w-3 h-3"></i>С оплатой</span>'
-                          : '<span class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-semibold rounded-full"><i data-lucide="handshake" class="w-3 h-3"></i>Без оплаты</span>'
+                         ? '<span class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-semibold rounded-full" style="white-space:nowrap;align-self:flex-start"><i data-lucide="wallet" class="w-3 h-3"></i>С оплатой</span>'
+: '<span class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-semibold rounded-full" style="white-space:nowrap;align-self:flex-start"><i data-lucide="handshake" class="w-3 h-3"></i>Без оплаты</span>'
                         }
                     </div>
                     <p class="text-xs font-normal text-gray-400 dark:text-gray-500">${timeAgo}</p>
