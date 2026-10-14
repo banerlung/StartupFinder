@@ -5,13 +5,14 @@ function imgUrl(path) {
     return path.startsWith('/') ? API_URL + path : path;
 }
 const PAGE_SIZE = 5;
+const CATEGORY_LABELS = { web: 'Web', mobile: 'Mobile', ai: 'AI', telegram: 'Telegram', gamedev: 'GameDev', roblox: 'Roblox', other: 'Другое' };
 
 // ============ STATE ============
 let state = {
     user: null,
     token: localStorage.getItem('token'),
     startups: [],
-    currentFilter: { stack: [], payment: 'all', vacancy: '' },
+    currentFilter: { stack: [], payment: 'all', vacancy: '', category: 'all' },
     currentPage: 'home',
     editingStartupId: null,
     deletingStartupId: null,
@@ -411,7 +412,8 @@ function buildStartupsUrl(offset = 0, limit = PAGE_SIZE) {
     const params = new URLSearchParams({
         limit: limit.toString(),
         offset: offset.toString(),
-        payment: state.currentFilter.payment
+        payment: state.currentFilter.payment,
+        category: state.currentFilter.category
     });
     if (state.currentFilter.stack.length > 0) {
         params.set('stack', state.currentFilter.stack.join(','));
@@ -640,7 +642,8 @@ function toggleExpand(startupId, btnEl) {
 async function viewStartupInFeed(startupId) {
     state.expandedStartups.clear();
     state.expandedStartups.add(startupId);
-    state.currentFilter = { stack: [], payment: 'all', vacancy: '' };
+    state.currentFilter = { stack: [], payment: 'all', vacancy: '', category: 'all' };
+    document.getElementById('filterCategory').value = 'all';
     document.querySelectorAll('.filter-chip').forEach(chip => {
         const f = chip.dataset.filter;
         if (f === 'all') {
@@ -733,6 +736,7 @@ function renderStartupCard(startup, animate = true) {
                          ? '<span class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-semibold rounded-full" style="white-space:nowrap;align-self:flex-start"><i data-lucide="wallet" class="w-3 h-3"></i>С оплатой</span>'
 : '<span class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-semibold rounded-full" style="white-space:nowrap;align-self:flex-start"><i data-lucide="handshake" class="w-3 h-3"></i>Без оплаты</span>'
                         }
+                        ${startup.category && CATEGORY_LABELS[startup.category] ? `<span class="flex-shrink-0 inline-flex items-center px-2.5 py-1 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 text-xs font-semibold rounded-full" style="white-space:nowrap;align-self:flex-start">${CATEGORY_LABELS[startup.category]}</span>` : ''}
                     </div>
                     <p class="text-xs font-normal text-gray-400 dark:text-gray-500">${timeAgo}</p>
                 </div>
@@ -904,6 +908,8 @@ function applyFilters() {
     state.currentFilter.stack = [...state.filterStacks];
     const payment = document.querySelector('input[name="paymentFilter"]:checked').value;
     state.currentFilter.payment = payment;
+    const category = document.getElementById('filterCategory').value;
+    state.currentFilter.category = category;
     const vacancy = document.getElementById('filterVacancyInput').value.trim();
     state.currentFilter.vacancy = vacancy;
     document.querySelectorAll('.filter-chip').forEach(chip => {
@@ -917,7 +923,7 @@ function applyFilters() {
         }
     });
     closeModal('filtersModal');
-    const count = state.filterStacks.length + (payment !== 'all' ? 1 : 0);
+    const count = state.filterStacks.length + (payment !== 'all' ? 1 : 0) + (category !== 'all' ? 1 : 0);
     const badge = document.getElementById('activeFiltersCount');
     if (count > 0) { badge.textContent = count; badge.classList.remove('hidden'); }
     else { badge.classList.add('hidden'); }
@@ -928,7 +934,9 @@ function resetFilters() {
     state.filterStacks = [];
     state.currentFilter.stack = [];
     state.currentFilter.payment = 'all';
+    state.currentFilter.category = 'all';
     document.querySelector('input[name="paymentFilter"][value="all"]').checked = true;
+    document.getElementById('filterCategory').value = 'all';
     document.getElementById('filterStackInput').value = '';
     renderFilterStackTags();
     document.getElementById('activeFiltersCount').classList.add('hidden');
@@ -1000,6 +1008,7 @@ async function handleCreateSubmit(e) {
     formData.append('name', document.getElementById('createName').value);
     formData.append('description', document.getElementById('createDescription').value);
     formData.append('is_paid', document.getElementById('createIsPaid').checked);
+    formData.append('category', document.getElementById('createCategory').value);
     formData.append('stack', document.getElementById('createStack').value);
     formData.append('telegram', telegram);
     formData.append('vacancies', JSON.stringify(state.createVacancies));
@@ -1352,6 +1361,7 @@ function openEditStartup(id) {
     document.getElementById('editStartupDescription').value = startup.description || '';
     document.getElementById('editDescCount').textContent = (startup.description || '').length;
     document.getElementById('editStartupIsPaid').checked = !!startup.is_paid;
+    document.getElementById('editStartupCategory').value = startup.category || 'other';
     document.getElementById('editStartupStack').value = Array.isArray(startup.stack) ? startup.stack.join(', ') : (startup.stack || '');
     document.getElementById('editStartupTelegram').value = startup.telegram || '';
     renderEditVacanciesTags();
@@ -1393,6 +1403,7 @@ async function handleEditStartupSubmit(e) {
     formData.append('name', document.getElementById('editStartupName').value);
     formData.append('description', document.getElementById('editStartupDescription').value);
     formData.append('is_paid', document.getElementById('editStartupIsPaid').checked);
+    formData.append('category', document.getElementById('editStartupCategory').value);
     formData.append('stack', document.getElementById('editStartupStack').value);
     formData.append('telegram', cleanTelegram(document.getElementById('editStartupTelegram').value));
     formData.append('vacancies', JSON.stringify(state.editVacancies));

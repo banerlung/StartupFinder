@@ -302,6 +302,18 @@
 </label>
 </div>
 <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6">
+<label class="block text-sm font-semibold mb-2">Категория <span class="text-red-500">*</span></label>
+<select id="createCategory" required class="input-field w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none">
+<option value="web">Web</option>
+<option value="mobile">Mobile</option>
+<option value="ai">AI</option>
+<option value="telegram">Telegram</option>
+<option value="gamedev">GameDev</option>
+<option value="roblox">Roblox</option>
+<option value="other">Другое</option>
+</select>
+</div>
+<div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6">
 <label class="block text-sm font-semibold mb-2">Технологии (стек через запятую)</label>
 <input type="text" id="createStack" placeholder="React, Node.js, PostgreSQL" class="input-field w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none">
 </div>
@@ -760,6 +772,19 @@
 </div>
 <div class="p-6 overflow-y-auto flex-1 space-y-6">
 <div>
+<label class="block text-sm font-semibold mb-2">По категории</label>
+<select id="filterCategory" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none">
+<option value="all">Все категории</option>
+<option value="web">Web</option>
+<option value="mobile">Mobile</option>
+<option value="ai">AI</option>
+<option value="telegram">Telegram</option>
+<option value="gamedev">GameDev</option>
+<option value="roblox">Roblox</option>
+<option value="other">Другое</option>
+</select>
+</div>
+<div>
 <label class="block text-sm font-semibold mb-2">По стеку</label>
 <div id="filterStackTags" class="flex flex-wrap gap-2 mb-2"></div>
 <input type="text" id="filterStackInput" placeholder="Например: React и нажмите Enter" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none">
@@ -797,6 +822,7 @@
 <div><label class="block text-sm font-semibold mb-1.5">Описание</label><textarea id="editStartupDescription" required maxlength="1000" rows="5" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none resize-none"></textarea><div class="flex justify-end mt-1 text-xs text-gray-500"><span id="editDescCount">0</span> / 1000</div></div>
 <div><label class="block text-sm font-semibold mb-1.5">Изображение проекта</label><input type="file" id="editStartupImage" accept="image/jpeg,image/png,image/webp" class="input-field w-full px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100"><p class="text-xs text-gray-500 mt-1">Оставьте пустым, чтобы сохранить текущее изображение. Максимум 5 МБ.</p></div>
 <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="editStartupIsPaid" class="w-4 h-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500"><span class="text-sm font-semibold flex items-center gap-1.5"><i data-lucide="wallet" class="w-4 h-4 text-green-600 dark:text-green-400"></i>Проект с оплатой</span></label>
+<div><label class="block text-sm font-semibold mb-1.5">Категория</label><select id="editStartupCategory" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none"><option value="web">Web</option><option value="mobile">Mobile</option><option value="ai">AI</option><option value="telegram">Telegram</option><option value="gamedev">GameDev</option><option value="roblox">Roblox</option><option value="other">Другое</option></select></div>
 <div><label class="block text-sm font-semibold mb-1.5">Технологии (стек)</label><input type="text" id="editStartupStack" placeholder="React, Node.js, ..." class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none"></div>
 <div><label class="block text-sm font-semibold mb-1.5">Кого вы ищете (вакансии) <span class="text-red-500">*</span></label><div id="editVacanciesTags" class="flex flex-wrap gap-2 mb-2"></div><input type="text" id="editVacancyInput" placeholder="Введите должность и нажмите Enter" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none"></div>
 <div><label class="block text-sm font-semibold mb-1.5">Telegram для связи (без @)</label><input type="text" id="editStartupTelegram" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none"></div>
