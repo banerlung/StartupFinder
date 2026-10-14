@@ -171,13 +171,7 @@
     </div>
   </div>
 </section>
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 md:pt-10">
-  <div class="inline-flex gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
-    <button id="tabProjects" onclick="switchMainTab('projects')" class="px-4 py-2 rounded-md text-sm font-medium bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white transition-all">Проекты</button>
-    <button id="tabPeople" onclick="switchMainTab('people')" class="px-4 py-2 rounded-md text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all">Люди</button>
-  </div>
-</div>
-<section id="projectsSection" class="pt-6 pb-16 md:pb-24">
+<section id="projectsSection" class="pt-8 pb-16 md:pt-10 md:pb-24">
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 <div class="mb-8">
 <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
@@ -210,6 +204,11 @@
     </button>
   </div>
 </div>
+</div>
+<div class="inline-flex gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg mb-8">
+  <button id="tabProjects" onclick="switchMainTab('projects')" class="px-4 py-2 rounded-md text-sm font-medium bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white transition-all">Проекты</button>
+  <button id="tabPeople" onclick="switchMainTab('people')" class="px-4 py-2 rounded-md text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all">Люди</button>
+</div>
 <p id="searchResultsInfo" class="hidden text-sm text-gray-500 dark:text-gray-400 mb-4 flex items-center gap-1.5"><i data-lucide="search" class="w-4 h-4"></i><span id="searchResultsText"></span></p>
 <div id="projectsGrid" class="space-y-6"></div>
 <div id="projectsLoading" class="space-y-6">
@@ -230,7 +229,7 @@
 </div>
 </div>
 </section>
-<section id="peopleSection" class="hidden pt-6 pb-16 md:pb-24">
+<section id="peopleSection" class="hidden pt-8 pb-16 md:pt-10 md:pb-24">
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-8">
       <div>
@@ -246,6 +245,10 @@
           </button>
         </div>
       </div>
+    </div>
+    <div class="inline-flex gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg mb-8">
+      <button id="tabProjects2" onclick="switchMainTab('projects')" class="px-4 py-2 rounded-md text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all">Проекты</button>
+      <button id="tabPeople2" onclick="switchMainTab('people')" class="px-4 py-2 rounded-md text-sm font-medium bg-white dark:bg-gray-700 shadow-sm text-gray-900 dark:text-white transition-all">Люди</button>
     </div>
     <div id="peopleGrid" class="space-y-6"></div>
     <div id="peopleEmpty" class="hidden text-center py-16">

@@ -123,39 +123,32 @@ function switchMainTab(tab) {
     state.currentMainTab = tab;
     const projectsSection = document.getElementById('projectsSection');
     const peopleSection = document.getElementById('peopleSection');
-    const tabProjects = document.getElementById('tabProjects');
-    const tabPeople = document.getElementById('tabPeople');
-    
     const isDark = document.documentElement.classList.contains('dark');
-    
+
+    const projBtns = [document.getElementById('tabProjects'), document.getElementById('tabProjects2')].filter(Boolean);
+    const peopleBtns = [document.getElementById('tabPeople'), document.getElementById('tabPeople2')].filter(Boolean);
+
+    const setActive = (btn) => {
+        btn.style.backgroundColor = isDark ? '#374151' : '#ffffff';
+        btn.style.color = isDark ? '#ffffff' : '#111827';
+        btn.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
+    };
+    const setInactive = (btn) => {
+        btn.style.backgroundColor = 'transparent';
+        btn.style.color = isDark ? '#9ca3af' : '#6b7280';
+        btn.style.boxShadow = 'none';
+    };
+
     if (tab === 'projects') {
         projectsSection.classList.remove('hidden');
         peopleSection.classList.add('hidden');
-        
-        // Активная вкладка Projects
-        tabProjects.style.backgroundColor = isDark ? '#374151' : '#ffffff';
-        tabProjects.style.color = isDark ? '#ffffff' : '#111827';
-        tabProjects.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
-        
-        // Неактивная вкладка People
-        tabPeople.style.backgroundColor = 'transparent';
-        tabPeople.style.color = isDark ? '#9ca3af' : '#6b7280';
-        tabPeople.style.boxShadow = 'none';
-        
+        projBtns.forEach(setActive);
+        peopleBtns.forEach(setInactive);
     } else {
         projectsSection.classList.add('hidden');
         peopleSection.classList.remove('hidden');
-        
-        // Активная вкладка People
-        tabPeople.style.backgroundColor = isDark ? '#374151' : '#ffffff';
-        tabPeople.style.color = isDark ? '#ffffff' : '#111827';
-        tabPeople.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)';
-        
-        // Неактивная вкладка Projects
-        tabProjects.style.backgroundColor = 'transparent';
-        tabProjects.style.color = isDark ? '#9ca3af' : '#6b7280';
-        tabProjects.style.boxShadow = 'none';
-        
+        peopleBtns.forEach(setActive);
+        projBtns.forEach(setInactive);
         if (state.people.length === 0) loadPeople();
     }
 }
@@ -732,11 +725,13 @@ function renderStartupCard(startup, animate = true) {
                         <h3 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white break-words leading-tight">
                             ${escapeHtml(startup.name)}
                         </h3>
+                        <div class="flex flex-col items-end gap-1.5 flex-shrink-0" style="align-self:flex-start">
                         ${startup.is_paid
-                         ? '<span class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-semibold rounded-full" style="white-space:nowrap;align-self:flex-start"><i data-lucide="wallet" class="w-3 h-3"></i>С оплатой</span>'
-: '<span class="flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-semibold rounded-full" style="white-space:nowrap;align-self:flex-start"><i data-lucide="handshake" class="w-3 h-3"></i>Без оплаты</span>'
+                         ? '<span class="inline-flex items-center gap-1 px-2.5 py-1 bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-semibold rounded-full" style="white-space:nowrap"><i data-lucide="wallet" class="w-3 h-3"></i>С оплатой</span>'
+: '<span class="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-semibold rounded-full" style="white-space:nowrap"><i data-lucide="handshake" class="w-3 h-3"></i>Без оплаты</span>'
                         }
-                        ${startup.category && CATEGORY_LABELS[startup.category] ? `<span class="flex-shrink-0 inline-flex items-center px-2.5 py-1 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 text-xs font-semibold rounded-full" style="white-space:nowrap;align-self:flex-start">${CATEGORY_LABELS[startup.category]}</span>` : ''}
+                        ${startup.category && CATEGORY_LABELS[startup.category] ? `<span class="inline-flex items-center px-2.5 py-1 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 text-xs font-semibold rounded-full" style="white-space:nowrap">${CATEGORY_LABELS[startup.category]}</span>` : ''}
+                        </div>
                     </div>
                     <p class="text-xs font-normal text-gray-400 dark:text-gray-500">${timeAgo}</p>
                 </div>
@@ -818,11 +813,7 @@ function renderStartupCard(startup, animate = true) {
                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                     </button>
                 </div>
-                ` : `
-                <button onclick="applyToStartup(${startup.id})" class="px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-sm font-semibold transition-colors flex items-center gap-1.5">
-                    <i data-lucide="user-plus" class="w-4 h-4"></i>Присоединиться
-                </button>
-                `}
+                ` : ''}
             </div>
 
         </div>
@@ -850,18 +841,6 @@ function renderContactLink(contact) {
         <i data-lucide="external-link" class="w-4 h-4 text-gray-400 flex-shrink-0"></i>
     </a>
     `;
-}
-async function applyToStartup(startupId) {
-    if (!state.user) { openModal('loginModal'); return; }
-    try {
-        const res = await fetch(`${API_URL}/api/startups/${startupId}/apply`, {
-            method: 'POST',
-            headers: { ...authHeaders(), 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: '' })
-        });
-        if (!res.ok) throw new Error();
-        showToast('Заявка отправлена!', 'success');
-    } catch (err) { showToast('Не удалось отправить заявку', 'error'); }
 }
 function getTimeAgo(dateStr) {
     if (!dateStr) return '';
