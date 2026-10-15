@@ -700,10 +700,6 @@ function renderStartupCard(startup, animate = true) {
     const animClass = animate ? 'stagger-item' : '';
 
     const fullDesc = escapeHtml(startup.description || '');
-    const MAX_LEN = 180;
-    const shortDesc = isExpanded
-        ? fullDesc
-        : (fullDesc.length > MAX_LEN ? fullDesc.slice(0, MAX_LEN).trimEnd() + '…' : fullDesc);
 
     return `
     <article id="startup-card-${startup.id}" class="${animClass} startup-card bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
@@ -738,8 +734,8 @@ function renderStartupCard(startup, animate = true) {
             </div>
 
             <div class="startup-row mb-6">
-                <p class="startup-desc text-sm text-gray-600 dark:text-gray-400 leading-relaxed break-words">
-                    ${shortDesc}
+                <p class="startup-desc text-sm text-gray-600 dark:text-gray-400 leading-relaxed break-words ${isExpanded ? '' : 'line-clamp-3'}">
+                    ${fullDesc}
                 </p>
             </div>
 
