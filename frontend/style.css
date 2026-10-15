@@ -3082,7 +3082,6 @@ animation: none;
 }
 
 .startup-desc {
-  display: block;
   width: 100%;
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -3092,11 +3091,6 @@ animation: none;
   .md\:p-10 { padding: 2.5rem; }
 }
 
-.line-clamp-2,
-.line-clamp-3 {
-  display: block;
-  overflow: hidden;
-}
 .startup-card-head {
     display: flex;
     align-items: flex-start;
