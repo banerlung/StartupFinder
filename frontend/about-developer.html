@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>О разработчике — Gaby</title>
+<meta name="description" content="Gaby — команда разработчиков, создающая цифровые продукты для стартаперов и творческих команд.">
+<script>
+(function(){
+  const t = localStorage.getItem('theme') || 'system';
+  if (t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches))
+    document.documentElement.classList.add('dark');
+})();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/cyrillic-400-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/cyrillic-600-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/cyrillic-700-normal.css">
+<link rel="icon" href="icons/logo.png">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+<link rel="stylesheet" href="style.css">
+
+
+<style>
+  .reveal{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.visible{opacity:1;transform:translateY(0)}
+  .reveal-left{opacity:0;transform:translateX(-40px);transition:opacity .7s ease,transform .7s ease}
+  .reveal-left.visible{opacity:1;transform:translateX(0)}
+  .reveal-right{opacity:0;transform:translateX(40px);transition:opacity .7s ease,transform .7s ease}
+  .reveal-right.visible{opacity:1;transform:translateX(0)}
+  .reveal-scale{opacity:0;transform:scale(.92);transition:opacity .6s ease,transform .6s ease}
+  .reveal-scale.visible{opacity:1;transform:scale(1)}
+  .delay-1{transition-delay:.1s}
+  .delay-2{transition-delay:.2s}
+  .delay-3{transition-delay:.3s}
+  .delay-4{transition-delay:.4s}
+  .company-hero-bg{background:linear-gradient(135deg,rgba(99,102,241,.08) 0%,rgba(168,85,247,.06) 50%,rgba(236,72,153,.04) 100%)}
+  .dark .company-hero-bg{background:linear-gradient(135deg,rgba(99,102,241,.12) 0%,rgba(168,85,247,.08) 50%,rgba(236,72,153,.06) 100%)}
+  .value-card:hover{transform:translateY(-4px)}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  .float-anim{animation:float 4s ease-in-out infinite}
+</style>
+
+
+</head>
+<body class="bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
+
+<nav id="navbar" class="sticky top-0 z-40 glass border-b border-gray-200/50 dark:border-gray-800/50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <a href="index.html" target="_self" class="flex items-center gap-2.5 shrink-0">
+        <span class="font-bold text-lg tracking-tight">Startup<span class="gradient-text">Finder</span></span>
+      </a>
+      <div class="hidden md:flex items-center gap-1">
+        <a href="index.html" target="_self" class="nav-link px-3 py-2 rounded-lg text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-50 dark:hover:bg-gray-800 transition-all">Главная</a>
+        <a href="about-project.html" target="_self" class="nav-link px-3 py-2 rounded-lg text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-50 dark:hover:bg-gray-800 transition-all">О проекте</a>
+        <a href="about-developer.html" target="_self" class="nav-link px-3 py-2 rounded-lg text-sm font-semibold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-gray-800 transition-all">О разработчике</a>
+      </div>
+      <div class="flex items-center gap-2 relative" id="themeWrap">
+        <button onclick="toggleThemeMenu()" class="p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" title="Тема">
+          <i data-lucide="sun" class="w-5 h-5 theme-icon-light"></i>
+          <i data-lucide="moon" class="w-5 h-5 theme-icon-dark hidden"></i>
+        </button>
+        <div id="themeMenu" class="hidden absolute right-0 top-full mt-2 w-44 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 overflow-hidden z-50">
+          <button onclick="setTheme('light')" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors"><i data-lucide="sun" class="w-4 h-4"></i><span>Светлая</span></button>
+          <button onclick="setTheme('dark')" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors"><i data-lucide="moon" class="w-4 h-4"></i><span>Тёмная</span></button>
+          <button onclick="setTheme('system')" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors"><i data-lucide="monitor" class="w-4 h-4"></i><span>Системная</span></button>
+        </div>
+        <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"><i data-lucide="menu" class="w-5 h-5"></i></button>
+      </div>
+    </div>
+  </div>
+  <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
+    <div class="px-4 py-3 space-y-1">
+      <a href="index.html" target="_self" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors"><i data-lucide="home" class="w-4 h-4"></i>Главная</a>
+      <a href="about-project.html" target="_self" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors"><i data-lucide="info" class="w-4 h-4"></i>О проекте</a>
+      <a href="about-developer.html" target="_self" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-gray-800 transition-colors"><i data-lucide="building-2" class="w-4 h-4"></i>О разработчике</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <!-- HERO -->
+  <section class="company-hero-bg pt-20 pb-16 md:pt-28 md:pb-24 relative overflow-hidden">
+    <div class="absolute top-10 right-10 w-64 h-64 bg-brand-500/5 rounded-full blur-3xl float-anim"></div>
+    <div class="absolute bottom-10 left-10 w-48 h-48 bg-purple-500/5 rounded-full blur-3xl float-anim" style="animation-delay:1s"></div>
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
+      <div class="reveal">
+        <span class="inline-flex items-center gap-2 px-4 py-2 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 rounded-full text-sm font-medium mb-8">
+          <span class="w-2 h-2 bg-brand-500 rounded-full"></span>
+          Команда разработчиков
+        </span>
+      </div>
+      <h1 class="reveal delay-1 text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-6 leading-tight">
+        Мы — <span class="gradient-text">Gaby</span>
+      </h1>
+      <p class="reveal delay-2 text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
+        Создаём цифровые продукты, которые объединяют людей. Верим, что любой проект начинается с команды, а не с инвестиций.
+      </p>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="py-16 md:py-24">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="reveal-left">
+          <h2 class="text-3xl md:text-4xl font-bold mb-6">Что мы делаем</h2>
+          <div class="space-y-4 text-gray-600 dark:text-gray-400 leading-relaxed">
+            <p>
+              Gaby — это команда разработчиков, дизайнеров и маркетологов, которые строят digital-продукты для предпринимателей и творческих команд.
+            </p>
+            <p>
+              Наш главный продукт — <span class="font-semibold text-gray-900 dark:text-white">StartupFinder</span>, платформа для поиска команды и публикации стартап-идей. Мы делаем так, чтобы любой человек с идеей мог найти единомышленников за один вечер.
+            </p>
+            <p>
+              Работаем удалённо, без офиса и бюрократии. Главное — результат, а не часы за компьютером.
+            </p>
+          </div>
+        </div>
+        <div class="reveal-right">
+          <div class="relative">
+            <div class="absolute -inset-4 bg-gradient-to-br from-brand-500/20 to-purple-500/20 rounded-3xl blur-2xl"></div>
+            <div class="relative bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-8 shadow-sm">
+              <div class="flex items-center gap-3 mb-6">
+                <div class="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center">
+                  <i data-lucide="target" class="w-5 h-5 text-brand-500"></i>
+                </div>
+                <span class="font-semibold">Наша цель</span>
+              </div>
+              <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                Сделать так, чтобы в России и СНГ любой стартапер мог собрать команду быстрее, чем найти работу на HH.ru. Без инвестиций на старте, без корпоративной волокиты.
+              </p>
+              <div class="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800 flex items-center gap-2 text-sm text-gray-500">
+                <i data-lucide="map-pin" class="w-4 h-4"></i>
+                <span>Санкт-Петербург, удалённо</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY TEAM -->
+  <section class="py-16 md:py-24 bg-gray-50 dark:bg-gray-900/30">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="reveal text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Почему про команду</h2>
+        <p class="text-gray-600 dark:text-gray-400">Мы верим, что команда важнее идеи</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="reveal bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-8 shadow-sm transition-all duration-300">
+          <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center mb-5 mx-auto">
+            <i data-lucide="users" class="w-6 h-6 text-brand-500"></i>
+          </div>
+          <h3 class="font-semibold text-lg mb-2 text-center">Идея без команды — ничто</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400 text-center">Миллионы отличных идей умирают, потому что автор не нашёл тех, кто поможет их реализовать.</p>
+        </div>
+        <div class="reveal delay-1 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-8 shadow-sm transition-all duration-300">
+          <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center mb-5 mx-auto">
+            <i data-lucide="handshake" class="w-6 h-6 text-brand-500"></i>
+          </div>
+          <h3 class="font-semibold text-lg mb-2 text-center">Вместе быстрее</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400 text-center">Один делает за год, команда из семи — за месяц. Распределение ролей и компетенций экономит время.</p>
+        </div>
+        <div class="reveal delay-2 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-8 shadow-sm transition-all duration-300">
+          <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center mb-5 mx-auto">
+            <i data-lucide="heart" class="w-6 h-6 text-brand-500"></i>
+          </div>
+          <h3 class="font-semibold text-lg mb-2 text-center">Энтузиазм &gt; деньги</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400 text-center">Команда, которая верит в продукт, сделает больше, чем нанятые за зарплату исполнители.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALUES -->
+  <section class="py-16 md:py-24">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="reveal text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Наши принципы</h2>
+        <p class="text-gray-600 dark:text-gray-400">То, во что мы верим и по чему работаем</p>
+      </div>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="reveal value-card bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-8 shadow-sm transition-all duration-300">
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center shrink-0">
+              <i data-lucide="zap" class="w-5 h-5 text-brand-500"></i>
+            </div>
+            <div>
+              <h3 class="font-semibold text-lg mb-1">Действуй быстро</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Лучшая идея бесполезна без первой строки кода. MVP за неделю, не за полгода.</p>
+            </div>
+          </div>
+        </div>
+        <div class="reveal delay-1 value-card bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-8 shadow-sm transition-all duration-300">
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center shrink-0">
+              <i data-lucide="eye" class="w-5 h-5 text-brand-500"></i>
+            </div>
+            <div>
+              <h3 class="font-semibold text-lg mb-1">Будь прозрачным</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Честные цифры, открытый процесс, никакой воды. Что сделано — видно всем.</p>
+            </div>
+          </div>
+        </div>
+        <div class="reveal delay-2 value-card bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-8 shadow-sm transition-all duration-300">
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center shrink-0">
+              <i data-lucide="rotate-ccw" class="w-5 h-5 text-brand-500"></i>
+            </div>
+            <div>
+              <h3 class="font-semibold text-lg mb-1">Учись на ошибках</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Провал — это данные. Каждый неудачный проект приближает к успешному.</p>
+            </div>
+          </div>
+        </div>
+        <div class="reveal delay-3 value-card bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-8 shadow-sm transition-all duration-300">
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center shrink-0">
+              <i data-lucide="globe" class="w-5 h-5 text-brand-500"></i>
+            </div>
+            <div>
+              <h3 class="font-semibold text-lg mb-1">Думай глобально</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Работаем из СНГ, но строим продукты для всего мира. Русский язык — старт, не финиш.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section class="py-16 md:py-24 bg-gray-50 dark:bg-gray-900/30">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="reveal text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Наши проекты</h2>
+        <p class="text-gray-600 dark:text-gray-400">Что мы уже построили и что строим</p>
+      </div>
+      <div class="space-y-6">
+        <div class="reveal bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-8 shadow-sm">
+          <div class="flex flex-col md:flex-row md:items-center gap-6">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white shrink-0">
+              <i data-lucide="rocket" class="w-8 h-8"></i>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center gap-3 mb-2">
+                <h3 class="font-semibold text-xl">StartupFinder</h3>
+                <span class="px-2.5 py-1 bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 rounded-full text-xs font-semibold">Активно</span>
+              </div>
+              <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                Платформа для поиска команды и публикации стартап-идей. Помогаем фаундерам находить разработчиков, дизайнеров и маркетологов для своих проектов.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="reveal delay-1 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-8 shadow-sm">
+          <div class="flex flex-col md:flex-row md:items-center gap-6">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center text-white shrink-0">
+              <i data-lucide="globe" class="w-8 h-8"></i>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center gap-3 mb-2">
+                <h3 class="font-semibold text-xl">GabWeb</h3>
+                <span class="px-2.5 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-full text-xs font-semibold">Архив</span>
+              </div>
+              <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                Браузер без телеметрии на Electron. Первый опыт работы с кроссплатформенными приложениями. Не взлетел, но дал бесценные знания.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM TEMPLATE -->
+  <section class="py-16 md:py-24">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="reveal text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Команда</h2>
+        <p class="text-gray-600 dark:text-gray-400">Люди, которые делают Gaby</p>
+      </div>
+      <div class="reveal grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+        <!-- Шаблон: добавь/убери карточки по необходимости -->
+        <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 text-center">
+          <div class="w-14 h-14 mx-auto rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-bold text-lg mb-3">B</div>
+          <div class="font-semibold text-sm">banerlung</div>
+          <div class="text-xs text-gray-400 mt-1">CEO / Fullstack</div>
+        </div>
+        <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 text-center">
+          <div class="w-14 h-14 mx-auto rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold text-lg mb-3">C</div>
+          <div class="font-semibold text-sm">ClonerNotFound</div>
+          <div class="text-xs text-gray-400 mt-1">Fullstack</div>
+        </div>
+        <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 text-center">
+          <div class="w-14 h-14 mx-auto rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white font-bold text-lg mb-3">X</div>
+          <div class="font-semibold text-sm">Xisa</div>
+          <div class="text-xs text-gray-400 mt-1">Frontend</div>
+        </div>
+        <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 text-center">
+          <div class="w-14 h-14 mx-auto rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-white font-bold text-lg mb-3">R</div>
+          <div class="font-semibold text-sm">Rusted</div>
+          <div class="text-xs text-gray-400 mt-1">Mobile</div>
+        </div>
+        <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 text-center">
+          <div class="w-14 h-14 mx-auto rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-lg mb-3">T</div>
+          <div class="font-semibold text-sm">@Topirus1kus</div>
+          <div class="text-xs text-gray-400 mt-1">Telegram bot support</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-16 md:py-24 bg-gray-50 dark:bg-gray-900/30">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="reveal bg-gradient-to-br from-brand-500 to-brand-600 rounded-2xl p-8 md:p-12 text-center text-white relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+        <div class="relative">
+          <h2 class="text-3xl md:text-4xl font-bold mb-4">Свяжитесь с нами</h2>
+          <p class="text-lg text-white/90 max-w-xl mx-auto mb-8">
+            Хотите сотрудничать, предложить идею или просто познакомиться? Мы открыты к диалогу.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="https://t.me/startup_finder_dev" target="_blank" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-brand-600 rounded-xl font-bold hover:scale-[1.02] active:scale-[0.98] transition-transform">
+              <i data-lucide="send" class="w-5 h-5"></i>Написать в Telegram
+            </a>
+            <a href="mailto:support@startup-finder.ru" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 hover:bg-white/20 text-white rounded-xl font-semibold transition-colors backdrop-blur-sm">
+              <i data-lucide="mail" class="w-5 h-5"></i>support@startup-finder.ru
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 mt-auto">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+      <div>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="font-bold text-lg">Startup<span class="gradient-text">Finder</span></span>
+        </div>
+        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed max-w-xs">
+          Продукт команды Gaby. Платформа для поиска команды, публикации стартап-идей и сборки команды мечты.
+        </p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-sm uppercase tracking-wider text-gray-900 dark:text-gray-100 mb-4">Навигация</h4>
+        <ul class="space-y-3">
+          <li><a href="index.html" target="_self" class="text-sm text-gray-500 dark:text-gray-400 hover:text-brand-600 transition-colors">Главная</a></li>
+          <li><a href="about-project.html" target="_self" class="text-sm text-gray-500 dark:text-gray-400 hover:text-brand-600 transition-colors">О проекте</a></li>
+          <li><a href="about-developer.html" target="_self" class="text-sm text-gray-500 dark:text-gray-400 hover:text-brand-600 transition-colors">О разработчике</a></li>
+          <li><a href="privacy.html" class="text-sm text-gray-500 dark:text-gray-400 hover:text-brand-600 transition-colors">Политика конфиденциальности</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold text-sm uppercase tracking-wider text-gray-900 dark:text-gray-100 mb-4">Мы в соцсетях</h4>
+        <div class="flex items-center gap-3">
+          <a href="https://t.me/startup_finder_dev" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-[#229ED9] hover:border-[#229ED9]/30 transition-all duration-200" aria-label="Telegram">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+          </a>
+          <a href="https://tiktok.com/@startup_finder" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:border-gray-400 transition-all duration-200" aria-label="TikTok">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="mt-10 pt-6 border-t border-gray-200 dark:border-gray-800">
+      <p class="text-sm text-gray-500 text-center">
+        &copy; 2026 Gaby Team. Сделано с <i data-lucide="heart" class="w-4 h-4 text-brand-500 fill-brand-500 inline align-text-top"></i> для стартаперов
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+function initIcons(){if(window.lucide)lucide.createIcons();else setTimeout(initIcons,100)}
+function refreshIcons(){if(window.lucide)lucide.createIcons()}
+function applyTheme(t){localStorage.setItem('theme',t);const d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);document.querySelectorAll('.theme-icon-light').forEach(e=>e.classList.toggle('hidden',d));document.querySelectorAll('.theme-icon-dark').forEach(e=>e.classList.toggle('hidden',!d))}
+function setTheme(t){applyTheme(t);document.getElementById('themeMenu').classList.add('hidden')}
+function toggleThemeMenu(){document.getElementById('themeMenu').classList.toggle('hidden')}
+function toggleMobileMenu(){document.getElementById('mobileMenu').classList.toggle('hidden')}
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if(localStorage.getItem('theme')==='system')applyTheme('system')});
+document.addEventListener('click',(e)=>{if(!e.target.closest('#themeWrap'))document.getElementById('themeMenu').classList.add('hidden')});
+
+const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}})},{threshold:.1});
+document.querySelectorAll('.reveal,.reveal-left,.reveal-right,.reveal-scale').forEach(el=>observer.observe(el));
+
+document.addEventListener('DOMContentLoaded',()=>{initIcons();applyTheme(localStorage.getItem('theme')||'system')});
+</script>
+</body>
+</html>

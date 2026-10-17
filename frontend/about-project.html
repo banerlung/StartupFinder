@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>О проекте — StartupFinder</title>
+<meta name="description" content="StartupFinder — платформа для поиска команды: как создать стартап, оформить профиль и найти единомышленников.">
+<script>
+(function(){
+  const t = localStorage.getItem('theme') || 'system';
+  if (t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches))
+    document.documentElement.classList.add('dark');
+})();
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-400-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/latin-700-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/cyrillic-400-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/cyrillic-600-normal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/fonts/inter@latest/cyrillic-700-normal.css">
+<link rel="icon" href="icons/logo.png">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+<link rel="stylesheet" href="style.css">
+<style>
+  .reveal{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.visible{opacity:1;transform:translateY(0)}
+  .delay-1{transition-delay:.1s}
+  .delay-2{transition-delay:.2s}
+  .about-hero-bg{background:linear-gradient(135deg,rgba(249,115,22,.08) 0%,rgba(168,85,247,.06) 50%,rgba(236,72,153,.04) 100%)}
+  .dark .about-hero-bg{background:linear-gradient(135deg,rgba(249,115,22,.12) 0%,rgba(168,85,247,.08) 50%,rgba(236,72,153,.06) 100%)}
+  .timeline-line{position:absolute;left:24px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,#f97316,#fdba74);opacity:.3}
+  .dark .timeline-line{opacity:.2}
+  .step-num{width:26px;height:26px;border-radius:9999px;background:var(--step-bg,#fff7ed);color:#ea580c;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+  .dark .step-num{background:#431407;color:#fb923c}
+</style>
+</head>
+<body class="bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
+
+<nav id="navbar" class="sticky top-0 z-40 glass border-b border-gray-200/50 dark:border-gray-800/50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <a href="index.html" target="_self" class="flex items-center gap-2.5 shrink-0">
+        <span class="font-bold text-lg tracking-tight">Startup<span class="gradient-text">Finder</span></span>
+      </a>
+      <div class="hidden md:flex items-center gap-1">
+        <a href="index.html" target="_self" class="nav-link px-3 py-2 rounded-lg text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-50 dark:hover:bg-gray-800 transition-all">Главная</a>
+        <a href="about-project.html" target="_self" class="nav-link px-3 py-2 rounded-lg text-sm font-semibold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-gray-800 transition-all">О проекте</a>
+        <a href="about-developer.html" target="_self" class="nav-link px-3 py-2 rounded-lg text-sm font-normal text-gray-600 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-50 dark:hover:bg-gray-800 transition-all">О разработчике</a>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="relative" id="themeWrap">
+          <button onclick="toggleThemeMenu()" class="p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" title="Тема" aria-expanded="false" id="themeBtn">
+            <i data-lucide="sun" class="w-5 h-5 theme-icon-light"></i>
+            <i data-lucide="moon" class="w-5 h-5 theme-icon-dark hidden"></i>
+          </button>
+          <div id="themeMenu" class="hidden absolute right-0 top-full mt-2 w-44 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 overflow-hidden z-50">
+            <button onclick="setTheme('light')" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors"><i data-lucide="sun" class="w-4 h-4"></i><span>Светлая</span></button>
+            <button onclick="setTheme('dark')" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors"><i data-lucide="moon" class="w-4 h-4"></i><span>Тёмная</span></button>
+            <button onclick="setTheme('system')" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors"><i data-lucide="monitor" class="w-4 h-4"></i><span>Системная</span></button>
+          </div>
+        </div>
+        <button onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"><i data-lucide="menu" class="w-5 h-5"></i></button>
+      </div>
+    </div>
+  </div>
+  <div id="mobileMenu" class="hidden md:hidden border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
+    <div class="px-4 py-3 space-y-1">
+      <a href="index.html" target="_self" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors"><i data-lucide="home" class="w-4 h-4"></i>Главная</a>
+      <a href="about-project.html" target="_self" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-gray-800 transition-colors"><i data-lucide="info" class="w-4 h-4"></i>О проекте</a>
+      <a href="about-developer.html" target="_self" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm hover:bg-brand-50 dark:hover:bg-gray-800 transition-colors"><i data-lucide="user" class="w-4 h-4"></i>О разработчике</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <!-- HERO -->
+  <section class="about-hero-bg pt-14 pb-12 md:pt-20 md:pb-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="reveal">
+        <span class="inline-flex items-center gap-2 px-4 py-2 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 rounded-full text-sm font-medium mb-6">
+          <span class="w-2 h-2 bg-brand-500 rounded-full"></span>
+          Платформа для поиска команды
+        </span>
+      </div>
+      <h1 class="reveal delay-1 text-4xl sm:text-5xl font-bold tracking-tight mb-5 leading-tight">
+        Найди людей, с которыми хочется <span class="gradient-text">строить</span>
+      </h1>
+      <p class="reveal delay-2 text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
+        StartupFinder — это место, где идеи находят команду. Ниже — короткие инструкции, как всё устроено.
+      </p>
+    </div>
+  </section>
+
+  <!-- TUTORIALS -->
+  <section class="py-14 md:py-20">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="reveal text-center mb-10">
+        <h2 class="text-3xl md:text-4xl font-bold mb-3">Туториалы</h2>
+        <p class="text-gray-600 dark:text-gray-400">Пошагово: от регистрации до своей команды</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- Как создать стартап -->
+        <div class="reveal bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 md:p-8 shadow-sm">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center shrink-0">
+              <i data-lucide="rocket" class="w-5 h-5 text-brand-500"></i>
+            </div>
+            <h3 class="font-semibold text-lg">Как создать стартап</h3>
+          </div>
+          <ol class="space-y-4">
+            <li class="flex gap-3"><span class="step-num">1</span><p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed"><span class="font-semibold text-gray-900 dark:text-white">Зарегистрируйся</span> и подтверди email кодом из письма.</p></li>
+            <li class="flex gap-3"><span class="step-num">2</span><p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Нажми <span class="font-semibold text-gray-900 dark:text-white">«Создать проект»</span> на главной или в профиле.</p></li>
+            <li class="flex gap-3"><span class="step-num">3</span><p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Заполни <span class="font-semibold text-gray-900 dark:text-white">название и описание</span>: какую проблему решаешь и для кого. Чем конкретнее, тем больше откликов.</p></li>
+            <li class="flex gap-3"><span class="step-num">4</span><p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Выбери <span class="font-semibold text-gray-900 dark:text-white">категорию</span>: Web, Mobile, AI, Telegram, GameDev, Roblox или Другое.</p></li>
+            <li class="flex gap-3"><span class="step-num">5</span><p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Укажи <span class="font-semibold text-gray-900 dark:text-white">стек</span> через запятую: React, Node.js, PostgreSQL…</p></li>
+            <li class="flex gap-3"><span class="step-num">6</span><p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Добавь <span class="font-semibold text-gray-900 dark:text-white">вакансии</span> — кого ищешь в команду. Каждую должность подтверждай Enter.</p></li>
+            <li class="flex gap-3"><span class="step-num">7</span><p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Оставь <span class="font-semibold text-gray-900 dark:text-white">контакты</span>: Telegram и/или email. Без них с тобой не свяжутся.</p></li>
+            <li class="flex gap-3"><span class="step-num">8</span><p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Если есть бюджет — отметь <span class="font-semibold text-gray-900 dark:text-white">«Проект с оплатой»</span>. Нажми «Опубликовать» — готово!</p></li>
+          </ol>
+        </div>
+
+        <!-- Как оформить профиль -->
+        <div class="reveal delay-1 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 md:p-8 shadow-sm">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center shrink-0">
+              <i data-lucide="user" class="w-5 h-5 text-brand-500"></i>
+            </div>
+            <h3 class="font-semibold text-lg">Как оформить профиль</h3>
+          </div>
+          <ol class="space-y-4">
+            <li class="flex gap-3"><span class="step-num">1</span><p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Открой <span class="font-semibold text-gray-900 dark:text-white">«Профиль»</span> в меню справа вверху.</p></li>
+            <li class="flex gap-3"><span class="step-num">2</span><p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Нажми <span class="font-semibold text-gray-900 dark:text-white">«Редактировать»</span>.</p></li>
+            <li class="flex gap-3"><span class="step-num">3</span><p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Добавь <span class="font-semibold text-gray-900 dark:text-white">аватар и имя</span> — так тебя проще узнать.</p></li>
+            <li class="flex gap-3"><span class="step-num">4</span><p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">В <span class="font-semibold text-gray-900 dark:text-white">«О себе»</span> коротко расскажи, кто ты и что умеешь (до 500 символов).</p></li>
+            <li class="flex gap-3"><span class="step-num">5</span><p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Заполни <span class="font-semibold text-gray-900 dark:text-white">профессиональную информацию</span>: роль, стек, опыт, уровень, GitHub.</p></li>
+            <li class="flex gap-3"><span class="step-num">6</span><p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Добавь <span class="font-semibold text-gray-900 dark:text-white">контакты</span>, чтобы с тобой могли связаться.</p></li>
+            <li class="flex gap-3"><span class="step-num">7</span><p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Хочешь попасть в раздел <span class="font-semibold text-gray-900 dark:text-white">«Люди»</span>? Включи «Открыт к предложениям о сотрудничестве» и укажи желаемую роль.</p></li>
+            <li class="flex gap-3"><span class="step-num">8</span><p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Нажми <span class="font-semibold text-gray-900 dark:text-white">«Сохранить»</span> — профиль виден другим участникам.</p></li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Как искать -->
+      <div class="reveal mt-6 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 md:p-8 shadow-sm">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center shrink-0">
+            <i data-lucide="search" class="w-5 h-5 text-brand-500"></i>
+          </div>
+          <h3 class="font-semibold text-lg">Как искать проекты и людей</h3>
+        </div>
+        <div class="grid sm:grid-cols-3 gap-6">
+          <div>
+            <div class="flex items-center gap-2 mb-2"><i data-lucide="sliders-horizontal" class="w-4 h-4 text-brand-500"></i><span class="font-semibold text-sm">Фильтры</span></div>
+            <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">На главной нажми иконку фильтров: по категории, оплате, стеку или вакансии. По умолчанию показываются все проекты.</p>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 mb-2"><i data-lucide="search" class="w-4 h-4 text-brand-500"></i><span class="font-semibold text-sm">Поиск</span></div>
+            <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Строка поиска понимает названия и описания проектов. Поддерживаются «точные фразы» в кавычках и -исключения.</p>
+          </div>
+          <div>
+            <div class="flex items-center gap-2 mb-2"><i data-lucide="users" class="w-4 h-4 text-brand-500"></i><span class="font-semibold text-sm">Вкладка «Люди»</span></div>
+            <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">Здесь участники, открытые к предложениям. Ищи по роли, стеку или имени и открывай профиль для контактов.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MISSION -->
+  <section class="py-14 md:py-20 bg-gray-50 dark:bg-gray-900/30">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="reveal">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Наша миссия</h2>
+        <p class="text-lg text-gray-600 dark:text-gray-400 leading-relaxed max-w-2xl mx-auto mb-10">
+          Мы делаем так, чтобы любой человек с идеей мог найти команду за один вечер. Без инвестиций, без офиса, без бюрократии.
+        </p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6 text-left md:text-center">
+        <div class="reveal bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 shadow-sm">
+          <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center mb-4 md:mx-auto">
+            <i data-lucide="zap" class="w-6 h-6 text-brand-500"></i>
+          </div>
+          <h3 class="font-semibold text-lg mb-2">Быстро</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Размести проект за 2 минуты. Не нужно заполнять 20 полей.</p>
+        </div>
+        <div class="reveal delay-1 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 shadow-sm">
+          <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center mb-4 md:mx-auto">
+            <i data-lucide="shield-check" class="w-6 h-6 text-brand-500"></i>
+          </div>
+          <h3 class="font-semibold text-lg mb-2">Честно</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Никаких платных подписок для размещения. Все проекты равны.</p>
+        </div>
+        <div class="reveal delay-2 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 shadow-sm">
+          <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center mb-4 md:mx-auto">
+            <i data-lucide="users" class="w-6 h-6 text-brand-500"></i>
+          </div>
+          <h3 class="font-semibold text-lg mb-2">По-человечески</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Ищешь не резюме, а людей. С идеями, энтузиазмом и готовностью рисковать.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section class="py-14 md:py-20">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="reveal text-center mb-10">
+        <h2 class="text-3xl md:text-4xl font-bold mb-3">Дорожная карта</h2>
+        <p class="text-gray-600 dark:text-gray-400">Что уже сделано и что будет дальше</p>
+      </div>
+      <div class="relative">
+        <div class="timeline-line"></div>
+        <div class="space-y-8">
+          <div class="reveal relative flex gap-6">
+            <div class="relative z-10 w-12 h-12 rounded-full bg-brand-500 flex items-center justify-center text-white shrink-0 shadow-lg shadow-brand-500/20">
+              <i data-lucide="check" class="w-5 h-5"></i>
+            </div>
+            <div class="pt-1">
+              <div class="text-sm font-semibold text-brand-600 dark:text-brand-400 mb-1">Июнь 2026</div>
+              <h3 class="font-semibold text-lg mb-1">Запуск MVP</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Регистрация, создание проектов, поиск. Первые 2 пользователя — я и мама.</p>
+            </div>
+          </div>
+          <div class="reveal delay-1 relative flex gap-6">
+            <div class="relative z-10 w-12 h-12 rounded-full bg-brand-500 flex items-center justify-center text-white shrink-0 shadow-lg shadow-brand-500/20">
+              <i data-lucide="check" class="w-5 h-5"></i>
+            </div>
+            <div class="pt-1">
+              <div class="text-sm font-semibold text-brand-600 dark:text-brand-400 mb-1">Август 2026</div>
+              <h3 class="font-semibold text-lg mb-1">Формирование команды</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400">7 человек: дизайн, бэкенд, фронтенд, SMM, SEO, HR. Распределение ролей.</p>
+            </div>
+          </div>
+          <div class="reveal delay-2 relative flex gap-6">
+            <div class="relative z-10 w-12 h-12 rounded-full bg-brand-500 flex items-center justify-center text-white shrink-0 shadow-lg shadow-brand-500/20">
+              <i data-lucide="check" class="w-5 h-5"></i>
+            </div>
+            <div class="pt-1">
+              <div class="text-sm font-semibold text-brand-600 dark:text-brand-400 mb-1">Октябрь 2026</div>
+              <h3 class="font-semibold text-lg mb-1">Вкладка «Люди» и категории</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Поиск участников по ролям. Фильтрация проектов: геймдев, AI, мобильные, веб.</p>
+            </div>
+          </div>
+          <div class="reveal relative flex gap-6">
+            <div class="relative z-10 w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 shrink-0">
+              <i data-lucide="rocket" class="w-5 h-5"></i>
+            </div>
+            <div class="pt-1">
+              <div class="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-1">Декабрь 2026</div>
+              <h3 class="font-semibold text-lg mb-1">Чаты и интеграция с хакатонами</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Внутренние чаты команд. Прямая публикация проектов с хакатонов.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="pb-14 md:pb-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="reveal bg-gradient-to-br from-brand-500 to-brand-600 rounded-2xl p-8 md:p-12 text-center text-white">
+        <h2 class="text-3xl md:text-4xl font-bold mb-4">Стань частью истории</h2>
+        <p class="text-lg text-white/90 max-w-xl mx-auto mb-8">
+          Размести свой проект или найди команду мечты. Это бесплатно и займёт 2 минуты.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="index.html" target="_self" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-brand-600 rounded-xl font-bold hover:scale-[1.02] active:scale-[0.98] transition-transform">
+            <i data-lucide="rocket" class="w-5 h-5"></i>Начать
+          </a>
+          <a href="about-developer.html" target="_self" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 hover:bg-white/20 text-white rounded-xl font-semibold transition-colors">
+            <i data-lucide="user" class="w-5 h-5"></i>О создателе
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 mt-auto">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+      <div>
+        <div class="flex items-center gap-2 mb-4">
+          <span class="font-bold text-lg">Startup<span class="gradient-text">Finder</span></span>
+        </div>
+        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed max-w-xs">
+          Платформа для поиска команды, публикации стартап-идей и сборки команды мечты.
+        </p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-sm uppercase tracking-wider text-gray-900 dark:text-gray-100 mb-4">Навигация</h4>
+        <ul class="space-y-3">
+          <li><a href="index.html" target="_self" class="text-sm text-gray-500 dark:text-gray-400 hover:text-brand-600 transition-colors">Главная</a></li>
+          <li><a href="about-project.html" target="_self" class="text-sm text-gray-500 dark:text-gray-400 hover:text-brand-600 transition-colors">О проекте</a></li>
+          <li><a href="about-developer.html" target="_self" class="text-sm text-gray-500 dark:text-gray-400 hover:text-brand-600 transition-colors">О разработчике</a></li>
+          <li><a href="privacy.html" target="_self" class="text-sm text-gray-500 dark:text-gray-400 hover:text-brand-600 transition-colors">Политика конфиденциальности</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold text-sm uppercase tracking-wider text-gray-900 dark:text-gray-100 mb-4">Мы в соцсетях</h4>
+        <div class="flex items-center gap-3">
+          <a href="https://t.me/startup_finder_dev" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-[#229ED9] hover:border-[#229ED9]/30 transition-all duration-200" aria-label="Telegram">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.479.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+          </a>
+          <a href="https://tiktok.com/@startup_finder" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:border-gray-400 transition-all duration-200" aria-label="TikTok">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="mt-10 pt-6 border-t border-gray-200 dark:border-gray-800">
+      <p class="text-sm text-gray-500 text-center">
+        &copy; 2026 StartupFinder. Сделано с <i data-lucide="heart" class="w-4 h-4 text-brand-500 fill-brand-500 inline align-text-top"></i> для стартаперов
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+function initIcons(){if(window.lucide)lucide.createIcons();else setTimeout(initIcons,100)}
+function applyTheme(t){localStorage.setItem('theme',t);const d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);document.querySelectorAll('.theme-icon-light').forEach(e=>e.classList.toggle('hidden',d));document.querySelectorAll('.theme-icon-dark').forEach(e=>e.classList.toggle('hidden',!d))}
+function setTheme(t){applyTheme(t);document.getElementById('themeMenu').classList.add('hidden')}
+function toggleThemeMenu(){document.getElementById('themeMenu').classList.toggle('hidden')}
+function toggleMobileMenu(){document.getElementById('mobileMenu').classList.toggle('hidden')}
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if(localStorage.getItem('theme')==='system')applyTheme('system')});
+document.addEventListener('click',(e)=>{if(!e.target.closest('#themeWrap'))document.getElementById('themeMenu').classList.add('hidden')});
+
+const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}})},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+document.addEventListener('DOMContentLoaded',()=>{initIcons();applyTheme(localStorage.getItem('theme')||'system')});
+</script>
+</body>
+</html>
