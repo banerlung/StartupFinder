@@ -88,10 +88,29 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () 
 });
 
 // ============ ROUTING ============
-function initRouteHandler() { window.addEventListener('hashchange', handleRoute); handleRoute(); }
+const PAGE_ROUTES = { home: '/', create: '/create', profile: '/profile', myStartups: '/my-startups', settings: '/settings' };
+
+function initRouteHandler() {
+    window.addEventListener('popstate', handleRoute);
+    document.addEventListener('click', (e) => {
+        const a = e.target.closest('a');
+        if (!a) return;
+        const href = a.getAttribute('href') || '';
+        if (a.target === '_blank' || a.hasAttribute('download') || !href.startsWith('/')) return;
+        e.preventDefault();
+        if (window.location.pathname !== href) {
+            window.history.pushState({}, '', href);
+        }
+        handleRoute();
+    });
+    handleRoute();
+}
 function handleRoute() {
-    const hash = window.location.hash || '#/';
-    const path = hash.slice(1) || '/';
+    // Совместимость со старыми ссылками вида #/profile
+    if (window.location.hash.startsWith('#/')) {
+        window.history.replaceState({}, '', window.location.hash.slice(1));
+    }
+    const path = window.location.pathname;
     if (path === '/' || path === '/home') navigate('home', false);
     else if (path === '/create') navigate('create', false);
     else if (path === '/profile') navigate('profile', false);
@@ -100,10 +119,10 @@ function handleRoute() {
     else if (path.startsWith('/user/')) showUserProfile(parseInt(path.split('/')[2], 10));
     else navigate('home', false);
 }
-function navigate(page, updateHash = true) {
-    if (updateHash) {
-        const routes = { home: '/', create: '/create', profile: '/profile', myStartups: '/my-startups', settings: '/settings' };
-        window.location.hash = routes[page] || '/';
+function navigate(page, updateUrl = true) {
+    if (updateUrl) {
+        const url = PAGE_ROUTES[page] || '/';
+        if (window.location.pathname !== url) window.history.pushState({}, '', url);
     }
     if ((page === 'create' || page === 'profile' || page === 'myStartups' || page === 'settings') && !state.user) {
         openModal('loginModal');
@@ -514,7 +533,7 @@ function renderPeopleCard(user) {
                 ${user.level ? `<span class="px-2 py-0.5 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 rounded text-xs font-medium">${levelLabels[user.level] || ''}</span>` : ''}
                 ${user.experience ? `<span>${user.experience} лет опыта</span>` : ''}
             </div>
-            <a href="#/user/${user.id}" target="_self" class="text-sm font-semibold text-brand-600 dark:text-brand-400 hover:underline">Профиль</a>
+            <a href="/user/${user.id}" target="_self" class="text-sm font-semibold text-brand-600 dark:text-brand-400 hover:underline">Профиль</a>
         </div>
     </article>
     `;
@@ -695,7 +714,7 @@ function renderStartupCard(startup, animate = true) {
     const isOwner = state.user && Number(state.user.id) === Number(startup.user_id);
     const authorName = startup.author_name || 'Участник';
     const authorInitial = authorName[0].toUpperCase();
-    const authorLink = isOwner ? '#/profile' : `#/user/${startup.user_id}`;
+    const authorLink = isOwner ? '/profile' : `/user/${startup.user_id}`;
     const expandable = hasExpandableContent(startup);
     const animClass = animate ? 'stagger-item' : '';
 
