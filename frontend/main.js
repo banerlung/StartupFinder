@@ -4,7 +4,7 @@ function imgUrl(path) {
     if (!path) return '';
     return path.startsWith('/') ? API_URL + path : path;
 }
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 15;
 const CATEGORY_LABELS = { web: 'Web', mobile: 'Mobile', ai: 'AI', telegram: 'Telegram', gamedev: 'GameDev', roblox: 'Roblox', other: 'Другое' };
 
 // ============ STATE ============
@@ -33,7 +33,6 @@ let state = {
 let currentOffset = 0;
 let hasMoreStartups = true;
 let isLoadingMore = false;
-let scrollObserver = null;
 
 // ============ INIT ============
 document.addEventListener('DOMContentLoaded', async () => {
@@ -135,6 +134,7 @@ function navigate(page, updateUrl = true) {
     if (page === 'profile') loadProfileData();
     if (page === 'myStartups') loadMyStartupsPage();
     if (page === 'create') resetCreateForm();
+    updateLoadMoreButton();
     refreshIcons();
 }
 
@@ -440,9 +440,12 @@ async function loadStartups(reset = false) {
         document.getElementById('projectsGrid').innerHTML = '';
         document.getElementById('projectsEmpty').classList.add('hidden');
         document.getElementById('projectsLoading').classList.remove('hidden');
+        updateLoadMoreButton();
     }
     if (isLoadingMore) return;
     isLoadingMore = true;
+    const moreBtn = document.getElementById('loadMoreBtn');
+    if (moreBtn) moreBtn.disabled = true;
     const loader = document.getElementById('loadMoreLoader');
     if (loader) loader.classList.remove('hidden');
     try {
@@ -472,11 +475,12 @@ async function loadStartups(reset = false) {
         if (reset && state.startups.length === 0) {
             document.getElementById('projectsEmpty').classList.remove('hidden');
         }
-        setupScrollObserver();
+        updateLoadMoreButton();
     } catch (err) {
         showToast('Не удалось загрузить проекты', 'error');
     } finally {
         isLoadingMore = false;
+        if (moreBtn) moreBtn.disabled = false;
         if (loader) loader.classList.add('hidden');
         document.getElementById('projectsLoading').classList.add('hidden');
     }
@@ -560,18 +564,11 @@ async function handlePeopleSearch() {
     }
 }
 
-function setupScrollObserver() {
-    if (scrollObserver) scrollObserver.disconnect();
-    const sentinel = document.getElementById('scrollSentinel');
-    if (!sentinel) return;
-    scrollObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting && hasMoreStartups && !isLoadingMore && state.currentPage === 'home') {
-                loadStartups(false);
-            }
-        });
-    }, { rootMargin: '200px' });
-    scrollObserver.observe(sentinel);
+function updateLoadMoreButton() {
+    const wrap = document.getElementById('loadMoreWrap');
+    if (!wrap) return;
+    const show = hasMoreStartups && state.startups.length > 0 && state.currentPage === 'home';
+    wrap.classList.toggle('hidden', !show);
 }
 
 function parseArray(val) {
@@ -1751,6 +1748,7 @@ async function search() {
         const grid = document.getElementById('projectsGrid');
         grid.innerHTML = list.map(s => renderStartupCard(s, true)).join('');
         refreshIcons();
+        document.getElementById('loadMoreWrap')?.classList.add('hidden');
         document.getElementById('projectsEmpty').classList.toggle('hidden', list.length > 0);
         document.getElementById('projectsSection')?.scrollIntoView({ behavior: 'smooth' });
     } catch (error) {
