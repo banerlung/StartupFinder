@@ -18,9 +18,7 @@ let state = {
     deletingStartupId: null,
     pendingVerifyEmail: null,
     pendingResetEmail: null,
-    createVacancies: [],
     createContacts: [],
-    editVacancies: [],
     editContacts: [],
     editProfileContacts: [],
     filterStacks: [],
@@ -938,8 +936,7 @@ function resetFilters() {
 function handleCreateClick() { if (!state.user) { openModal('loginModal'); return; } navigate('create'); }
 function resetCreateForm() {
     document.getElementById('createForm').reset();
-    state.createVacancies = []; state.createContacts = [];
-    document.getElementById('createVacanciesTags').innerHTML = '';
+    state.createContacts = [];
     document.getElementById('createContactsTags').innerHTML = '';
     document.getElementById('createDescCount').textContent = '0';
     document.getElementById('createContactsError').classList.add('hidden');
@@ -968,14 +965,9 @@ async function handleCreateSubmit(e) {
         contactInput.value = '';
     }
 
-    // То же самое для вакансии — иначе набранная без Enter теряется
-    const vacancyInput = document.getElementById('createVacancyInput');
-    const pendingVacancy = vacancyInput.value.trim();
-    if (pendingVacancy && !state.createVacancies.includes(pendingVacancy)) {
-        state.createVacancies.push(pendingVacancy);
-        renderCreateVacanciesTags();
-        vacancyInput.value = '';
-    }
+    // Вакансии теперь вводятся одной строкой через запятую
+    const vacancyInput = document.getElementById('createVacancies');
+    const vacancies = vacancyInput.value.split(',').map(v => v.trim()).filter(Boolean);
 
     const telegram = cleanTelegram(document.getElementById('createTelegram').value);
     if (!telegram && state.createContacts.length === 0) {
@@ -983,7 +975,7 @@ async function handleCreateSubmit(e) {
         showToast('Укажите хотя бы один способ связи', 'error');
         return;
     }
-    if (state.createVacancies.length === 0) {
+    if (vacancies.length === 0) {
         showToast('Укажите хотя бы одну вакансию', 'error');
         vacancyInput.focus();
         return;
@@ -1002,7 +994,7 @@ async function handleCreateSubmit(e) {
     formData.append('category', document.getElementById('createCategory').value);
     formData.append('stack', document.getElementById('createStack').value);
     formData.append('telegram', telegram);
-    formData.append('vacancies', JSON.stringify(state.createVacancies));
+    formData.append('vacancies', JSON.stringify(vacancies));
     formData.append('contacts', JSON.stringify(state.createContacts));
     
     const imageFile = document.getElementById('createImage')?.files[0];
@@ -1345,7 +1337,6 @@ function openEditStartup(id) {
     const startup = state.startups.find(s => s.id === id);
     if (!startup) return;
     state.editingStartupId = id;
-    state.editVacancies = parseArray(startup.vacancies);
     state.editContacts = parseArray(startup.contacts);
     document.getElementById('editStartupId').value = id;
     document.getElementById('editStartupName').value = startup.name || '';
@@ -1355,22 +1346,11 @@ function openEditStartup(id) {
     document.getElementById('editStartupCategory').value = startup.category || 'other';
     document.getElementById('editStartupStack').value = Array.isArray(startup.stack) ? startup.stack.join(', ') : (startup.stack || '');
     document.getElementById('editStartupTelegram').value = startup.telegram || '';
-    renderEditVacanciesTags();
+    document.getElementById('editVacancies').value = parseArray(startup.vacancies).join(', ');
     renderEditContactsTags();
     openModal('editStartupModal');
     refreshIcons();
 }
-function renderEditVacanciesTags() {
-    const container = document.getElementById('editVacanciesTags');
-    container.innerHTML = state.editVacancies.map((v, i) => `
-        <span class="tag">
-            ${escapeHtml(v)}
-            <button type="button" onclick="removeEditVacancy(${i})" aria-label="Удалить"><i data-lucide="x" class="w-3 h-3"></i></button>
-        </span>
-    `).join('');
-    refreshIcons();
-}
-function removeEditVacancy(idx) { state.editVacancies.splice(idx, 1); renderEditVacanciesTags(); }
 function renderEditContactsTags() {
     const container = document.getElementById('editContactsTags');
     container.innerHTML = state.editContacts.map((c, i) => `
@@ -1385,7 +1365,8 @@ function removeEditContact(idx) { state.editContacts.splice(idx, 1); renderEditC
 
 async function handleEditStartupSubmit(e) {
     e.preventDefault();
-    if(state.editVacancies.length === 0) {
+    const vacancies = document.getElementById('editVacancies').value.split(',').map(v => v.trim()).filter(Boolean);
+    if(vacancies.length === 0) {
         showToast("Нельзя сохранить проект без указания хотя бы одной вакансии ", "error");
         return;
     }
@@ -1397,7 +1378,7 @@ async function handleEditStartupSubmit(e) {
     formData.append('category', document.getElementById('editStartupCategory').value);
     formData.append('stack', document.getElementById('editStartupStack').value);
     formData.append('telegram', cleanTelegram(document.getElementById('editStartupTelegram').value));
-    formData.append('vacancies', JSON.stringify(state.editVacancies));
+    formData.append('vacancies', JSON.stringify(vacancies));
     formData.append('contacts', JSON.stringify(state.editContacts));
     const imageFile = document.getElementById('editStartupImage')?.files[0];
     if (imageFile) formData.append('image', imageFile);
@@ -1511,17 +1492,6 @@ async function handleEditProfileSubmit(e) {
 
 // ============ TAG INPUTS ============
 function initTagInputs() {
-    document.getElementById('createVacancyInput').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const val = e.target.value.trim();
-            if (val && !state.createVacancies.includes(val)) {
-                state.createVacancies.push(val);
-                renderCreateVacanciesTags();
-                e.target.value = '';
-            }
-        }
-    });
     document.getElementById('createContactInput').addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -1529,17 +1499,6 @@ function initTagInputs() {
             if (val && !state.createContacts.includes(val)) {
                 state.createContacts.push(val);
                 renderCreateContactsTags();
-                e.target.value = '';
-            }
-        }
-    });
-    document.getElementById('editVacancyInput').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const val = e.target.value.trim();
-            if (val && !state.editVacancies.includes(val)) {
-                state.editVacancies.push(val);
-                renderEditVacanciesTags();
                 e.target.value = '';
             }
         }
@@ -1578,17 +1537,6 @@ function initTagInputs() {
         }
     });
 }
-function renderCreateVacanciesTags() {
-    const container = document.getElementById('createVacanciesTags');
-    container.innerHTML = state.createVacancies.map((v, i) => `
-        <span class="tag">
-            ${escapeHtml(v)}
-            <button type="button" onclick="removeCreateVacancy(${i})" aria-label="Удалить"><i data-lucide="x" class="w-3 h-3"></i></button>
-        </span>
-    `).join('');
-    refreshIcons();
-}
-function removeCreateVacancy(idx) { state.createVacancies.splice(idx, 1); renderCreateVacanciesTags(); }
 function renderCreateContactsTags() {
     const container = document.getElementById('createContactsTags');
     container.innerHTML = state.createContacts.map((c, i) => `
