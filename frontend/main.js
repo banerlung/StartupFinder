@@ -1249,7 +1249,7 @@ async function showUserProfile(id) {
                 </div>
                 <h1 class="text-2xl font-bold">${escapeHtml(user.name || 'Участник')}</h1>
                 ${user.is_open_to_work ? `
-                <div class="mt-3"><span class="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-medium rounded-full"><i data-lucide="check-circle" class="w-3 h-3"></i>Открыт к предложениям${user.desired_role ? ` · ${escapeHtml(user.desired_role)}` : ''}</span></div>` : ''}
+                <div class="mt-3"><span class="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 dark:bg-green-950/40 text-green-700 dark:text-green-400 text-xs font-medium rounded-full"><i data-lucide="check-circle" class="w-3 h-3"></i>Открыт к предложениям${user.desired_role ? ` · ${escapeHtml(user.desired_role)}` : ''}</span></div>` : ''}
                 <p class="text-gray-700 dark:text-gray-300 leading-relaxed mt-3 break-words">${escapeHtml(user.description || 'Описание не добавлено')}</p>
                 ${profHtml}
                 ${contacts.length ? `
