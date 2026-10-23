@@ -1492,7 +1492,7 @@ async function handleEditProfileSubmit(e) {
 
 // ============ TAG INPUTS ============
 function initTagInputs() {
-    document.getElementById('createContactInput').addEventListener('keydown', (e) => {
+    document.getElementById('createContactInput')?.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
             const val = e.target.value.trim();
@@ -1503,7 +1503,7 @@ function initTagInputs() {
             }
         }
     });
-    document.getElementById('editContactInput').addEventListener('keydown', (e) => {
+    document.getElementById('editContactInput')?.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
             const val = e.target.value.trim();
@@ -1514,7 +1514,7 @@ function initTagInputs() {
             }
         }
     });
-    document.getElementById('editProfileContactInput').addEventListener('keydown', (e) => {
+    document.getElementById('editProfileContactInput')?.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
             const val = e.target.value.trim();
@@ -1525,7 +1525,7 @@ function initTagInputs() {
             }
         }
     });
-    document.getElementById('filterStackInput').addEventListener('keydown', (e) => {
+    document.getElementById('filterStackInput')?.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
             const val = e.target.value.trim();
@@ -1550,9 +1550,9 @@ function renderCreateContactsTags() {
 function removeCreateContact(idx) { state.createContacts.splice(idx, 1); renderCreateContactsTags(); }
 
 function initCharCounters() {
-    document.getElementById('createDescription').addEventListener('input', (e) => { document.getElementById('createDescCount').textContent = e.target.value.length; });
-    document.getElementById('editStartupDescription').addEventListener('input', (e) => { document.getElementById('editDescCount').textContent = e.target.value.length; });
-    document.getElementById('editProfileDescription').addEventListener('input', (e) => { document.getElementById('editProfileDescCount').textContent = e.target.value.length; });
+    document.getElementById('createDescription')?.addEventListener('input', (e) => { document.getElementById('createDescCount').textContent = e.target.value.length; });
+    document.getElementById('editStartupDescription')?.addEventListener('input', (e) => { document.getElementById('editDescCount').textContent = e.target.value.length; });
+    document.getElementById('editProfileDescription')?.addEventListener('input', (e) => { document.getElementById('editProfileDescCount').textContent = e.target.value.length; });
 }
 
 // ============ MODALS (с фокус-трапом и Escape) ============
