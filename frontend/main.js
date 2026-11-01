@@ -613,7 +613,7 @@ function cleanTelegram(val) {
 
 function hasExpandableContent(startup) {
     const contacts = parseArray(startup.contacts);
-    const hasContacts = contacts.length > 0 || !!startup.telegram;
+    const hasContacts = contacts.length > 0 || !!startup.telegram || !!startup.contacts_hidden;
     const desc = (startup.description || '').trim();
     return hasContacts || desc.length > 120;
 }
@@ -768,7 +768,7 @@ function renderStartupCard(startup, animate = true) {
             </div>` : ''}
 
             ${vacancies.length > 0 ? `
-            <div class="startup-row mb-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-800">
+            <div class="startup-row startup-vacancies mb-6 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-800">
                 <div class="flex items-center gap-2 mb-3">
                     <i data-lucide="users" class="w-4 h-4 text-gray-500 dark:text-gray-400"></i>
                     <span class="text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider">Ищут в команду</span>
@@ -802,7 +802,14 @@ function renderStartupCard(startup, animate = true) {
 </a>` : ''}
                             ${contacts.map(c => renderContactLink(c)).join('')}
                         </div>
-                    </div>` : ''}
+                    </div>` : (startup.contacts_hidden ? `
+                    <div>
+                        <div class="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-3">Контакты</div>
+                        <button onclick="openModal('registerModal')" class="w-full flex items-center gap-3 p-3 bg-brand-50 dark:bg-brand-950/40 rounded-xl border border-brand-200 dark:border-brand-800/40 hover:bg-brand-100 dark:hover:bg-brand-950/60 transition-colors">
+                            <i data-lucide="eye" class="w-4 h-4 text-brand-500 flex-shrink-0"></i>
+                            <span class="text-sm font-semibold text-brand-700 dark:text-brand-300">Зарегистрируйтесь, чтобы увидеть контакты</span>
+                        </button>
+                    </div>` : '')}
                 </div>
             </div>
 
