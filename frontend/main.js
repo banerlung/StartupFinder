@@ -108,7 +108,12 @@ function handleRoute() {
         window.history.replaceState({}, '', window.location.hash.slice(1));
     }
     const path = window.location.pathname;
-    if (path === '/' || path === '/home') navigate('home', false);
+    if (path === '/' || path === '/home') {
+        navigate('home', false);
+        // Определяем вкладку из URL: /?tab=people → «Люди», иначе «Проекты»
+        const tab = new URLSearchParams(window.location.search).get('tab');
+        switchMainTab(tab === 'people' ? 'people' : 'projects');
+    }
     else if (path === '/create') navigate('create', false);
     else if (path === '/profile') navigate('profile', false);
     else if (path === '/my-startups') navigate('myStartups', false);
@@ -138,6 +143,11 @@ function navigate(page, updateUrl = true) {
 
 function switchMainTab(tab) {
     state.currentMainTab = tab;
+    // Запоминаем вкладку в URL, чтобы при загрузке страницы
+    // автоматически открывалась нужная секция.
+    if (window.location.pathname === '/') {
+        window.history.replaceState({}, '', tab === 'people' ? '/?tab=people' : '/');
+    }
     const projectsSection = document.getElementById('projectsSection');
     const peopleSection = document.getElementById('peopleSection');
     const isDark = document.documentElement.classList.contains('dark');
