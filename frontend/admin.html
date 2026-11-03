@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Админ-панель — StartupFinder</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: #030712; color: #e5e7eb; min-height: 100vh; }
+  a { color: #f97316; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 20px; margin-bottom: 24px; }
+  h1 span { color: #f97316; }
+  .card { background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 24px; }
+  .login-card { max-width: 400px; margin: 10vh auto 0; }
+  label { display: block; font-size: 13px; color: #9ca3af; margin: 0 0 6px; }
+  input[type=text], input[type=password] {
+    width: 100%; padding: 10px 12px; margin-bottom: 16px;
+    background: #1f2937; border: 1px solid #374151; border-radius: 8px;
+    color: #e5e7eb; font-size: 14px; outline: none;
+  }
+  input:focus { border-color: #f97316; }
+  button {
+    cursor: pointer; border: none; border-radius: 8px; font-size: 14px;
+    padding: 10px 16px; background: #f97316; color: #fff; font-weight: 600;
+  }
+  button:hover { background: #ea580c; }
+  button.ghost { background: #1f2937; color: #e5e7eb; }
+  button.danger { background: #7f1d1d; color: #fca5a5; padding: 6px 10px; font-size: 13px; }
+  button.danger:hover { background: #991b1b; }
+  .error { background: #7f1d1d; color: #fecaca; border-radius: 8px; padding: 10px 12px; font-size: 13px; margin-bottom: 16px; }
+  .hidden { display: none !important; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+  .tabs button.ghost.active { background: #374151; color: #fff; }
+  .toolbar { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .toolbar input { flex: 1; min-width: 200px; margin-bottom: 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid #1f2937; vertical-align: top; }
+  th { color: #9ca3af; font-weight: 600; font-size: 12px; text-transform: uppercase; }
+  td .muted { color: #6b7280; font-size: 12px; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; background: #1f2937; color: #9ca3af; margin-right: 4px; }
+  .badge.green { background: #052e16; color: #4ade80; }
+  .pager { display: flex; gap: 8px; align-items: center; margin-top: 16px; color: #9ca3af; font-size: 13px; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ЛОГИН -->
+  <div id="loginView" class="login-card card">
+    <h1>Startup<span>Finder</span> — админ</h1>
+    <div id="loginError" class="error hidden"></div>
+    <form id="loginForm">
+      <label for="login">Логин</label>
+      <input type="text" id="login" autocomplete="username" required>
+      <label for="password">Пароль</label>
+      <input type="password" id="password" autocomplete="current-password" required>
+      <label for="totp">Код 2FA (6 цифр)</label>
+      <input type="text" id="totp" inputmode="numeric" pattern="\d{6}" maxlength="6" autocomplete="one-time-code">
+      <button type="submit" id="loginBtn" style="width:100%">Войти</button>
+    </form>
+  </div>
+
+  <!-- ПАНЕЛЬ -->
+  <div id="panelView" class="hidden">
+    <div class="topbar">
+      <h1 style="margin:0">Startup<span>Finder</span> — модерация</h1>
+      <div>
+        <a href="/" style="margin-right:12px; font-size:13px">← На сайт</a>
+        <button class="ghost" onclick="logout()">Выйти</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="ghost active" id="tabStartups" onclick="showTab('startups')">Проекты</button>
+      <button class="ghost" id="tabUsers" onclick="showTab('users')">Пользователи</button>
+    </div>
+
+    <div class="toolbar">
+      <input type="text" id="searchInput" placeholder="Поиск…" onkeydown="if(event.key==='Enter')applySearch()">
+      <button class="ghost" onclick="applySearch()">Найти</button>
+    </div>
+
+    <div class="card">
+      <div id="tableWrap"></div>
+      <div class="pager">
+        <button class="ghost" onclick="goPage(-1)">← Назад</button>
+        <span id="pageInfo"></span>
+        <button class="ghost" onclick="goPage(1)">Вперёд →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const TOKEN_KEY = 'adminToken';
+const PAGE_SIZE = 20;
+
+const state = {
+  tab: 'startups',
+  q: '',
+  page: 0,
+  total: 0,
+};
+
+function token() { return sessionStorage.getItem(TOKEN_KEY); }
+
+async function api(path, options = {}) {
+  const res = await fetch(path, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token() ? { Authorization: 'Bearer ' + token() } : {}),
+      ...(options.headers || {}),
+    },
+  });
+  if (res.status === 401 && token()) { logout(); throw new Error('Сессия истекла'); }
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const msg = (body.error && body.error.message) || ('Ошибка ' + res.status);
+    const err = new Error(msg);
+    err.status = res.status;
+    throw err;
+  }
+  return body.data !== undefined ? body.data : body;
+}
+
+// ---- Логин ----
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const errBox = document.getElementById('loginError');
+  errBox.classList.add('hidden');
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true;
+  btn.textContent = 'Проверка…';
+  try {
+    const data = await api('/api/admin/login', {
+      method: 'POST',
+      body: JSON.stringify({
+        login: document.getElementById('login').value.trim(),
+        password: document.getElementById('password').value,
+        totp: document.getElementById('totp').value.trim(),
+      }),
+    });
+    sessionStorage.setItem(TOKEN_KEY, data.token);
+    showPanel();
+  } catch (err) {
+    errBox.textContent = err.message;
+    errBox.classList.remove('hidden');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Войти';
+  }
+});
+
+function logout() {
+  sessionStorage.removeItem(TOKEN_KEY);
+  document.getElementById('panelView').classList.add('hidden');
+  document.getElementById('loginView').classList.remove('hidden');
+}
+
+function showPanel() {
+  document.getElementById('loginView').classList.add('hidden');
+  document.getElementById('panelView').classList.remove('hidden');
+  loadData();
+}
+
+// ---- Списки ----
+function showTab(tab) {
+  state.tab = tab;
+  state.page = 0;
+  state.q = '';
+  document.getElementById('searchInput').value = '';
+  document.getElementById('tabStartups').classList.toggle('active', tab === 'startups');
+  document.getElementById('tabUsers').classList.toggle('active', tab === 'users');
+  loadData();
+}
+
+function applySearch() {
+  state.q = document.getElementById('searchInput').value.trim();
+  state.page = 0;
+  loadData();
+}
+
+function goPage(delta) {
+  const maxPage = Math.max(0, Math.ceil(state.total / PAGE_SIZE) - 1);
+  state.page = Math.min(Math.max(0, state.page + delta), maxPage);
+  loadData();
+}
+
+async function loadData() {
+  const wrap = document.getElementById('tableWrap');
+  wrap.innerHTML = '<p style="color:#9ca3af">Загрузка…</p>';
+  try {
+    const path = state.tab === 'startups' ? '/api/admin/startups' : '/api/admin/users';
+    const data = await api(`${path}?q=${encodeURIComponent(state.q)}&limit=${PAGE_SIZE}&offset=${state.page * PAGE_SIZE}`);
+    state.total = data.total;
+    document.getElementById('pageInfo').textContent =
+      `Страница ${state.page + 1} из ${Math.max(1, Math.ceil(state.total / PAGE_SIZE))} · всего ${state.total}`;
+    wrap.innerHTML = state.tab === 'startups' ? renderStartups(data.items) : renderUsers(data.items);
+  } catch (err) {
+    wrap.innerHTML = `<div class="error">${escapeHtml(err.message)}</div>`;
+  }
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function renderStartups(items) {
+  if (!items.length) return '<p style="color:#9ca3af">Ничего не найдено.</p>';
+  return `<table><thead><tr>
+    <th>ID</th><th>Проект</th><th>Автор</th><th>Категория</th><th>Дата</th><th></th>
+  </tr></thead><tbody>${items.map((s) => `<tr>
+    <td>${s.id}</td>
+    <td><b>${escapeHtml(s.name)}</b><div class="muted">${escapeHtml((s.description || '').slice(0, 100))}${(s.description || '').length > 100 ? '…' : ''}</div></td>
+    <td>${escapeHtml(s.user?.name || '—')}<div class="muted">${escapeHtml(s.user?.email || '')}</div></td>
+    <td><span class="badge">${escapeHtml(s.category || 'other')}</span>${s.isPaid ? '<span class="badge green">оплата</span>' : ''}</td>
+    <td class="muted">${new Date(s.createdAt).toLocaleDateString('ru-RU')}</td>
+    <td><button class="danger" onclick="del('startups', ${s.id})">Удалить</button></td>
+  </tr>`).join('')}</tbody></table>`;
+}
+
+function renderUsers(items) {
+  if (!items.length) return '<p style="color:#9ca3af">Ничего не найдено.</p>';
+  return `<table><thead><tr>
+    <th>ID</th><th>Пользователь</th><th>Email</th><th>Статус</th><th>Проектов</th><th>Дата</th><th></th>
+  </tr></thead><tbody>${items.map((u) => `<tr>
+    <td>${u.id}</td>
+    <td><b>${escapeHtml(u.name)}</b></td>
+    <td>${escapeHtml(u.email)}</td>
+    <td>${u.isVerified ? '<span class="badge green">подтверждён</span>' : '<span class="badge">не подтверждён</span>'}${u.isOpenToWork ? '<span class="badge green">ищет проект</span>' : ''}</td>
+    <td>${u._count ? u._count.startups : 0}</td>
+    <td class="muted">${new Date(u.createdAt).toLocaleDateString('ru-RU')}</td>
+    <td><button class="danger" onclick="del('users', ${u.id})">Удалить</button></td>
+  </tr>`).join('')}</tbody></table>`;
+}
+
+async function del(kind, id) {
+  if (!confirm(`Точно удалить ${kind === 'startups' ? 'проект' : 'пользователя'} #${id}? Действие необратимо.`)) return;
+  try {
+    await api(`/api/admin/${kind}/${id}`, { method: 'DELETE' });
+    loadData();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+
+// Если сессия ещё жива — сразу показываем панель
+if (token()) {
+  api('/api/admin/me').then(showPanel).catch(() => sessionStorage.removeItem(TOKEN_KEY));
+}
+</script>
+</body>
+</html>
