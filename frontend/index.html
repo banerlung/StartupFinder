@@ -32,7 +32,7 @@
 <script src="vendor/lucide.min.js" defer></script>
 
 <link rel="stylesheet" href="vendor/fonts.css?v=20261023">
-<link rel="stylesheet" href="style.css?v=20261102">
+<link rel="stylesheet" href="style.css?v=20261103">
 <base target="_blank">
 </head>
 <body class="auth-loading bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
@@ -331,9 +331,8 @@
 </div>
 </div>
 <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6">
-<label class="block text-sm font-semibold mb-2">Дополнительные контакты</label>
-<div id="createContactsTags" class="flex flex-wrap gap-2 mb-2"></div>
-<input type="text" id="createContactInput" placeholder="Email, VK, GitHub" class="input-field w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none">
+<label class="block text-sm font-semibold mb-2">Дополнительные контакты (через запятую)</label>
+<input type="text" id="createContacts" placeholder="Email, VK, GitHub" class="input-field w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none">
 </div>
 <div id="createContactsError" class="hidden text-sm text-red-500">Укажите хотя бы один способ связи (Telegram или контакт)</div>
 <div class="flex flex-col-reverse sm:flex-row gap-3 justify-end pt-4">
@@ -833,7 +832,7 @@
 <div><label class="block text-sm font-semibold mb-1.5">Технологии (стек)</label><input type="text" id="editStartupStack" placeholder="React, Node.js, ..." class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none"></div>
 <div><label class="block text-sm font-semibold mb-1.5">Кого вы ищете (вакансии через запятую) <span class="text-red-500">*</span></label><input type="text" id="editVacancies" placeholder="Дизайнер, frontend-разработчик" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none"></div>
 <div><label class="block text-sm font-semibold mb-1.5">Telegram для связи (без @)</label><input type="text" id="editStartupTelegram" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none"></div>
-<div><label class="block text-sm font-semibold mb-1.5">Дополнительные контакты</label><div id="editContactsTags" class="flex flex-wrap gap-2 mb-2"></div><input type="text" id="editContactInput" placeholder="Email, VK, GitHub..." class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none"></div>
+<div><label class="block text-sm font-semibold mb-1.5">Дополнительные контакты (через запятую)</label><input type="text" id="editContacts" placeholder="Email, VK, GitHub..." class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none"></div>
 <button type="submit" class="hidden" aria-hidden="true"></button>
 </form>
 <div class="p-6 border-t border-gray-200 dark:border-gray-800 flex gap-3">
@@ -944,9 +943,8 @@
       </div>
 
       <div>
-        <label class="block text-sm font-semibold mb-1.5">Контакты</label>
-        <div id="editProfileContactsTags" class="flex flex-wrap gap-2 mb-2"></div>
-        <input type="text" id="editProfileContactInput" placeholder="Введите контакт и нажмите Enter" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none">
+        <label class="block text-sm font-semibold mb-1.5">Контакты (через запятую)</label>
+        <input type="text" id="editProfileContacts" placeholder="Email, VK, GitHub..." class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none">
       </div>
 
       <button type="submit" class="hidden" aria-hidden="true"></button>
@@ -971,6 +969,6 @@
   </svg>
   <span class="text-sm font-normal text-zinc-300">Нет подключения к интернету</span>
 </div>
-<script src="main.js?v=20261102" defer></script>
+<script src="main.js?v=20261103" defer></script>
 </body>
 </html>

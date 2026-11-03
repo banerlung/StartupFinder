@@ -18,9 +18,6 @@ let state = {
     deletingStartupId: null,
     pendingVerifyEmail: null,
     pendingResetEmail: null,
-    createContacts: [],
-    editContacts: [],
-    editProfileContacts: [],
     filterStacks: [],
     expandedStartups: new Set(),
     authLoaded: false,
@@ -953,8 +950,6 @@ function resetFilters() {
 function handleCreateClick() { if (!state.user) { openModal('loginModal'); return; } navigate('create'); }
 function resetCreateForm() {
     document.getElementById('createForm').reset();
-    state.createContacts = [];
-    document.getElementById('createContactsTags').innerHTML = '';
     document.getElementById('createDescCount').textContent = '0';
     document.getElementById('createContactsError').classList.add('hidden');
 }
@@ -973,21 +968,15 @@ async function handleCreateSubmit(e) {
     e.preventDefault();
     if (!state.user) { openModal('loginModal'); return; }
 
-    // Дозабираем набранный, но не добавленный Enter'ом контакт
-    const contactInput = document.getElementById('createContactInput');
-    const pendingContact = contactInput.value.trim();
-    if (pendingContact && !state.createContacts.includes(pendingContact)) {
-        state.createContacts.push(pendingContact);
-        renderCreateContactsTags();
-        contactInput.value = '';
-    }
+    // Контакты и вакансии вводятся одной строкой через запятую
+    const contactInput = document.getElementById('createContacts');
+    const contacts = contactInput.value.split(',').map(v => v.trim()).filter(Boolean);
 
-    // Вакансии теперь вводятся одной строкой через запятую
     const vacancyInput = document.getElementById('createVacancies');
     const vacancies = vacancyInput.value.split(',').map(v => v.trim()).filter(Boolean);
 
     const telegram = cleanTelegram(document.getElementById('createTelegram').value);
-    if (!telegram && state.createContacts.length === 0) {
+    if (!telegram && contacts.length === 0) {
         document.getElementById('createContactsError').classList.remove('hidden');
         showToast('Укажите хотя бы один способ связи', 'error');
         return;
@@ -1012,7 +1001,7 @@ async function handleCreateSubmit(e) {
     formData.append('stack', document.getElementById('createStack').value);
     formData.append('telegram', telegram);
     formData.append('vacancies', JSON.stringify(vacancies));
-    formData.append('contacts', JSON.stringify(state.createContacts));
+    formData.append('contacts', JSON.stringify(contacts));
     
     const imageFile = document.getElementById('createImage')?.files[0];
     if (imageFile) formData.append('image', imageFile);
@@ -1354,7 +1343,6 @@ function openEditStartup(id) {
     const startup = state.startups.find(s => s.id === id);
     if (!startup) return;
     state.editingStartupId = id;
-    state.editContacts = parseArray(startup.contacts);
     document.getElementById('editStartupId').value = id;
     document.getElementById('editStartupName').value = startup.name || '';
     document.getElementById('editStartupDescription').value = startup.description || '';
@@ -1364,21 +1352,10 @@ function openEditStartup(id) {
     document.getElementById('editStartupStack').value = Array.isArray(startup.stack) ? startup.stack.join(', ') : (startup.stack || '');
     document.getElementById('editStartupTelegram').value = startup.telegram || '';
     document.getElementById('editVacancies').value = parseArray(startup.vacancies).join(', ');
-    renderEditContactsTags();
+    document.getElementById('editContacts').value = parseArray(startup.contacts).join(', ');
     openModal('editStartupModal');
     refreshIcons();
 }
-function renderEditContactsTags() {
-    const container = document.getElementById('editContactsTags');
-    container.innerHTML = state.editContacts.map((c, i) => `
-        <span class="tag">
-            ${escapeHtml(c)}
-            <button type="button" onclick="removeEditContact(${i})" aria-label="Удалить"><i data-lucide="x" class="w-3 h-3"></i></button>
-        </span>
-    `).join('');
-    refreshIcons();
-}
-function removeEditContact(idx) { state.editContacts.splice(idx, 1); renderEditContactsTags(); }
 
 async function handleEditStartupSubmit(e) {
     e.preventDefault();
@@ -1396,7 +1373,7 @@ async function handleEditStartupSubmit(e) {
     formData.append('stack', document.getElementById('editStartupStack').value);
     formData.append('telegram', cleanTelegram(document.getElementById('editStartupTelegram').value));
     formData.append('vacancies', JSON.stringify(vacancies));
-    formData.append('contacts', JSON.stringify(state.editContacts));
+    formData.append('contacts', JSON.stringify(document.getElementById('editContacts').value.split(',').map(c => c.trim()).filter(Boolean)));
     const imageFile = document.getElementById('editStartupImage')?.files[0];
     if (imageFile) formData.append('image', imageFile);
 
@@ -1450,32 +1427,21 @@ function openEditProfileModal() {
     document.getElementById('editProfileIsOpenToWork').checked = !!state.user.is_open_to_work;
     document.getElementById('editProfileDesiredRole').value = state.user.desired_role || '';
 
-    state.editProfileContacts = parseArray(state.user.contacts);
-    renderEditProfileContactsTags();
+    document.getElementById('editProfileContacts').value = parseArray(state.user.contacts).join(', ');
 
     openModal('editProfileModal');
     refreshIcons();
 }
-function renderEditProfileContactsTags() {
-    const container = document.getElementById('editProfileContactsTags');
-    container.innerHTML = state.editProfileContacts.map((c, i) => `
-        <span class="tag">
-            ${escapeHtml(c)}
-            <button type="button" onclick="removeEditProfileContact(${i})" aria-label="Удалить"><i data-lucide="x" class="w-3 h-3"></i></button>
-        </span>
-    `).join('');
-    refreshIcons();
-}
-function removeEditProfileContact(idx) { state.editProfileContacts.splice(idx, 1); renderEditProfileContactsTags(); }
 
 async function handleEditProfileSubmit(e) {
     e.preventDefault();
     if (!validateFileSize('editProfileImage', 5)) return;
 
+    const profileContacts = document.getElementById('editProfileContacts').value.split(',').map(c => c.trim()).filter(Boolean);
     const formData = new FormData();
     formData.append('name', document.getElementById('editProfileName').value);
     formData.append('description', document.getElementById('editProfileDescription').value);
-    formData.append('contacts', JSON.stringify(state.editProfileContacts));
+    formData.append('contacts', JSON.stringify(profileContacts));
 
     formData.append('role', document.getElementById('editProfileRole').value.trim());
     formData.append('stack', document.getElementById('editProfileStack').value.trim());
@@ -1499,7 +1465,7 @@ async function handleEditProfileSubmit(e) {
             throw new Error(err.error?.message || 'Ошибка сохранения');
         }
         state.user = await res.json();
-        state.user.contacts = state.editProfileContacts;
+        state.user.contacts = profileContacts;
         updateAuthUI();
         closeModal('editProfileModal');
         showToast('Профиль обновлён', 'success');
@@ -1509,39 +1475,6 @@ async function handleEditProfileSubmit(e) {
 
 // ============ TAG INPUTS ============
 function initTagInputs() {
-    document.getElementById('createContactInput')?.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const val = e.target.value.trim();
-            if (val && !state.createContacts.includes(val)) {
-                state.createContacts.push(val);
-                renderCreateContactsTags();
-                e.target.value = '';
-            }
-        }
-    });
-    document.getElementById('editContactInput')?.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const val = e.target.value.trim();
-            if (val && !state.editContacts.includes(val)) {
-                state.editContacts.push(val);
-                renderEditContactsTags();
-                e.target.value = '';
-            }
-        }
-    });
-    document.getElementById('editProfileContactInput')?.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const val = e.target.value.trim();
-            if (val && !state.editProfileContacts.includes(val)) {
-                state.editProfileContacts.push(val);
-                renderEditProfileContactsTags();
-                e.target.value = '';
-            }
-        }
-    });
     document.getElementById('filterStackInput')?.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -1554,17 +1487,6 @@ function initTagInputs() {
         }
     });
 }
-function renderCreateContactsTags() {
-    const container = document.getElementById('createContactsTags');
-    container.innerHTML = state.createContacts.map((c, i) => `
-        <span class="tag">
-            ${escapeHtml(c)}
-            <button type="button" onclick="removeCreateContact(${i})" aria-label="Удалить"><i data-lucide="x" class="w-3 h-3"></i></button>
-        </span>
-    `).join('');
-    refreshIcons();
-}
-function removeCreateContact(idx) { state.createContacts.splice(idx, 1); renderCreateContactsTags(); }
 
 function initCharCounters() {
     document.getElementById('createDescription')?.addEventListener('input', (e) => { document.getElementById('createDescCount').textContent = e.target.value.length; });
