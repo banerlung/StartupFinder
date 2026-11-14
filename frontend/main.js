@@ -66,16 +66,11 @@ function applyTheme(theme) {
     document.querySelectorAll('.theme-icon-light').forEach(el => el.classList.toggle('hidden', isDark));
     document.querySelectorAll('.theme-icon-dark').forEach(el => el.classList.toggle('hidden', !isDark));
 }
-function setTheme(theme) { applyTheme(theme); closeThemeMenu(); }
-function toggleThemeMenu() {
-    const menu = document.getElementById('themeMenu');
-    const btn = document.getElementById('themeBtn');
-    const isHidden = menu.classList.toggle('hidden');
-    btn.setAttribute('aria-expanded', !isHidden);
-}
-function closeThemeMenu() {
-    document.getElementById('themeMenu').classList.add('hidden');
-    document.getElementById('themeBtn').setAttribute('aria-expanded', 'false');
+function setTheme(theme) { applyTheme(theme); }
+function toggleTheme() {
+    const saved = localStorage.getItem('theme') || 'system';
+    const isDark = saved === 'dark' || (saved === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    applyTheme(isDark ? 'light' : 'dark');
 }
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
     if (localStorage.getItem('theme') === 'system') applyTheme('system');
@@ -797,7 +792,7 @@ function renderStartupCard(startup, animate = true) {
                     ${contacts.length > 0 || startup.telegram ? `
                     <div>
                         <div class="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mb-3">Контакты</div>
-                        <div class="space-y-2">
+                        <div class="flex flex-wrap gap-2">
                         ${startup.telegram ? `
 <a href="https://t.me/${escapeHtml(cleanTelegram(startup.telegram))}" target="_blank" rel="noopener noreferrer" class="telegram-link flex items-center gap-3 p-3 bg-blue-50 rounded-xl hover:bg-blue-100 transition-colors group/link">
     <div class="telegram-icon w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center flex-shrink-0 shadow-sm shadow-blue-500/20">
@@ -1557,7 +1552,6 @@ function initModalKeys() {
         }
     });
     document.addEventListener('click', (e) => {
-    if (!e.target.closest('#themeBtn') && !e.target.closest('#themeMenu')) closeThemeMenu();
     if (!e.target.closest('#guestInfoBtn')) closeGuestInfoMenu();
     if (!e.target.closest('#profileMenu')) document.getElementById('profileDropdown').classList.add('hidden');
 });
