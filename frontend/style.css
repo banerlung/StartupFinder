@@ -3211,3 +3211,172 @@ animation: none;
   .md\:grid-cols-5{grid-template-columns:repeat(5,minmax(0,1fr))}
 }
 .startup-card-body > .startup-row.startup-vacancies{display:block}
+
+/* ================================================
+   Мобильная адаптация (только до 767px, десктоп не меняется)
+   ================================================ */
+@media (max-width: 767px) {
+
+  /* --- Компактные карточки стартапов --- */
+
+  /* Меньшие отступы между карточками: 12px вместо 24px */
+  #projectsGrid > * + *,
+  #userProfileStartups > * + *,
+  #myStartupsPageGrid > * + *,
+  #myStartupsGrid > * + *,
+  #peopleGrid > * + * {
+    margin-top: .75rem;
+  }
+
+  /* Внутренние отступы карточки: 16px вместо 24px */
+  .startup-card-body {
+    padding: 1rem;
+  }
+
+  /* Отступы между строками внутри карточки: 12px вместо 20-24px */
+  .startup-card-body > .startup-row,
+  .startup-card-body > .expand-content {
+    margin-bottom: .75rem;
+  }
+
+  /* Логотип/аватар проекта меньше: 44px вместо 64px */
+  .startup-card .startup-card-body .startup-row > .w-16.h-16 {
+    width: 2.75rem;
+    height: 2.75rem;
+    font-size: 1.125rem;
+  }
+
+  .startup-card-body .startup-row:first-child {
+    gap: .75rem;
+  }
+
+  /* Название проекта компактнее */
+  .startup-card-head h3 {
+    font-size: 1.0625rem;
+    line-height: 1.35;
+  }
+
+  /* Описание в 2 строки вместо 3 — карточка ниже */
+  .startup-card .startup-desc.line-clamp-3 {
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+
+  /* Блок вакансий компактнее */
+  .startup-card-body .startup-vacancies {
+    padding: .75rem;
+  }
+
+  .startup-card-body .expand-content > div {
+    padding-top: 1rem;
+  }
+
+  /* --- Большие зоны нажатия (от 44px) --- */
+
+  /* Убираем задержку двойного тапа */
+  html {
+    touch-action: manipulation;
+  }
+
+  /* Кнопка «Подробнее» */
+  .expand-btn {
+    min-height: 48px;
+  }
+
+  /* Кнопки владельца: редактировать / удалить */
+  .startup-card-body > .startup-row:last-child button:not(.expand-btn) {
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Строка автора — вся строка кликабельна, высота от 44px */
+  .startup-card-body > a.startup-row {
+    min-height: 44px;
+  }
+
+  /* Контакты в раскрытой части карточки */
+  .expand-content a,
+  .expand-content button {
+    min-height: 48px;
+  }
+
+  /* Кнопки в шапке (тема, бургер-меню) */
+  #navbar button.p-2 {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Пункты мобильного меню */
+  #mobileMenu a,
+  #mobileMenu button {
+    padding-top: .875rem;
+    padding-bottom: .875rem;
+  }
+
+  /* Вкладки «Проекты» / «Люди» */
+  #tabProjects, #tabPeople, #tabProjects2, #tabPeople2 {
+    padding: .625rem 1.25rem;
+    font-size: .9375rem;
+  }
+
+  /* Строка поиска и кнопка фильтров — 44px */
+  #searchInput, #peopleSearchInput {
+    padding-top: .75rem;
+    padding-bottom: .75rem;
+  }
+  #buttonInput {
+    height: 44px;
+  }
+  button[title="Фильтры"] {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Пункты-радиокнопки в фильтрах */
+  #filtersModal label.flex {
+    min-height: 44px;
+  }
+
+  /* Кнопка закрытия в модалках */
+  .modal-backdrop button[aria-label="Закрыть"] {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* --- Карточки людей --- */
+  #peopleGrid article {
+    padding: 1rem;
+  }
+  /* Увеличиваем зону нажатия ссылок в карточке людей без сдвига вёрстки */
+  #peopleGrid article a {
+    padding: .5rem .875rem;
+    margin: -.5rem -.875rem;
+    border-radius: .5rem;
+  }
+
+  /* Кнопки в превью «Мои стартапы» в профиле */
+  #myStartupsGrid button {
+    min-height: 44px;
+  }
+
+  /* --- Прочее --- */
+
+  /* Заголовки секций компактнее */
+  #projectsSection h2, #peopleSection h2 {
+    font-size: 1.5rem;
+  }
+
+  /* CTA-баннер «Готов начать?» компактнее */
+  #homePage section:last-child .rounded-2xl {
+    padding: 1.5rem;
+  }
+
+  /* Ссылки в футере удобнее для пальца */
+  footer ul a {
+    display: inline-block;
+    padding: .25rem 0;
+  }
+}

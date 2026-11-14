@@ -520,11 +520,13 @@ function renderPeopleCard(user) {
     return `
     <article class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-6 md:p-8">
         <div class="flex items-start gap-4 mb-4">
+            <a href="/user/${user.id}" target="_self" class="flex-shrink-0" aria-label="Профиль ${escapeHtml(user.name || 'участника')}">
             <div class="w-14 h-14 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white text-xl font-semibold flex-shrink-0">
                 ${user.avatar_url ? `<img src="${imgUrl(user.avatar_url)}" class="w-full h-full object-cover rounded-full" alt="">` : initial}
             </div>
+            </a>
             <div class="flex-1 min-w-0">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">${escapeHtml(user.name || 'Без имени')}</h3>
+                <a href="/user/${user.id}" target="_self" class="hover:text-brand-600 dark:hover:text-brand-400 transition-colors"><h3 class="text-lg font-semibold text-gray-900 dark:text-white">${escapeHtml(user.name || 'Без имени')}</h3></a>
                 ${user.role ? `<p class="text-sm text-gray-500 dark:text-gray-400">${escapeHtml(user.role)}</p>` : ''}
                 ${user.desired_role ? `<p class="text-sm text-brand-600 dark:text-brand-400">Ищет: ${escapeHtml(user.desired_role)}</p>` : ''}
             </div>
