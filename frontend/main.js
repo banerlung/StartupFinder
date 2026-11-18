@@ -471,6 +471,7 @@ async function loadStartups(reset = false) {
             });
             grid.appendChild(fragment);
             refreshIcons();
+            initAllComments();
         }
         if (reset && state.startups.length === 0) {
             document.getElementById('projectsEmpty').classList.remove('hidden');
@@ -681,6 +682,7 @@ async function viewStartupInFeed(startupId) {
             if (state.startups.length > 0) {
                 grid.innerHTML = state.startups.map(s => renderStartupCard(s, true)).join('');
                 refreshIcons();
+                initAllComments();
             }
             const projectsSection = document.getElementById('projectsSection');
             if (projectsSection) projectsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -837,6 +839,29 @@ function renderStartupCard(startup, animate = true) {
                 ` : ''}
             </div>
 
+            <div class="startup-row comments-section pt-5 border-t border-gray-100 dark:border-gray-800">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="message-circle" class="w-4 h-4 text-gray-500 dark:text-gray-400"></i>
+                        <span class="text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider">Комментарии</span>
+                    </div>
+                    <span id="comments-count-${startup.id}" class="text-xs text-gray-400"></span>
+                </div>
+                <div id="comments-list-${startup.id}" class="space-y-4 mb-4">
+                    <p class="text-sm text-gray-400 dark:text-gray-500">Загрузка комментариев…</p>
+                </div>
+                ${state.user ? `
+                <form id="comments-form-${startup.id}" onsubmit="handleCommentSubmit(${startup.id}, event)" class="flex flex-col gap-2">
+                    <textarea maxlength="1000" rows="2" placeholder="Написать комментарий…" class="input-field w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none resize-none"></textarea>
+                    <div class="flex justify-end">
+                        <button type="submit" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-sm font-semibold transition-colors btn-hover">Отправить</button>
+                    </div>
+                </form>` : `
+                <button onclick="openModal('loginModal')" class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2">
+                    <i data-lucide="log-in" class="w-4 h-4"></i>Войдите, чтобы комментировать
+                </button>`}
+            </div>
+
         </div>
     </article>
     `;
@@ -863,6 +888,106 @@ function renderContactLink(contact) {
     </a>
     `;
 }
+// ============ COMMENTS (комментарии к проектам) ============
+// Подгружает комментарии для всех отрисованных карточек.
+// Повторно не дёргает API благодаря data-loaded (перерисовка списка и т.п.).
+function initAllComments() {
+    document.querySelectorAll('.startup-card').forEach(card => {
+        const id = card.id && card.id.startsWith('startup-card-') ? card.id.replace('startup-card-', '') : null;
+        if (id) loadComments(Number(id));
+    });
+}
+
+async function loadComments(startupId, force = false) {
+    const list = document.getElementById(`comments-list-${startupId}`);
+    const countEl = document.getElementById(`comments-count-${startupId}`);
+    if (!list) return;
+    if (!force && list.dataset.loaded === '1') return;
+    try {
+        const res = await fetch(`${API_URL}/api/startups/${startupId}/comments`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        const comments = data.comments || [];
+        renderCommentsList(startupId, comments);
+        list.dataset.loaded = '1';
+        if (countEl) countEl.textContent = comments.length ? String(comments.length) : '';
+    } catch (err) {
+        if (list.dataset.loaded !== '1') {
+            list.innerHTML = '<p class="text-sm text-gray-400">Не удалось загрузить комментарии.</p>';
+        }
+    }
+}
+
+function renderCommentsList(startupId, comments) {
+    const list = document.getElementById(`comments-list-${startupId}`);
+    if (!list) return;
+    if (!comments.length) {
+        list.innerHTML = '<p class="text-sm text-gray-400 dark:text-gray-500">Пока нет комментариев — поделись мнением первым!</p>';
+        return;
+    }
+    const canDelete = (comment) => state.user && Number(comment.author_id) === Number(state.user.id);
+    list.innerHTML = comments.map(c => `
+    <div class="flex items-start gap-3" id="comment-${c.id}">
+        <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-semibold text-gray-600 dark:text-gray-300 overflow-hidden flex-shrink-0">
+            ${c.author_avatar ? `<img src="${imgUrl(c.author_avatar)}" class="w-full h-full object-cover" alt="">` : escapeHtml((c.author_name || 'У')[0].toUpperCase())}
+        </div>
+        <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+                <span class="text-sm font-semibold text-gray-900 dark:text-white">${escapeHtml(c.author_name)}</span>
+                <span class="text-xs text-gray-400">${getTimeAgo(c.created_at)}</span>
+                ${canDelete(c) ? `<button onclick="handleDeleteComment(${c.id}, ${startupId})" class="text-xs text-gray-400 hover:text-red-500 transition-colors ml-auto" aria-label="Удалить комментарий">удалить</button>` : ''}
+            </div>
+            <p class="text-sm text-gray-600 dark:text-gray-400 break-words">${escapeHtml(c.content)}</p>
+        </div>
+    </div>`).join('');
+}
+
+async function handleCommentSubmit(startupId, event) {
+    event.preventDefault();
+    const form = document.getElementById(`comments-form-${startupId}`);
+    if (!form) return;
+    const input = form.querySelector('textarea');
+    const btn = form.querySelector('button[type="submit"]');
+    const content = input.value.trim();
+    if (!content) return;
+    btn.disabled = true;
+    try {
+        const res = await fetch(`${API_URL}/api/startups/${startupId}/comments`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...authHeaders() },
+            body: JSON.stringify({ content }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            showToast(data.error?.message || 'Не удалось отправить комментарий', 'error');
+            return;
+        }
+        input.value = '';
+        await loadComments(startupId, true);
+        showToast('Комментарий опубликован', 'success');
+    } catch (err) {
+        showToast('Ошибка соединения', 'error');
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+async function handleDeleteComment(commentId, startupId) {
+    try {
+        const res = await fetch(`${API_URL}/api/comments/${commentId}`, {
+            method: 'DELETE',
+            headers: authHeaders(),
+        });
+        if (!res.ok) {
+            showToast('Не удалось удалить комментарий', 'error');
+            return;
+        }
+        await loadComments(startupId, true);
+    } catch (err) {
+        showToast('Ошибка соединения', 'error');
+    }
+}
+
 function getTimeAgo(dateStr) {
     if (!dateStr) return '';
     const date = new Date(dateStr);
@@ -1269,6 +1394,7 @@ async function showUserProfile(id) {
             ? startups.map(s => renderStartupCard(s, true)).join('')
             : '<p class="text-sm text-gray-500 italic">У участника пока нет проектов</p>';
         refreshIcons();
+        initAllComments();
     } catch (e) {
         showToast('Не удалось загрузить профиль', 'error');
         navigate('home');
@@ -1331,6 +1457,7 @@ async function loadMyStartupsPage() {
             empty.classList.add('hidden');
             grid.innerHTML = myStartups.map(s => renderStartupCard(s, true)).join('');
             refreshIcons();
+            initAllComments();
         }
     } catch (err) { console.error(err); }
 }
@@ -1631,6 +1758,7 @@ async function search() {
         const grid = document.getElementById('projectsGrid');
         grid.innerHTML = list.map(s => renderStartupCard(s, true)).join('');
         refreshIcons();
+        initAllComments();
         document.getElementById('loadMoreWrap')?.classList.add('hidden');
         document.getElementById('projectsEmpty').classList.toggle('hidden', list.length > 0);
         document.getElementById('projectsSection')?.scrollIntoView({ behavior: 'smooth' });

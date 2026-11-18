@@ -243,5 +243,52 @@ const observer = new IntersectionObserver((entries) => {
 sections.forEach(section => observer.observe(section));
 </script>
 
+<!-- Яндекс.Метрика: загружается ТОЛЬКО после согласия пользователя на cookies. При отказе данные не собираются. -->
+<script>
+(function () {
+  var METRIKA_ID = 114348046;
+  var CONSENT_KEY = 'cookie_consent';
+
+  function loadMetrika() {
+    (function (m, e, t, r, i, k, a) {
+      m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments) };
+      m[i].l = 1 * new Date();
+      for (var j = 0; j < document.scripts.length; j++) { if (document.scripts[j].src === r) { return; } }
+      k = e.createElement(t), a = e.getElementsByTagName(t)[0]; k.async = 1; k.src = r; a.parentNode.insertBefore(k, a);
+    })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js?id=' + METRIKA_ID, 'ym');
+    ym(METRIKA_ID, 'init', { webvisor: true, clickmap: true, accurateTrackBounce: true, trackLinks: true });
+  }
+
+  function showBanner() {
+    if (document.getElementById('cookieConsent')) return;
+    var banner = document.createElement('div');
+    banner.id = 'cookieConsent';
+    banner.setAttribute('role', 'dialog');
+    banner.setAttribute('aria-label', 'Согласие на использование cookies');
+    banner.innerHTML =
+      '<div class="cookie-consent-text">Мы используем Яндекс.Метрику (cookies), чтобы понимать, как используется сайт. ' +
+      '<a href="privacy.html" target="_blank" rel="noopener">Подробнее в политике конфиденциальности</a>.</div>' +
+      '<div class="cookie-consent-actions">' +
+      '<button type="button" class="cookie-btn cookie-accept">Принять</button>' +
+      '<button type="button" class="cookie-btn cookie-decline">Отказаться</button>' +
+      '</div>';
+    document.body.appendChild(banner);
+    banner.querySelector('.cookie-accept').addEventListener('click', function () {
+      try { localStorage.setItem(CONSENT_KEY, 'accepted'); } catch (e) {}
+      banner.remove();
+      loadMetrika();
+    });
+    banner.querySelector('.cookie-decline').addEventListener('click', function () {
+      try { localStorage.setItem(CONSENT_KEY, 'declined'); } catch (e) {}
+      banner.remove();
+    });
+  }
+
+  var consent = null;
+  try { consent = localStorage.getItem(CONSENT_KEY); } catch (e) {}
+  if (consent === 'accepted') loadMetrika();
+  else if (consent !== 'declined') showBanner();
+})();
+</script>
 </body>
 </html>

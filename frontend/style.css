@@ -3380,3 +3380,84 @@ animation: none;
     padding: .25rem 0;
   }
 }
+
+/* ================================================
+   Баннер согласия на cookies (Яндекс.Метрика)
+   ================================================ */
+#cookieConsent {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 90;
+  max-width: 560px;
+  margin: 0 auto;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .15);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #374151;
+}
+
+.dark #cookieConsent {
+  background: #111827;
+  border-color: #374151;
+  color: #d1d5db;
+}
+
+.cookie-consent-text a {
+  color: #F97316;
+}
+
+.cookie-consent-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.cookie-btn {
+  padding: 8px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: opacity .15s ease;
+}
+
+.cookie-btn:hover {
+  opacity: .85;
+}
+
+.cookie-accept {
+  background: #F97316;
+  color: #ffffff;
+}
+
+.cookie-decline {
+  background: transparent;
+  border-color: #d1d5db;
+  color: #6b7280;
+}
+
+.dark .cookie-decline {
+  border-color: #4b5563;
+  color: #9ca3af;
+}
+
+@media (max-width: 767px) {
+  #cookieConsent {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+  }
+  .cookie-btn {
+    min-height: 44px;
+    flex: 1;
+  }
+}
