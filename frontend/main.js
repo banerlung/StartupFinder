@@ -839,8 +839,8 @@ function renderStartupCard(startup, animate = true) {
                 ` : ''}
             </div>
 
-            <div class="startup-row comments-section pt-5 border-t border-gray-100 dark:border-gray-800">
-                <div class="flex items-center justify-between mb-4">
+            <div class="comments-section pt-6 mt-2 border-t border-gray-100 dark:border-gray-800">
+                <div class="flex items-center justify-between mb-5">
                     <div class="flex items-center gap-2">
                         <i data-lucide="message-circle" class="w-4 h-4 text-gray-500 dark:text-gray-400"></i>
                         <span class="text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider">Комментарии</span>
@@ -928,14 +928,16 @@ function renderCommentsList(startupId, comments) {
     const canDelete = (comment) => state.user && Number(comment.author_id) === Number(state.user.id);
     list.innerHTML = comments.map(c => `
     <div class="flex items-start gap-3" id="comment-${c.id}">
+        <a href="/user/${c.author_id}" target="_self" class="flex-shrink-0 hover:opacity-80 transition-opacity" aria-label="Профиль ${escapeHtml(c.author_name)}">
         <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-semibold text-gray-600 dark:text-gray-300 overflow-hidden flex-shrink-0">
             ${c.author_avatar ? `<img src="${imgUrl(c.author_avatar)}" class="w-full h-full object-cover" alt="">` : escapeHtml((c.author_name || 'У')[0].toUpperCase())}
         </div>
+        </a>
         <div class="flex-1 min-w-0">
             <div class="flex items-center gap-2">
-                <span class="text-sm font-semibold text-gray-900 dark:text-white">${escapeHtml(c.author_name)}</span>
+                <a href="/user/${c.author_id}" target="_self" class="text-sm font-semibold text-gray-900 dark:text-white hover:text-brand-600 dark:hover:text-brand-400 transition-colors">${escapeHtml(c.author_name)}</a>
                 <span class="text-xs text-gray-400">${getTimeAgo(c.created_at)}</span>
-                ${canDelete(c) ? `<button onclick="handleDeleteComment(${c.id}, ${startupId})" class="text-xs text-gray-400 hover:text-red-500 transition-colors ml-auto" aria-label="Удалить комментарий">удалить</button>` : ''}
+                ${canDelete(c) ? `<button onclick="confirmDeleteComment(${c.id}, ${startupId})" class="text-xs text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors ml-auto" aria-label="Удалить комментарий">удалить</button>` : ''}
             </div>
             <p class="text-sm text-gray-600 dark:text-gray-400 break-words">${escapeHtml(c.content)}</p>
         </div>
@@ -972,7 +974,16 @@ async function handleCommentSubmit(startupId, event) {
     }
 }
 
-async function handleDeleteComment(commentId, startupId) {
+function confirmDeleteComment(commentId, startupId) {
+    state.deletingCommentId = commentId;
+    state.deletingCommentStartupId = startupId;
+    openModal('deleteCommentModal');
+}
+
+async function handleDeleteCommentConfirm() {
+    const commentId = state.deletingCommentId;
+    const startupId = state.deletingCommentStartupId;
+    if (!commentId) return;
     try {
         const res = await fetch(`${API_URL}/api/comments/${commentId}`, {
             method: 'DELETE',
@@ -982,7 +993,11 @@ async function handleDeleteComment(commentId, startupId) {
             showToast('Не удалось удалить комментарий', 'error');
             return;
         }
+        closeModal('deleteCommentModal');
+        state.deletingCommentId = null;
+        state.deletingCommentStartupId = null;
         await loadComments(startupId, true);
+        showToast('Комментарий удалён', 'success');
     } catch (err) {
         showToast('Ошибка соединения', 'error');
     }

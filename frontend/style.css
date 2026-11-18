@@ -3461,3 +3461,11 @@ animation: none;
     flex: 1;
   }
 }
+
+/* Секция комментариев в карточке — вертикальная колонка */
+.startup-card-body > .comments-section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
