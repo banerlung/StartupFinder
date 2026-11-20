@@ -230,6 +230,14 @@ function toggleProfileMenu() {
 }
 function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('hidden'); }
 
+// Цели Яндекс.Метрики. Срабатывают только если счётчик загружен,
+// то есть пользователь дал согласие на cookies в баннере.
+function reachGoal(name) {
+    if (typeof window.ym === 'function') {
+        try { window.ym(114348046, 'reachGoal', name); } catch (e) {}
+    }
+}
+
 async function handleLogin(e) {
     e.preventDefault();
     const btn = document.getElementById('loginSubmitBtn');
@@ -259,6 +267,7 @@ async function handleLogin(e) {
         await loadUser();
         closeModal('loginModal');
         showToast('Добро пожаловать!', 'success');
+        reachGoal('login');
         document.getElementById('loginEmail').value = '';
         document.getElementById('loginPassword').value = '';
     } catch (err) { showToast('Ошибка соединения с сервером', 'error'); }
@@ -308,6 +317,7 @@ async function handleVerify(e) {
         await loadUser();
         closeModal('verifyModal');
         showToast('Email подтверждён! Добро пожаловать!', 'success');
+        reachGoal('register');
         document.getElementById('verifyCode').value = '';
         state.pendingVerifyEmail = null;
     } catch (err) { showToast('Ошибка соединения с сервером', 'error'); }
@@ -967,6 +977,7 @@ async function handleCommentSubmit(startupId, event) {
         input.value = '';
         await loadComments(startupId, true);
         showToast('Комментарий опубликован', 'success');
+        reachGoal('comment_posted');
     } catch (err) {
         showToast('Ошибка соединения', 'error');
     } finally {
@@ -1151,6 +1162,7 @@ async function handleCreateSubmit(e) {
         });
         if (!res.ok) { const err = await res.json(); throw new Error(err.error?.message || 'Ошибка'); }
         showToast('Проект опубликован!', 'success');
+        reachGoal('create_project');
         navigate('home');
         loadStartups(true);
     } catch (err) { showToast(err.message || 'Не удалось создать проект', 'error'); }
