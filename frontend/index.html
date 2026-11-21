@@ -37,8 +37,8 @@
 <link rel="icon" href="icons/logo.png">
 <script src="vendor/lucide.min.js" defer></script>
 
-<link rel="stylesheet" href="vendor/fonts.css?v=20261023">
-<link rel="stylesheet" href="style.css?v=20261120">
+<link rel="stylesheet" href="vendor/fonts.css?v=20261123">
+<link rel="stylesheet" href="style.css?v=20261123">
 <base target="_blank">
 </head>
 <body class="auth-loading bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
@@ -47,6 +47,7 @@
     <div class="flex items-center justify-between h-16">
       
       <a href="/" target="_self" class="flex items-center gap-2.5 shrink-0" onclick="navigate('home')">
+        <img src="icons/logo.png" alt="" class="w-8 h-8 rounded-lg">
         <span class="font-bold text-lg tracking-tight">Startup<span class="gradient-text">Finder</span></span>
       </a>
 
@@ -152,17 +153,38 @@
 </nav>
 <main id="mainContent">
 <div id="homePage" class="page active">
-<section class="hidden md:block pt-16 pb-16 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
+<section class="py-16 md:py-20 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="max-w-3xl mx-auto text-center">
-      
-      <h1 class="text-5xl sm:text-6xl md:text-7xl font-normal tracking-tight text-gray-900 dark:text-white mb-6 leading-tight">
-        Найди команду<br>для своего проекта
+
+      <p class="text-xs font-semibold uppercase tracking-widest text-brand-600 dark:text-brand-400 mb-4">Команда для стартапа — без рекрутеров</p>
+
+      <h1 class="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight text-gray-900 dark:text-white mb-6 leading-tight">
+        Найди команду.<br class="hidden sm:block"> Или войди в чужую.
       </h1>
-      
-      <p class="text-lg md:text-xl font-normal text-gray-500 dark:text-gray-400">
-        Выложи идею, собери команду и запусти стартап вместе с единомышленниками
-      </p>  
+
+      <p class="text-lg md:text-xl font-normal text-gray-500 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
+        Фаундеры находят разработчиков и дизайнеров. Специалисты находят проекты, в которые хочется верить. Бесплатно.
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <button onclick="handleCreateClick()" class="w-full sm:w-auto px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-xl font-semibold transition-colors shadow-sm shadow-brand-500/20">Опубликовать проект</button>
+        <button onclick="switchMainTab('people'); document.getElementById('peopleSection')?.scrollIntoView({behavior:'smooth'})" class="w-full sm:w-auto px-6 py-3 rounded-xl font-semibold text-gray-600 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors">Я ищу проект →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="border-b border-gray-100 dark:border-gray-800/60">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="cat-strip flex gap-2">
+      <button type="button" class="cat-chip active" data-cat="all" onclick="quickCategory('all')">Все проекты</button>
+      <button type="button" class="cat-chip" data-cat="telegram" onclick="quickCategory('telegram')">Telegram</button>
+      <button type="button" class="cat-chip" data-cat="roblox" onclick="quickCategory('roblox')">Roblox</button>
+      <button type="button" class="cat-chip" data-cat="gamedev" onclick="quickCategory('gamedev')">GameDev</button>
+      <button type="button" class="cat-chip" data-cat="ai" onclick="quickCategory('ai')">AI</button>
+      <button type="button" class="cat-chip" data-cat="mobile" onclick="quickCategory('mobile')">Mobile</button>
+      <button type="button" class="cat-chip" data-cat="web" onclick="quickCategory('web')">Web</button>
     </div>
   </div>
 </section>
@@ -540,6 +562,23 @@
 
 <section class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6 mb-6">
 <div class="flex items-center gap-3 mb-4">
+<div class="w-10 h-10 rounded-lg bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center"><i data-lucide="bell" class="w-5 h-5 text-brand-600 dark:text-brand-400"></i></div>
+<div>
+<h2 class="font-bold">Уведомления</h2>
+<p class="text-sm text-gray-500 dark:text-gray-400">Что присылать на почту</p>
+</div>
+</div>
+<label class="flex items-start gap-3 cursor-pointer">
+<input type="checkbox" id="settingsNotifyComments" onchange="saveNotificationSettings(this)" class="mt-1 w-5 h-5 rounded border-gray-300 text-brand-500 focus:ring-brand-500">
+<div>
+<div class="text-sm font-semibold">Новые комментарии к моим проектам</div>
+<div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Письмо придёт, когда кто-то прокомментирует ваш проект</div>
+</div>
+</label>
+</section>
+
+<section class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6 mb-6">
+<div class="flex items-center gap-3 mb-4">
 <div class="w-10 h-10 rounded-lg bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center"><i data-lucide="user-cog" class="w-5 h-5 text-brand-600 dark:text-brand-400"></i></div>
 <div>
 <h2 class="font-bold">Аккаунт</h2>
@@ -551,6 +590,12 @@
 <span class="font-semibold">Выйти из аккаунта</span>
 <i data-lucide="chevron-right" class="w-4 h-4 ml-auto text-gray-400"></i>
 </button>
+<button onclick="exportMyData()" class="mt-3 w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-left">
+<i data-lucide="download" class="w-5 h-5 text-gray-500"></i>
+<span class="font-semibold">Скачать мои данные</span>
+<i data-lucide="chevron-right" class="w-4 h-4 ml-auto text-gray-400"></i>
+</button>
+<p class="text-xs text-gray-500 dark:text-gray-400 mt-3">JSON-файл с профилем, проектами и комментариями — ваша копия данных по 152-ФЗ.</p>
 </section>
 
 <section class="bg-white dark:bg-gray-900 rounded-xl border-2 border-red-200 dark:border-red-900/50 p-6">
@@ -990,7 +1035,7 @@
   </svg>
   <span class="text-sm font-normal text-zinc-300">Нет подключения к интернету</span>
 </div>
-<script src="main.js?v=20261120" defer></script>
+<script src="main.js?v=20261121" defer></script>
 <!-- Яндекс.Метрика: загружается ТОЛЬКО после согласия пользователя на cookies. При отказе данные не собираются. -->
 <script>
 (function () {

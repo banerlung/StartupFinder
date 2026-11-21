@@ -172,6 +172,54 @@ function switchMainTab(tab) {
     }
 }
 // ============ AUTH ============
+// ============ SETTINGS: NOTIFICATIONS & DATA EXPORT ============
+async function loadNotificationSettings() {
+    if (!state.user) return;
+    try {
+        const res = await fetch(`${API_URL}/api/me`, { headers: authHeaders() });
+        if (!res.ok) return;
+        const data = await res.json();
+        const cb = document.getElementById('settingsNotifyComments');
+        if (cb) cb.checked = data.notify_comments !== false;
+    } catch (e) {}
+}
+
+async function saveNotificationSettings(el) {
+    const prev = !el.checked;
+    try {
+        const res = await fetch(`${API_URL}/api/me/notifications`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', ...authHeaders() },
+            body: JSON.stringify({ notify_comments: el.checked }),
+        });
+        if (!res.ok) throw new Error();
+        showToast(el.checked ? 'Уведомления о комментариях включены' : 'Уведомления о комментариях выключены', 'success');
+    } catch (e) {
+        el.checked = prev;
+        showToast('Не удалось сохранить настройку', 'error');
+    }
+}
+
+// Скачивание всех своих данных (профиль, проекты, комментарии) в JSON.
+async function exportMyData() {
+    try {
+        const res = await fetch(`${API_URL}/api/me/export`, { headers: authHeaders() });
+        if (!res.ok) throw new Error();
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'startupfinder-data.json';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        showToast('Файл с данными скачан', 'success');
+    } catch (e) {
+        showToast('Не удалось скачать данные', 'error');
+    }
+}
+
 async function loadUser() {
     if (!state.token) {
         state.authLoaded = true;
@@ -186,6 +234,7 @@ async function loadUser() {
         state.authLoaded = true;
         document.body.classList.remove('auth-loading');
         updateAuthUI();
+        loadNotificationSettings();
     } catch (e) {
         state.token = null;
         state.user = null;
@@ -1027,6 +1076,30 @@ function getTimeAgo(dateStr) {
 }
 
 // ============ FILTERS ============
+// Клик по категории на главной: фильтрует ленту и плавно скроллит к ней.
+// Дублирует логику applyFilters, но без открытия модалки.
+function quickCategory(cat) {
+    state.currentFilter.category = cat;
+    const select = document.getElementById('filterCategory');
+    if (select) select.value = cat;
+
+    document.querySelectorAll('.cat-chip').forEach(chip => {
+        chip.classList.toggle('active', chip.dataset.cat === cat);
+    });
+
+    const count = state.currentFilter.stack.length
+        + (state.currentFilter.payment !== 'all' ? 1 : 0)
+        + (cat !== 'all' ? 1 : 0);
+    const badge = document.getElementById('activeFiltersCount');
+    if (badge) {
+        if (count > 0) { badge.textContent = count; badge.classList.remove('hidden'); }
+        else badge.classList.add('hidden');
+    }
+
+    switchMainTab('projects');
+    loadStartups(true);
+    setTimeout(() => document.getElementById('projectsSection')?.scrollIntoView({ behavior: 'smooth' }), 100);
+}
 function setQuickFilter(filter) {
     state.currentFilter.payment = filter;
     document.querySelectorAll('.filter-chip').forEach(chip => {

@@ -2711,7 +2711,7 @@ html {
 scroll-behavior: smooth;
 }
 body {
-font-family: 'Inter', system-ui, sans-serif;
+font-family: 'Golos Text', 'Inter', system-ui, sans-serif;
 }
 
 /* ================================================
@@ -2726,7 +2726,7 @@ html {
 scroll-behavior: smooth;
 }
 body {
-font-family: 'Inter', system-ui, sans-serif;
+font-family: 'Golos Text', 'Inter', system-ui, sans-serif;
 }
 
 /* ===== Кривые анимаций (единые для всего проекта) ===== */
@@ -3468,4 +3468,65 @@ animation: none;
   flex-direction: column;
   width: 100%;
   min-width: 0;
+}
+
+/* ================================================
+   Категории на главной (кликабельная полоса)
+   ================================================ */
+.cat-strip {
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+}
+
+.cat-strip::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.cat-chip {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #4b5563;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color .15s ease, border-color .15s ease, background-color .15s ease;
+}
+
+.dark .cat-chip {
+  background: #111827;
+  border-color: #1f2937;
+  color: #9ca3af;
+}
+
+.cat-chip:hover {
+  border-color: #F97316;
+  color: #F97316;
+}
+
+.cat-chip.active {
+  background: #F97316;
+  border-color: #F97316;
+  color: #ffffff;
+}
+
+.cat-chip.active:hover {
+  color: #ffffff;
+}
+
+@media (max-width: 767px) {
+  .cat-chip {
+    min-height: 40px;
+  }
+}
+
+/* Оранжевое выделение текста — фирменная деталь */
+::selection {
+background-color: #F97316;
+color: #ffffff;
 }
