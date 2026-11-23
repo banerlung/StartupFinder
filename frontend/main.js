@@ -768,7 +768,6 @@ function renderStartupCard(startup, animate = true) {
     const stacks = parseArray(startup.stack);
     const vacancies = parseArray(startup.vacancies);
     const contacts = parseArray(startup.contacts);
-    const initial = (startup.name || 'P')[0].toUpperCase();
     const timeAgo = getTimeAgo(startup.created_at);
     const isExpanded = state.expandedStartups.has(startup.id);
     const isOwner = state.user && Number(state.user.id) === Number(startup.user_id);
@@ -781,7 +780,7 @@ function renderStartupCard(startup, animate = true) {
     const fullDesc = escapeHtml(startup.description || '');
 
     return `
-    <article id="startup-card-${startup.id}" class="${animClass} startup-card bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
+    <article id="startup-card-${startup.id}" class="${animClass} startup-card ${startup.image_url ? '' : 'no-logo'} bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
         <div class="startup-card-body p-6 md:p-10">
 
             <div class="startup-row flex items-start gap-4 mb-5">
@@ -789,15 +788,12 @@ function renderStartupCard(startup, animate = true) {
                 <div class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-gray-50 dark:bg-gray-800 ring-1 ring-gray-100 dark:ring-gray-700">
                    <img src="${imgUrl(startup.image_url)}" alt="${escapeHtml(startup.name)}" class="w-full h-full object-cover" fetchpriority="high">
                 </div>
-                ` : `
-                <div class="w-16 h-16 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-400 font-semibold text-2xl flex-shrink-0 ring-1 ring-gray-100 dark:ring-gray-700">
-                    ${initial}
-                </div>
-                `}
-
                 <div class="flex-1 min-w-0 pt-1">
+                ` : `
+                <div class="flex-1 min-w-0">
+                `}
                     <div class="startup-card-head">
-                        <h3 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white break-words leading-tight">
+                        <h3 class="font-semibold tracking-tight text-gray-900 dark:text-white break-words leading-tight">
                             ${escapeHtml(startup.name)}
                         </h3>
                         <div class="flex flex-col items-end gap-1.5 flex-shrink-0" style="align-self:flex-start">
