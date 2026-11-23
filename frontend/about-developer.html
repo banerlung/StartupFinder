@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>О разработчике — Gaby</title>
-<meta name="description" content="Gaby — команда разработчиков, создающая цифровые продукты для стартаперов и творческих команд.">
+<title>О разработчике — команда Gaby</title>
+<meta name="description" content="Gaby — инженерная команда за платформой StartupFinder. Как мы строим, какие принципы держим и чего добились.">
 <script>
 (function(){
   const t = localStorage.getItem('theme') || 'system';
@@ -15,30 +15,19 @@
 <link rel="icon" href="icons/logo.png">
 <script src="vendor/lucide.min.js?v=20261124" defer></script>
 <link rel="stylesheet" href="vendor/fonts.css">
-<link rel="stylesheet" href="style.css?v=20261118d">
-
+<link rel="stylesheet" href="style.css?v=20261127">
 
 <style>
-  .reveal{opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s ease}
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
   .reveal.visible{opacity:1;transform:translateY(0)}
-  .reveal-left{opacity:0;transform:translateX(-40px);transition:opacity .7s ease,transform .7s ease}
-  .reveal-left.visible{opacity:1;transform:translateX(0)}
-  .reveal-right{opacity:0;transform:translateX(40px);transition:opacity .7s ease,transform .7s ease}
-  .reveal-right.visible{opacity:1;transform:translateX(0)}
-  .reveal-scale{opacity:0;transform:scale(.92);transition:opacity .6s ease,transform .6s ease}
-  .reveal-scale.visible{opacity:1;transform:scale(1)}
   .delay-1{transition-delay:.1s}
   .delay-2{transition-delay:.2s}
   .delay-3{transition-delay:.3s}
   .delay-4{transition-delay:.4s}
-  .company-hero-bg{background:linear-gradient(135deg,rgba(99,102,241,.08) 0%,rgba(168,85,247,.06) 50%,rgba(236,72,153,.04) 100%)}
-  .dark .company-hero-bg{background:linear-gradient(135deg,rgba(99,102,241,.12) 0%,rgba(168,85,247,.08) 50%,rgba(236,72,153,.06) 100%)}
-  .value-card:hover{transform:translateY(-4px)}
-  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-  .float-anim{animation:float 4s ease-in-out infinite}
+  .num-ghost{font-size:2.5rem;font-weight:700;line-height:1;color:rgba(249,115,22,.28)}
+  .dark .num-ghost{color:rgba(249,115,22,.35)}
+  @media (min-width:768px){.num-ghost{font-size:3rem}}
 </style>
-
-
 </head>
 <body class="bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300">
 
@@ -46,6 +35,7 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
       <a href="index.html" target="_self" class="flex items-center gap-2.5 shrink-0">
+        <img src="icons/logo.png" alt="" class="w-8 h-8 rounded-lg">
         <span class="font-bold text-lg tracking-tight">Startup<span class="gradient-text">Finder</span></span>
       </a>
       <div class="hidden md:flex items-center gap-1">
@@ -72,260 +62,235 @@
 </nav>
 
 <main>
-  <!-- HERO -->
-  <section class="company-hero-bg pt-20 pb-16 md:pt-28 md:pb-24 relative overflow-hidden">
-    <div class="absolute top-10 right-10 w-64 h-64 bg-brand-500/5 rounded-full blur-3xl float-anim"></div>
-    <div class="absolute bottom-10 left-10 w-48 h-48 bg-purple-500/5 rounded-full blur-3xl float-anim" style="animation-delay:1s"></div>
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
+
+<!-- HERO -->
+<section class="pt-16 pb-14 md:pt-24 md:pb-20 border-b border-gray-100 dark:border-gray-800/60">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <p class="reveal text-xs font-semibold uppercase tracking-widest text-brand-600 dark:text-brand-400 mb-5">Gaby — инженерная команда</p>
+    <h1 class="reveal delay-1 text-4xl sm:text-5xl font-bold tracking-tight leading-tight mb-6">
+      Мы строим инфраструктуру,<br>
+      <span class="text-gray-400 dark:text-gray-500">в которой стартапы находят команду.</span>
+    </h1>
+    <p class="reveal delay-2 text-lg text-gray-600 dark:text-gray-400 max-w-2xl leading-relaxed">
+      StartupFinder — наш главный продукт: платформа с верифицированными участниками, прямым контактом
+      и без комиссий. Санкт-Петербург, работаем удалённо.
+    </p>
+  </div>
+</section>
+
+<!-- ЦИФРЫ -->
+<section class="border-b border-gray-100 dark:border-gray-800/60">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-2 md:grid-cols-4 gap-8">
+    <div class="reveal">
+      <div class="text-3xl font-bold tracking-tight">8+</div>
+      <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">проектов уже ищут команду</div>
+    </div>
+    <div class="reveal delay-1">
+      <div class="text-3xl font-bold tracking-tight">5</div>
+      <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">инженеров в команде</div>
+    </div>
+    <div class="reveal delay-2">
+      <div class="text-3xl font-bold tracking-tight">4</div>
+      <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">месяца от идеи до релиза 1.0</div>
+    </div>
+    <div class="reveal delay-3">
+      <div class="text-3xl font-bold tracking-tight">100%</div>
+      <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">аккаунтов с подтверждённой почтой</div>
+    </div>
+  </div>
+</section>
+
+<!-- ПРОБЛЕМА → РЕШЕНИЕ -->
+<section class="py-14 md:py-20">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="reveal text-2xl md:text-3xl font-bold tracking-tight mb-2">Что не так с поиском команды</h2>
+    <p class="reveal text-gray-500 dark:text-gray-400 mb-10">Четыре проблемы, которые мы закрываем архитектурой, а не обещаниями.</p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+      <div class="reveal border-t border-gray-100 dark:border-gray-800 py-8 flex gap-5">
+        <div class="num-ghost">01</div>
+        <div>
+          <h3 class="text-lg font-semibold leading-snug mb-2">
+            <span class="block text-gray-400 dark:text-gray-500">Идеи умирают без команды</span>
+            Люди находят друг друга до старта
+          </h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Проект публикуется с вакансиями и стеком — и виден сразу, без регистрации у зрителя. Путь от «увидел» до «написал» занимает секунды.</p>
+        </div>
+      </div>
+
+      <div class="reveal delay-1 border-t border-gray-100 dark:border-gray-800 py-8 flex gap-5">
+        <div class="num-ghost">02</div>
+        <div>
+          <h3 class="text-lg font-semibold leading-snug mb-2">
+            <span class="block text-gray-400 dark:text-gray-500">Площадки кишат фейками</span>
+            Каждая почта подтверждена
+          </h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Писать и публиковать может только верифицированный аккаунт. Мусор и боты отсеиваются на входе, а не модерацией постфактум.</p>
+        </div>
+      </div>
+
+      <div class="reveal delay-2 border-t border-gray-100 dark:border-gray-800 py-8 flex gap-5">
+        <div class="num-ghost">03</div>
+        <div>
+          <h3 class="text-lg font-semibold leading-snug mb-2">
+            <span class="block text-gray-400 dark:text-gray-500">Рекрутеры берут комиссию</span>
+            Прямой контакт. Бесплатно, навсегда
+          </h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Без тарифной сетки и платных лимитов: мы не продаём доступ к людям. Фаундер и специалист договариваются напрямую.</p>
+        </div>
+      </div>
+
+      <div class="reveal delay-3 border-t border-gray-100 dark:border-gray-800 py-8 flex gap-5">
+        <div class="num-ghost">04</div>
+        <div>
+          <h3 class="text-lg font-semibold leading-snug mb-2">
+            <span class="block text-gray-400 dark:text-gray-500">Данные утекают</span>
+            Контроль у пользователя
+          </h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">bcrypt-хеши паролей, HTTPS везде, соответствие 152-ФЗ: экспорт всех своих данных и удаление аккаунта — в один клик из настроек.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ТАЙМЛАЙН -->
+<section class="py-14 md:py-20 bg-gray-50 dark:bg-gray-900/30 border-t border-gray-100 dark:border-gray-800/60">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="reveal text-2xl md:text-3xl font-bold tracking-tight mb-10">Как мы сюда пришли</h2>
+
+    <div class="border-t border-gray-100 dark:border-gray-800 py-7 flex flex-col sm:flex-row gap-2 sm:gap-0">
+      <div class="shrink-0 text-sm font-semibold text-brand-600 dark:text-brand-400" style="width:10rem;padding-right:1.5rem">2024</div>
+      <div>
+        <h3 class="font-semibold mb-1">Основание Gaby</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Первые продукты и первый серьёзный провал: собственный браузер на Electron. Не взлетел, но научил кроссплатформенной разработке больше, чем полгода туториалов.</p>
+      </div>
+    </div>
+
+    <div class="border-t border-gray-100 dark:border-gray-800 py-7 flex flex-col sm:flex-row gap-2 sm:gap-0">
+      <div class="shrink-0 text-sm font-semibold text-brand-600 dark:text-brand-400" style="width:10rem;padding-right:1.5rem">2026, лето</div>
+      <div>
+        <h3 class="font-semibold mb-1">Старт StartupFinder</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Четыре месяца работы: проектирование базы, верификация, загрузка и защита файлов, админ-панель с двухфакторной авторизацией, CI/CD.</p>
+      </div>
+    </div>
+
+    <div class="border-t border-gray-100 dark:border-gray-800 py-7 flex flex-col sm:flex-row gap-2 sm:gap-0">
+      <div class="shrink-0 text-sm font-semibold text-brand-600 dark:text-brand-400" style="width:10rem;padding-right:1.5rem">2026, осень</div>
+      <div>
+        <h3 class="font-semibold mb-1">Релиз 1.0</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Платформа в продакшене: комментарии с уведомлениями на почту, фильтры по стеку и оплате, раздел «Люди», тёмная тема, мобильная адаптивность, юридическая база.</p>
+      </div>
+    </div>
+
+    <div class="border-t border-b border-gray-100 dark:border-gray-800 py-7 flex flex-col sm:flex-row gap-2 sm:gap-0">
+      <div class="shrink-0 text-sm font-semibold text-brand-600 dark:text-brand-400" style="width:10rem;padding-right:1.5rem">Сейчас</div>
+      <div>
+        <h3 class="font-semibold mb-1">Дальше — глубже</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Отклики на проекты, умный подбор по стеку, мобильное приложение. Растём вместе с пользователями.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ИНЖЕНЕРИЯ -->
+<section class="py-14 md:py-20 border-t border-gray-100 dark:border-gray-800/60">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="reveal text-2xl md:text-3xl font-bold tracking-tight mb-2">Как построена платформа</h2>
+    <p class="reveal text-gray-500 dark:text-gray-400 mb-10">Без магии: проверенный стек и дисциплина эксплуатации.</p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-10">
       <div class="reveal">
-        <span class="inline-flex items-center gap-2 px-4 py-2 bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 rounded-full text-sm font-medium mb-8">
-          <span class="w-2 h-2 bg-brand-500 rounded-full"></span>
-          Команда разработчиков
-        </span>
+        <h3 class="text-sm font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-4">Стек</h3>
+        <ul class="space-y-3 text-sm">
+          <li class="flex gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-brand-500 mt-0.5 shrink-0"></i><span><b>Backend:</b> Node.js, Express, PostgreSQL, Prisma, Redis, BullMQ</span></li>
+          <li class="flex gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-brand-500 mt-0.5 shrink-0"></i><span><b>Frontend:</b> ванильный JS, собственный дизайн-системный CSS, Capacitor под Android</span></li>
+          <li class="flex gap-3"><i data-lucide="check-circle" class="w-4 h-4 text-brand-500 mt-0.5 shrink-0"></i><span><b>Инфраструктура:</b> VPS в РФ, nginx, GitHub Actions, PM2-кластер</span></li>
+        </ul>
       </div>
-      <h1 class="reveal delay-1 text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-6 leading-tight">
-        Мы — <span class="gradient-text">Gaby</span>
-      </h1>
-      <p class="reveal delay-2 text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
-        Создаём цифровые продукты, которые объединяют людей. Верим, что любой проект начинается с команды, а не с инвестиций.
-      </p>
+      <div class="reveal delay-1">
+        <h3 class="text-sm font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-4">Безопасность и надёжность</h3>
+        <ul class="space-y-3 text-sm">
+          <li class="flex gap-3"><i data-lucide="shield-check" class="w-4 h-4 text-brand-500 mt-0.5 shrink-0"></i><span>Пароли — bcrypt, сессии — JWT, админка — TOTP 2FA</span></li>
+          <li class="flex gap-3"><i data-lucide="shield-check" class="w-4 h-4 text-brand-500 mt-0.5 shrink-0"></i><span>Rate-limiting на все чувствительные эндпоинты, параметризованные запросы, валидация загрузок по сигнатурам</span></li>
+          <li class="flex gap-3"><i data-lucide="shield-check" class="w-4 h-4 text-brand-500 mt-0.5 shrink-0"></i><span>Ежедневные бэкапы базы с проверкой восстановления, автоматический деплой с контролем ошибок</span></li>
+        </ul>
+      </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ABOUT -->
-  <section class="py-16 md:py-24">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid md:grid-cols-2 gap-12 items-center">
-        <div class="reveal-left">
-          <h2 class="text-3xl md:text-4xl font-bold mb-6">Что мы делаем</h2>
-          <div class="space-y-4 text-gray-600 dark:text-gray-400 leading-relaxed">
-            <p>
-              Gaby — это команда разработчиков, дизайнеров и маркетологов, которые строят digital-продукты для предпринимателей и творческих команд.
-            </p>
-            <p>
-              Наш главный продукт — <span class="font-semibold text-gray-900 dark:text-white">StartupFinder</span>, платформа для поиска команды и публикации стартап-идей. Мы делаем так, чтобы любой человек с идеей мог найти единомышленников за один вечер.
-            </p>
-            <p>
-              Работаем удалённо, без офиса и бюрократии. Главное — результат, а не часы за компьютером.
-            </p>
-          </div>
-        </div>
-        <div class="reveal-right">
-          <div class="relative">
-            <div class="absolute -inset-4 bg-gradient-to-br from-brand-500/20 to-purple-500/20 rounded-3xl blur-2xl"></div>
-            <div class="relative bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-8 shadow-sm">
-              <div class="flex items-center gap-3 mb-6">
-                <div class="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center">
-                  <i data-lucide="target" class="w-5 h-5 text-brand-500"></i>
-                </div>
-                <span class="font-semibold">Наша цель</span>
-              </div>
-              <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                Сделать так, чтобы в России и СНГ любой стартапер мог собрать команду быстрее, чем найти работу на HH.ru. Без инвестиций на старте, без корпоративной волокиты.
-              </p>
-              <div class="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800 flex items-center gap-2 text-sm text-gray-500">
-                <i data-lucide="map-pin" class="w-4 h-4"></i>
-                <span>Санкт-Петербург, удалённо</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+<!-- ПРОДУКТЫ -->
+<section class="py-14 md:py-20 bg-gray-50 dark:bg-gray-900/30 border-t border-gray-100 dark:border-gray-800/60">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="reveal text-2xl md:text-3xl font-bold tracking-tight mb-10">Продукты</h2>
 
-  <!-- WHY TEAM -->
-  <section class="py-16 md:py-24 bg-gray-50 dark:bg-gray-900/30">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="reveal text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">Почему про команду</h2>
-        <p class="text-gray-600 dark:text-gray-400">Мы верим, что команда важнее идеи</p>
-      </div>
-      <div class="grid md:grid-cols-3 gap-6">
-        <div class="reveal bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-8 shadow-sm transition-all duration-300">
-          <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center mb-5 mx-auto">
-            <i data-lucide="users" class="w-6 h-6 text-brand-500"></i>
-          </div>
-          <h3 class="font-semibold text-lg mb-2 text-center">Идея без команды — ничто</h3>
-          <p class="text-sm text-gray-500 dark:text-gray-400 text-center">Миллионы отличных идей умирают, потому что автор не нашёл тех, кто поможет их реализовать.</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <a href="index.html" target="_self" class="reveal block bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-6 hover:border-brand-400 dark:hover:border-brand-600 transition-colors">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-lg font-semibold">StartupFinder</h3>
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-semibold rounded-full"><span class="w-2 h-2 bg-green-500 rounded-full"></span>В продакшене</span>
         </div>
-        <div class="reveal delay-1 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-8 shadow-sm transition-all duration-300">
-          <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center mb-5 mx-auto">
-            <i data-lucide="handshake" class="w-6 h-6 text-brand-500"></i>
-          </div>
-          <h3 class="font-semibold text-lg mb-2 text-center">Вместе быстрее</h3>
-          <p class="text-sm text-gray-500 dark:text-gray-400 text-center">Один делает за год, команда из семи — за месяц. Распределение ролей и компетенций экономит время.</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Платформа для поиска команды и публикации стартап-идей. Верификация, фильтры, комментарии, уведомления.</p>
+      </a>
+      <div class="reveal delay-1 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-6" style="opacity:.7">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-lg font-semibold">GabWeb</h3>
+          <span class="px-2.5 py-1 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-xs font-semibold rounded-full">Архив</span>
         </div>
-        <div class="reveal delay-2 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-8 shadow-sm transition-all duration-300">
-          <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center mb-5 mx-auto">
-            <i data-lucide="heart" class="w-6 h-6 text-brand-500"></i>
-          </div>
-          <h3 class="font-semibold text-lg mb-2 text-center">Энтузиазм &gt; деньги</h3>
-          <p class="text-sm text-gray-500 dark:text-gray-400 text-center">Команда, которая верит в продукт, сделает больше, чем нанятые за зарплату исполнители.</p>
-        </div>
+        <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">Браузер без телеметрии на Electron. Не взлетел — остался как учебный проект и опыт кроссплатформенной разработки.</p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- VALUES -->
-  <section class="py-16 md:py-24">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="reveal text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">Наши принципы</h2>
-        <p class="text-gray-600 dark:text-gray-400">То, во что мы верим и по чему работаем</p>
-      </div>
-      <div class="grid md:grid-cols-2 gap-6">
-        <div class="reveal value-card bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-8 shadow-sm transition-all duration-300">
-          <div class="flex items-start gap-4">
-            <div class="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center shrink-0">
-              <i data-lucide="zap" class="w-5 h-5 text-brand-500"></i>
-            </div>
-            <div>
-              <h3 class="font-semibold text-lg mb-1">Действуй быстро</h3>
-              <p class="text-sm text-gray-500 dark:text-gray-400">Лучшая идея бесполезна без первой строки кода. MVP за неделю, не за полгода.</p>
-            </div>
-          </div>
-        </div>
-        <div class="reveal delay-1 value-card bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-8 shadow-sm transition-all duration-300">
-          <div class="flex items-start gap-4">
-            <div class="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center shrink-0">
-              <i data-lucide="eye" class="w-5 h-5 text-brand-500"></i>
-            </div>
-            <div>
-              <h3 class="font-semibold text-lg mb-1">Будь прозрачным</h3>
-              <p class="text-sm text-gray-500 dark:text-gray-400">Честные цифры, открытый процесс, никакой воды. Что сделано — видно всем.</p>
-            </div>
-          </div>
-        </div>
-        <div class="reveal delay-2 value-card bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-8 shadow-sm transition-all duration-300">
-          <div class="flex items-start gap-4">
-            <div class="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center shrink-0">
-              <i data-lucide="rotate-ccw" class="w-5 h-5 text-brand-500"></i>
-            </div>
-            <div>
-              <h3 class="font-semibold text-lg mb-1">Учись на ошибках</h3>
-              <p class="text-sm text-gray-500 dark:text-gray-400">Провал — это данные. Каждый неудачный проект приближает к успешному.</p>
-            </div>
-          </div>
-        </div>
-        <div class="reveal delay-3 value-card bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-8 shadow-sm transition-all duration-300">
-          <div class="flex items-start gap-4">
-            <div class="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-950/40 flex items-center justify-center shrink-0">
-              <i data-lucide="globe" class="w-5 h-5 text-brand-500"></i>
-            </div>
-            <div>
-              <h3 class="font-semibold text-lg mb-1">Думай глобально</h3>
-              <p class="text-sm text-gray-500 dark:text-gray-400">Работаем из СНГ, но строим продукты для всего мира. Русский язык — старт, не финиш.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+<!-- КОМАНДА -->
+<section class="py-14 md:py-20 border-t border-gray-100 dark:border-gray-800/60">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="reveal text-2xl md:text-3xl font-bold tracking-tight mb-2">Команда</h2>
+    <p class="reveal text-gray-500 dark:text-gray-400 mb-10">Пять человек. Роли — не для красоты: каждый отвечает за свой слой.</p>
 
-  <!-- PROJECTS -->
-  <section class="py-16 md:py-24 bg-gray-50 dark:bg-gray-900/30">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="reveal text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">Наши проекты</h2>
-        <p class="text-gray-600 dark:text-gray-400">Что мы уже построили и что строим</p>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+      <div class="reveal bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-5 text-center">
+        <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-bold">B</div>
+        <div class="font-semibold text-sm">banerlung</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">CEO / Fullstack</div>
       </div>
-      <div class="space-y-6">
-        <div class="reveal bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-8 shadow-sm">
-          <div class="flex flex-col md:flex-row md:items-center gap-6">
-            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white shrink-0">
-              <i data-lucide="rocket" class="w-8 h-8"></i>
-            </div>
-            <div class="flex-1">
-              <div class="flex items-center gap-3 mb-2">
-                <h3 class="font-semibold text-xl">StartupFinder</h3>
-                <span class="px-2.5 py-1 bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 rounded-full text-xs font-semibold">Активно</span>
-              </div>
-              <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                Платформа для поиска команды и публикации стартап-идей. Помогаем фаундерам находить разработчиков, дизайнеров и маркетологов для своих проектов.
-              </p>
-            </div>
-          </div>
-        </div>
-        <div class="reveal delay-1 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-8 shadow-sm">
-          <div class="flex flex-col md:flex-row md:items-center gap-6">
-            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center text-white shrink-0">
-              <i data-lucide="globe" class="w-8 h-8"></i>
-            </div>
-            <div class="flex-1">
-              <div class="flex items-center gap-3 mb-2">
-                <h3 class="font-semibold text-xl">GabWeb</h3>
-                <span class="px-2.5 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-full text-xs font-semibold">Архив</span>
-              </div>
-              <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                Браузер без телеметрии на Electron. Первый опыт работы с кроссплатформенными приложениями. Не взлетел, но дал бесценные знания.
-              </p>
-            </div>
-          </div>
-        </div>
+      <div class="reveal delay-1 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-5 text-center">
+        <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-bold">C</div>
+        <div class="font-semibold text-sm">ClonerNotFound</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Fullstack</div>
+      </div>
+      <div class="reveal delay-2 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-5 text-center">
+        <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-bold">X</div>
+        <div class="font-semibold text-sm">Xisa</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Frontend</div>
+      </div>
+      <div class="reveal delay-3 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-5 text-center">
+        <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-bold">R</div>
+        <div class="font-semibold text-sm">Rusted</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Mobile</div>
+      </div>
+      <div class="reveal delay-4 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl p-5 text-center">
+        <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-bold">T</div>
+        <div class="font-semibold text-sm">@Topirus1kus</div>
+        <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Telegram-боты</div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- TEAM TEMPLATE -->
-  <section class="py-16 md:py-24">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="reveal text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold mb-4">Команда</h2>
-        <p class="text-gray-600 dark:text-gray-400">Люди, которые делают Gaby</p>
-      </div>
-      <div class="reveal grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-        <!-- Шаблон: добавь/убери карточки по необходимости -->
-        <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 text-center">
-          <div class="w-14 h-14 mx-auto rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-bold text-lg mb-3">B</div>
-          <div class="font-semibold text-sm">banerlung</div>
-          <div class="text-xs text-gray-400 mt-1">CEO / Fullstack</div>
-        </div>
-        <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 text-center">
-          <div class="w-14 h-14 mx-auto rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-bold text-lg mb-3">C</div>
-          <div class="font-semibold text-sm">ClonerNotFound</div>
-          <div class="text-xs text-gray-400 mt-1">Fullstack</div>
-        </div>
-        <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 text-center">
-          <div class="w-14 h-14 mx-auto rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-white font-bold text-lg mb-3">X</div>
-          <div class="font-semibold text-sm">Xisa</div>
-          <div class="text-xs text-gray-400 mt-1">Frontend</div>
-        </div>
-        <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 text-center">
-          <div class="w-14 h-14 mx-auto rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-white font-bold text-lg mb-3">R</div>
-          <div class="font-semibold text-sm">Rusted</div>
-          <div class="text-xs text-gray-400 mt-1">Mobile</div>
-        </div>
-        <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 text-center">
-          <div class="w-14 h-14 mx-auto rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-lg mb-3">T</div>
-          <div class="font-semibold text-sm">@Topirus1kus</div>
-          <div class="text-xs text-gray-400 mt-1">Telegram bot support</div>
-        </div>
-      </div>
-    </div>
-  </section>
+<!-- CTA -->
+<section class="py-16 md:py-20 bg-gray-50 dark:bg-gray-900/30 border-t border-gray-100 dark:border-gray-800/60">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class="reveal text-2xl md:text-3xl font-bold tracking-tight mb-4">Есть идея и нет команды?</h2>
+    <p class="reveal delay-1 text-gray-500 dark:text-gray-400 mb-8">Опубликуй проект — или найди чужой, в который хочется верить.</p>
+    <a href="index.html" target="_self" class="reveal delay-2 inline-flex items-center gap-2 px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white rounded-xl font-semibold transition-colors">Открыть платформу<i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+  </div>
+</section>
 
-  <section class="py-16 md:py-24 bg-gray-50 dark:bg-gray-900/30">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="reveal bg-gradient-to-br from-brand-500 to-brand-600 rounded-2xl p-8 md:p-12 text-center text-white relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-        <div class="relative">
-          <h2 class="text-3xl md:text-4xl font-bold mb-4">Свяжитесь с нами</h2>
-          <p class="text-lg text-white/90 max-w-xl mx-auto mb-8">
-            Хотите сотрудничать, предложить идею или просто познакомиться? Мы открыты к диалогу.
-          </p>
-          <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="https://t.me/startup_finder_dev" target="_blank" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-brand-600 rounded-xl font-bold hover:scale-[1.02] active:scale-[0.98] transition-transform">
-              <i data-lucide="send" class="w-5 h-5"></i>Написать в Telegram
-            </a>
-            <a href="mailto:support@startup-finder.ru" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 hover:bg-white/20 text-white rounded-xl font-semibold transition-colors backdrop-blur-sm">
-              <i data-lucide="mail" class="w-5 h-5"></i>support@startup-finder.ru
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
 </main>
 
 <footer class="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 mt-auto">
@@ -333,6 +298,7 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
       <div>
         <div class="flex items-center gap-2 mb-4">
+          <img src="icons/logo.png" alt="" class="w-7 h-7 rounded-lg">
           <span class="font-bold text-lg">Startup<span class="gradient-text">Finder</span></span>
         </div>
         <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed max-w-xs">

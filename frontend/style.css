@@ -3297,7 +3297,7 @@ animation: none;
   }
 
   /* Кнопки владельца: редактировать / удалить */
-  .startup-card-body > .startup-row:last-child button:not(.expand-btn) {
+  .startup-card-body > .startup-row:last-child > div button {
     width: 44px;
     height: 44px;
     display: inline-flex;

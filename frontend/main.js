@@ -235,6 +235,7 @@ async function loadUser() {
         document.body.classList.remove('auth-loading');
         updateAuthUI();
         loadNotificationSettings();
+        loadMyResponses();
     } catch (e) {
         state.token = null;
         state.user = null;
@@ -882,6 +883,17 @@ function renderStartupCard(startup, animate = true) {
                 </button>
                     ` : '<div class="flex-1"></div>'}
 
+                ${!isOwner ? `
+                ${state.user ? `
+                <button id="respond-btn-${startup.id}" onclick="wantToJoin(${startup.id})" ${state.myResponseStartupIds && state.myResponseStartupIds.has(startup.id) ? 'disabled' : ''} class="px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors flex items-center gap-1.5 ${state.myResponseStartupIds && state.myResponseStartupIds.has(startup.id) ? 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 cursor-default' : 'bg-brand-500 hover:bg-brand-600 text-white'}">
+                    <i data-lucide="user-plus" class="w-4 h-4"></i><span>${state.myResponseStartupIds && state.myResponseStartupIds.has(startup.id) ? 'Отклик отправлен' : 'Хочу в команду'}</span>
+                </button>` : `
+                <button onclick="openModal('loginModal')" class="px-4 py-2.5 bg-brand-500 hover:bg-brand-600 text-white rounded-xl text-sm font-semibold transition-colors flex items-center gap-1.5"><i data-lucide="user-plus" class="w-4 h-4"></i><span>Хочу в команду</span></button>`}
+                ` : `
+                <button data-responses-startup="${startup.id}" onclick="openResponsesList(${startup.id})" class="px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-brand-400 dark:hover:border-brand-600 text-gray-700 dark:text-gray-300 rounded-xl text-sm font-semibold transition-colors flex items-center gap-1.5">
+                    <i data-lucide="users" class="w-4 h-4"></i>Отклики <span id="responses-count-${startup.id}" class="hidden text-xs bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 px-1.5 py-0.5 rounded-full font-semibold"></span>
+                </button>`}
+
                 ${isOwner ? `
                 <div class="flex items-center gap-2">
                     <button onclick="openEditStartup(${startup.id})" class="p-2.5 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors" aria-label="Редактировать">
@@ -943,6 +955,146 @@ function renderContactLink(contact) {
     </a>
     `;
 }
+// ============ RESPONSES («ХОЧУ В КОМАНДУ») ============
+async function loadMyResponses() {
+    if (!state.user) return;
+    try {
+        const res = await fetch(`${API_URL}/api/me/responses`, { headers: authHeaders() });
+        if (!res.ok) return;
+        const data = await res.json();
+        state.myResponseStartupIds = new Set((data.startup_ids || []).map(Number));
+    } catch (e) {
+        state.myResponseStartupIds = new Set();
+    }
+}
+
+function wantToJoin(startupId) {
+    if (!state.user) { openModal('loginModal'); return; }
+    if (state.myResponseStartupIds && state.myResponseStartupIds.has(startupId)) {
+        showToast('Вы уже откликнулись на этот проект', 'info');
+        return;
+    }
+    state.pendingRespondStartupId = startupId;
+    document.getElementById('respondMessage').value = '';
+    openModal('respondModal');
+}
+
+async function handleRespondSubmit() {
+    const startupId = state.pendingRespondStartupId;
+    if (!startupId) return;
+    const btn = document.getElementById('respondSubmitBtn');
+    const message = document.getElementById('respondMessage').value.trim();
+    btn.disabled = true;
+    try {
+        const res = await fetch(`${API_URL}/api/startups/${startupId}/responses`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...authHeaders() },
+            body: JSON.stringify(message ? { message } : {}),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            showToast(data.error?.message || 'Не удалось отправить отклик', 'error');
+            return;
+        }
+        if (!state.myResponseStartupIds) state.myResponseStartupIds = new Set();
+        state.myResponseStartupIds.add(startupId);
+        closeModal('respondModal');
+        state.pendingRespondStartupId = null;
+        const btnEl = document.getElementById(`respond-btn-${startupId}`);
+        if (btnEl) {
+            btnEl.disabled = true;
+            btnEl.classList.remove('bg-brand-500', 'hover:bg-brand-600', 'text-white');
+            btnEl.classList.add('bg-gray-100', 'dark:bg-gray-800', 'text-gray-400', 'dark:text-gray-500', 'cursor-default');
+            const span = btnEl.querySelector('span');
+            if (span) span.textContent = 'Отклик отправлен';
+        }
+        showToast('Отклик отправлен — автор получит письмо', 'success');
+        reachGoal('respond');
+    } catch (e) {
+        showToast('Ошибка соединения', 'error');
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+async function openResponsesList(startupId) {
+    state.currentResponsesStartupId = startupId;
+    const body = document.getElementById('responsesListBody');
+    body.innerHTML = '<p class="text-sm text-gray-400">Загрузка…</p>';
+    openModal('responsesModal');
+    try {
+        const res = await fetch(`${API_URL}/api/startups/${startupId}/responses`, { headers: authHeaders() });
+        if (!res.ok) {
+            showToast('Не удалось загрузить отклики', 'error');
+            closeModal('responsesModal');
+            return;
+        }
+        const data = await res.json();
+        renderResponsesList(startupId, data.responses || []);
+    } catch (e) {
+        body.innerHTML = '<p class="text-sm text-gray-400">Не удалось загрузить отклики.</p>';
+    }
+}
+
+function renderResponsesList(startupId, responses) {
+    const body = document.getElementById('responsesListBody');
+    if (!body) return;
+    if (!responses.length) {
+        body.innerHTML = '<p class="text-sm text-gray-400 dark:text-gray-500">Пока никто не откликнулся.</p>';
+        return;
+    }
+    body.innerHTML = responses.map(r => `
+    <div class="border border-gray-100 dark:border-gray-800 rounded-xl p-4">
+        <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white text-sm font-semibold overflow-hidden flex-shrink-0">
+                ${r.user.avatar_url ? `<img src="${imgUrl(r.user.avatar_url)}" class="w-full h-full object-cover" alt="">` : escapeHtml((r.user.name || 'У')[0].toUpperCase())}
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <a href="/user/${r.user.id}" target="_self" class="text-sm font-semibold text-gray-900 dark:text-white hover:text-brand-600 transition-colors">${escapeHtml(r.user.name || 'Участник')}</a>
+                    ${r.user.role ? `<span class="text-xs text-gray-400">${escapeHtml(r.user.role)}</span>` : ''}
+                    <button onclick="handleDeleteResponse(${r.id}, ${startupId})" class="text-xs text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors ml-auto" aria-label="Удалить отклик">удалить</button>
+                </div>
+                ${r.user.stack ? `<p class="text-xs text-gray-400 mt-0.5 break-words">${escapeHtml(r.user.stack)}</p>` : ''}
+                ${r.message ? `<p class="text-sm text-gray-600 dark:text-gray-400 mt-2 break-words">${escapeHtml(r.message)}</p>` : ''}
+                ${(r.user.contacts && r.user.contacts.length) ? `
+                <div class="flex flex-wrap gap-1.5 mt-2">
+                    ${r.user.contacts.map(c => `<span class="text-xs px-2 py-1 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-md border border-gray-100 dark:border-gray-700 break-all">${escapeHtml(String(c))}</span>`).join('')}
+                </div>` : ''}
+                <p class="text-xs text-gray-400 mt-2">${getTimeAgo(r.created_at)}</p>
+            </div>
+        </div>
+    </div>`).join('');
+    refreshIcons();
+}
+
+async function handleDeleteResponse(responseId, startupId) {
+    try {
+        const res = await fetch(`${API_URL}/api/responses/${responseId}`, {
+            method: 'DELETE',
+            headers: authHeaders(),
+        });
+        if (!res.ok) { showToast('Не удалось удалить отклик', 'error'); return; }
+        await openResponsesList(startupId);
+        updateResponsesBadge(startupId);
+        showToast('Отклик удалён', 'success');
+    } catch (e) {
+        showToast('Ошибка соединения', 'error');
+    }
+}
+
+// Счётчик откликов на кнопке автора (подгружается вместе с комментариями).
+async function updateResponsesBadge(startupId) {
+    try {
+        const res = await fetch(`${API_URL}/api/startups/${startupId}/responses`, { headers: authHeaders() });
+        if (!res.ok) return;
+        const data = await res.json();
+        const n = (data.responses || []).length;
+        const badge = document.getElementById(`responses-count-${startupId}`);
+        if (badge) { badge.textContent = n; badge.classList.toggle('hidden', n === 0); }
+    } catch (e) {}
+}
+
 // ============ COMMENTS (комментарии к проектам) ============
 // Подгружает комментарии для всех отрисованных карточек.
 // Повторно не дёргает API благодаря data-loaded (перерисовка списка и т.п.).
@@ -950,6 +1102,21 @@ function initAllComments() {
     document.querySelectorAll('.startup-card').forEach(card => {
         const id = card.id && card.id.startsWith('startup-card-') ? card.id.replace('startup-card-', '') : null;
         if (id) loadComments(Number(id));
+    });
+    // Бейджи откликов на карточках автора
+    document.querySelectorAll('[data-responses-startup]').forEach(btn => {
+        const id = btn.getAttribute('data-responses-startup');
+        if (!id || btn.dataset.loaded === '1') return;
+        fetch(`${API_URL}/api/startups/${id}/responses`, { headers: authHeaders() })
+            .then(r => (r.ok ? r.json() : null))
+            .then(data => {
+                if (!data) return;
+                btn.dataset.loaded = '1';
+                const n = (data.responses || []).length;
+                const badge = document.getElementById(`responses-count-${id}`);
+                if (badge && n > 0) { badge.textContent = n; badge.classList.remove('hidden'); }
+            })
+            .catch(() => {});
     });
 }
 
