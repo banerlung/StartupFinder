@@ -3543,3 +3543,10 @@ animation: none;
 background-color: #F97316;
 color: #ffffff;
 }
+
+/* На телефоне переключатель темы убран из шапки — тема меняется в настройках */
+@media (max-width: 767px) {
+  #navbar #themeBtn {
+    display: none;
+  }
+}
