@@ -215,6 +215,30 @@ Authorization: Bearer <token>
 
 ---
 
+### POST /api/change-password
+Смена пароля в настройках
+**Заголовки**  `Authorization: Bearer <token>`
+
+**Тело запроса (JSON)**
+```json
+{
+"old_password": "строка",
+"new_password": "строка, min 6"
+}
+```
+**Ответ:**
+```
+200 OK
+{ "message": "Пароль обновлён" }
+
+400 — неверный текущий пароль
+{ "success": false, "error": { "code": "INVALID_PASSWORD", "message": "Неверный текущий пароль" } }
+
+400 — валидация (короткий новый пароль и т.п.)
+{ "success": false, "error": { "code": "VALIDATION_ERROR", "message": "...", "details": [...] } }
+
+401 — токен недействителен (стандартный ответ API)
+```
 ## Эндпоинты пользователя
 
 ### GET /api/me
