@@ -1,4 +1,4 @@
-# StartupFinder
+# StartupFinder Repo
 
 Платформа для поиска кофаундеров и команды для стартапов.
 
